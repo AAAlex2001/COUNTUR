@@ -1,0 +1,214 @@
+.hero {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 32px 16px;
+  gap: 32px;
+
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.overline {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #13d8f4;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 38px;
+  line-height: 98%;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.description {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 155%;
+
+  color: #8c9aa2;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 8px;
+}
+
+.actions .action {
+  flex: 1 1 0;
+  padding: 0 10px;
+
+  min-width: 0;
+}
+
+.icon {
+  display: none;
+  flex: none;
+  width: 17px;
+  height: 17px;
+}
+
+.stats {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 32px;
+
+  list-style: none;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.value {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 26px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.label {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+  text-transform: uppercase;
+
+  color: #59666d;
+}
+
+.media {
+  position: relative;
+  isolation: isolate;
+
+  box-sizing: border-box;
+  aspect-ratio: 574 / 416;
+
+  background: #0c1114;
+  border: 1px solid #273138;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.tag {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 14px;
+  gap: 10px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+  background: #101519;
+  border: 1px solid #3a4851;
+  border-radius: 4px;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+
+  background: #3ddc97;
+  border-radius: 50%;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 48px 24px;
+  }
+
+  .title {
+    font-size: 56px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .actions {
+    align-self: flex-start;
+    gap: 12px;
+  }
+
+  .actions .action {
+    flex: none;
+    padding: 0 20px;
+  }
+
+  .icon {
+    display: block;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    flex-direction: row;
+    padding: 72px 120px;
+    gap: 56px;
+
+    max-width: 1440px;
+  }
+
+  .copy {
+    flex: none;
+    width: 570px;
+  }
+
+  .media {
+    flex: 1 1 0;
+    height: 416px;
+    aspect-ratio: auto;
+  }
+}

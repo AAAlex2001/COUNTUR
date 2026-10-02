@@ -43,9 +43,22 @@
   border-color: #3a4851;
 }
 
+.ghost {
+  padding: 0 12px;
+
+  height: 36px;
+
+  color: #13d8f4;
+  background: transparent;
+}
+
 .primary:hover:not(:disabled) {
   background: #10bcd5;
   border-color: #10bcd5;
+}
+
+.ghost:hover:not(:disabled) {
+  background: rgba(19, 216, 244, 0.12);
 }
 
 .outline:hover:not(:disabled) {

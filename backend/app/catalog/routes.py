@@ -71,6 +71,7 @@ async def get_products(
     category: list[str] = Query(default_factory=list, description="Slug категорий"),
     brand: list[str] = Query(default_factory=list, description="Slug брендов"),
     in_stock: bool = Query(False, description="Только товары в наличии"),
+    featured: bool = Query(False, description="Только хиты и товары со скидкой"),
     price_min: Decimal | None = Query(None, ge=0, description="Цена от"),
     price_max: Decimal | None = Query(None, ge=0, description="Цена до"),
     spec: list[str] = Query(
@@ -97,6 +98,7 @@ async def get_products(
         category_slugs=category,
         brand_slugs=brand,
         in_stock=in_stock,
+        featured=featured,
         price_min=price_min,
         price_max=price_max,
         specs=spec_filters,

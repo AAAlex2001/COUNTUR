@@ -1,4 +1,4 @@
-"""Сохранение фото товаров в media/products."""
+"""Сохранение загруженных картинок в каталог media."""
 
 from io import BytesIO
 from pathlib import Path
@@ -12,7 +12,6 @@ from app.config import get_settings
 MEGABYTE = 1024 * 1024
 IMAGE_MAX_SIZE_BYTES = 5 * MEGABYTE
 IMAGE_EXTENSIONS = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp"}
-PRODUCTS_FOLDER = "products"
 
 
 class UploadError(ValueError):
@@ -36,8 +35,8 @@ def detect_extension(content: bytes) -> str:
     return extension
 
 
-async def save_product_image(file: UploadFile) -> str:
-    """Сохранить фото товара. Возвращает путь относительно каталога media."""
+async def save_image(file: UploadFile, folder: str) -> str:
+    """Сохранить картинку в папку внутри media. Возвращает путь относительно media."""
 
     content = await file.read(IMAGE_MAX_SIZE_BYTES + 1)
     if len(content) > IMAGE_MAX_SIZE_BYTES:
@@ -45,16 +44,16 @@ async def save_product_image(file: UploadFile) -> str:
 
     extension = detect_extension(content)
 
-    directory = Path(get_settings().media_dir) / PRODUCTS_FOLDER
+    directory = Path(get_settings().media_dir) / folder
     directory.mkdir(parents=True, exist_ok=True)
 
     filename = f"{uuid4().hex}{extension}"
     (directory / filename).write_bytes(content)
 
-    return f"{PRODUCTS_FOLDER}/{filename}"
+    return f"{folder}/{filename}"
 
 
-def remove_product_image(path: str) -> None:
-    """Удалить файл фото. Если его уже нет на диске, молчим: цель достигнута."""
+def remove_image(path: str) -> None:
+    """Удалить файл картинки. Если его уже нет на диске, молчим: цель достигнута."""
 
     (Path(get_settings().media_dir) / path).unlink(missing_ok=True)

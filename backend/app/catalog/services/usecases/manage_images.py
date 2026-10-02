@@ -4,8 +4,10 @@ from fastapi import UploadFile
 
 from app.catalog.models import Product, ProductImage, PublicationStatus
 from app.catalog.services.exceptions import ImageNotFoundError, InvalidProductError
-from app.catalog.services.images import remove_product_image, save_product_image
 from app.catalog.services.repo import ProductRepository
+from app.uploads import remove_image, save_image
+
+PRODUCTS_FOLDER = "products"
 
 
 class AddProductImageUseCase:
@@ -17,7 +19,7 @@ class AddProductImageUseCase:
     async def execute(self, product: Product, file: UploadFile) -> Product:
         """Вернуть товар с новым фото. Бросает UploadError, если файл не подходит."""
 
-        path = await save_product_image(file)
+        path = await save_image(file, PRODUCTS_FOLDER)
 
         last_order = max((image.sort_order for image in product.images), default=-1)
         product.images.append(ProductImage(path=path, sort_order=last_order + 1))
@@ -25,7 +27,7 @@ class AddProductImageUseCase:
         try:
             return await self.products.save(product)
         except Exception:
-            remove_product_image(path)
+            remove_image(path)
             raise
 
 
@@ -49,7 +51,7 @@ class RemoveProductImageUseCase:
         product.images.remove(image)
 
         updated = await self.products.save(product)
-        remove_product_image(path)
+        remove_image(path)
 
         return updated
 

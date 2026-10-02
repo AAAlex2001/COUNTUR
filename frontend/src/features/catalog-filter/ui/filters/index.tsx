@@ -1,7 +1,6 @@
 "use client";
 
 import cn from "classnames";
-import Link from "next/link";
 import { useState } from "react";
 import { CATALOG_PATH, type CatalogFilters, type Category } from "@/entities/product";
 import Button from "@/shared/ui/button";
@@ -47,9 +46,9 @@ const Filters = ({ categories, filters, className }: FiltersProps) => {
       <aside className={styles.panel} aria-label="Фильтры каталога">
         <div className={styles.head}>
           <p className={styles.title}>Фильтры</p>
-          <Link className={styles.reset} href={CATALOG_PATH}>
+          <Button variant="ghost" href={CATALOG_PATH}>
             Сбросить
-          </Link>
+          </Button>
         </div>
 
         <hr className={styles.divider} />

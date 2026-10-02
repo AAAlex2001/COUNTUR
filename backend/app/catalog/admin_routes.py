@@ -54,7 +54,6 @@ from app.catalog.services.exceptions import (
     InvalidProductError,
     SkuAlreadyTakenError,
 )
-from app.catalog.services.images import UploadError
 from app.catalog.services.repo import (
     BrandRepository,
     CategoryRepository,
@@ -78,6 +77,7 @@ from app.catalog.services.usecases.manage_images import (
 )
 from app.catalog.services.usecases.manage_reviews import UpdateReviewUseCase
 from app.catalog.services.usecases.update_product import UpdateProductUseCase
+from app.uploads import UploadError
 
 router = APIRouter(
     prefix="/admin",

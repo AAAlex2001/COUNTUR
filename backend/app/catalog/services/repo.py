@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 
-from sqlalchemy import ColumnElement, and_, func, select, update
+from sqlalchemy import ColumnElement, and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.models import (
@@ -42,6 +42,7 @@ class ProductFilters:
     category_slugs: list[str] = field(default_factory=list)
     brand_slugs: list[str] = field(default_factory=list)
     in_stock: bool = False
+    featured: bool = False
     price_min: Decimal | None = None
     price_max: Decimal | None = None
     specs: dict[int, list[str]] = field(default_factory=dict)
@@ -63,6 +64,9 @@ def build_conditions(filters: ProductFilters) -> list[ColumnElement[bool]]:
 
     if filters.in_stock:
         conditions.append(Product.availability == Availability.IN_STOCK)
+
+    if filters.featured:
+        conditions.append(or_(Product.is_hit.is_(True), Product.old_price.is_not(None)))
 
     if filters.price_min is not None:
         conditions.append(Product.price >= filters.price_min)

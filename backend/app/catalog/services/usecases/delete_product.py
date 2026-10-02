@@ -1,8 +1,8 @@
 """Сценарий удаления товара."""
 
 from app.catalog.models import Product
-from app.catalog.services.images import remove_product_image
 from app.catalog.services.repo import ProductRepository
+from app.uploads import remove_image
 
 
 class DeleteProductUseCase:
@@ -19,4 +19,4 @@ class DeleteProductUseCase:
         await self.products.delete(product)
 
         for path in paths:
-            remove_product_image(path)
+            remove_image(path)

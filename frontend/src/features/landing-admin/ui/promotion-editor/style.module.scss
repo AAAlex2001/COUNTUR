@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.preview {
+  position: relative;
+
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 2 / 1;
+
+  background: #151c21;
+  border: 1px solid #273138;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.empty {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #59666d;
+}
+
+.submit {
+  align-self: flex-start;
+}

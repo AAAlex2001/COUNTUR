@@ -1,0 +1,32 @@
+.hint,
+.empty {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #59666d;
+}
+
+.preview {
+  position: relative;
+
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  max-width: 574px;
+  aspect-ratio: 574 / 416;
+
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}

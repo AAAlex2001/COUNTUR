@@ -18,6 +18,7 @@ export type {
 export {
   getCatalogFilters,
   getCategories,
+  getFeaturedProducts,
   getProducts,
   type SearchParams,
 } from "./api/catalog";

@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .title {
@@ -28,27 +28,6 @@
   text-transform: uppercase;
 
   color: #f2f7f8;
-}
-
-.reset {
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 13px;
-  text-decoration: none;
-  text-transform: uppercase;
-
-  color: #13d8f4;
-}
-
-.reset:hover {
-  text-decoration: underline;
-}
-
-.reset:focus-visible {
-  outline: 2px solid #13d8f4;
-  outline-offset: 3px;
 }
 
 .divider {
