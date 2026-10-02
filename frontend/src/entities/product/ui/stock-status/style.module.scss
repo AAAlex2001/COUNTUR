@@ -1,0 +1,40 @@
+.status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.small {
+  font-size: 10px;
+  line-height: 13px;
+}
+
+.dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.in_stock {
+  color: #3ddc97;
+}
+
+.expected {
+  color: #ff9d3d;
+}
+
+.out_of_stock {
+  color: #ff5c5c;
+}

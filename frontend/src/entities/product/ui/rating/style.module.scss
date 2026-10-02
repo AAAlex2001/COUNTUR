@@ -1,0 +1,41 @@
+.rating {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.compact {
+  gap: 6px;
+}
+
+.stars {
+  flex: none;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: transparent;
+  background: linear-gradient(90deg, #ff9d3d var(--fill), #3a4851 var(--fill));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.small {
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.summary {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+
+  color: #8c9aa2;
+}

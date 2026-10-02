@@ -1,0 +1,109 @@
+.button {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.button:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  cursor: default;
+}
+
+.lg {
+  width: 46px;
+  height: 46px;
+}
+
+.lg svg {
+  width: 20px;
+  height: 20px;
+}
+
+.md {
+  width: 40px;
+  height: 40px;
+}
+
+.md svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sm {
+  width: 28px;
+  height: 28px;
+}
+
+.sm svg {
+  width: 17px;
+  height: 17px;
+}
+
+.accent {
+  color: #080b0d;
+  background: #13d8f4;
+}
+
+.accent:hover:not(:disabled) {
+  background: #4be3f8;
+}
+
+.accent:disabled {
+  opacity: 0.6;
+}
+
+.muted {
+  color: #59666d;
+  background: #151c21;
+  border-color: #273138;
+}
+
+.danger {
+  color: #ff5a65;
+  background: transparent;
+}
+
+.danger:hover:not(:disabled) {
+  background: rgba(255, 90, 101, 0.12);
+}
+
+.danger:disabled {
+  opacity: 0.5;
+}
+
+.outline {
+  color: #f2f7f8;
+  background: #101519;
+  border-color: #3a4851;
+}
+
+.outline:hover:not(:disabled),
+.outline[aria-pressed="true"] {
+  color: #13d8f4;
+  border-color: #13d8f4;
+}
+
+.outline[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+
+.outline:disabled {
+  opacity: 0.6;
+}

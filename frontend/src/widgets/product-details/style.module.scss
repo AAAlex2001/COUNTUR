@@ -1,0 +1,136 @@
+.details {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 24px 16px 48px;
+  gap: 24px;
+
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 28px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #13d8f4;
+}
+
+.sku {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #59666d;
+}
+
+.name {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 105%;
+
+  color: #f2f7f8;
+}
+
+.ratingRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 20px;
+}
+
+.description {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 155%;
+
+  color: #8c9aa2;
+}
+
+.chips {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.meta:empty,
+.chips:empty {
+  display: none;
+}
+
+.divider {
+  width: 100%;
+  height: 0;
+
+  border: none;
+  border-top: 1px solid #273138;
+}
+
+@media (min-width: 768px) {
+  .details {
+    padding: 28px 24px 56px;
+  }
+
+  .name {
+    font-size: 44px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .details {
+    padding: 34px 120px 70px;
+    gap: 28px;
+
+    max-width: 1440px;
+  }
+
+  .hero {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 54px;
+  }
+
+  .info {
+    flex: 1 1 0;
+  }
+}

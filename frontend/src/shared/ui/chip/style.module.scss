@@ -1,0 +1,17 @@
+.chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  padding: 7px 10px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+  text-transform: uppercase;
+
+  color: #8c9aa2;
+  background: #151c21;
+  border: 1px solid #273138;
+  border-radius: 4px;
+}

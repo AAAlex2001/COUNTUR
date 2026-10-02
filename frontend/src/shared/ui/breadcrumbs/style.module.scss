@@ -1,0 +1,45 @@
+.breadcrumbs {
+  width: 100%;
+}
+
+.list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 7px;
+
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #59666d;
+}
+
+.crumb {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.crumb:hover {
+  color: #13d8f4;
+}
+
+.crumb:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 3px;
+  border-radius: 2px;
+}

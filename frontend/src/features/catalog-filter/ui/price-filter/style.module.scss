@@ -1,0 +1,10 @@
+.inputs {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.input {
+  flex: 1 1 0;
+}

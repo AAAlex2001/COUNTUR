@@ -1,0 +1,17 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 13px;
+}
+
+.title {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}

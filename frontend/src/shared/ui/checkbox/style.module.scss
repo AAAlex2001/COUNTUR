@@ -1,0 +1,92 @@
+.checkbox {
+  position: relative;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  cursor: pointer;
+}
+
+.input {
+  position: absolute;
+
+  width: 16px;
+  height: 16px;
+  margin: 0;
+
+  opacity: 0;
+  cursor: pointer;
+}
+
+.box {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 16px;
+  height: 16px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 12px;
+
+  color: #080b0d;
+  background: #101519;
+  border: 1px solid #3a4851;
+  border-radius: 2px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.label {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #8c9aa2;
+  transition: color 0.15s ease;
+}
+
+.count {
+  margin-left: -4px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #59666d;
+}
+
+.checkbox:hover .box {
+  border-color: #13d8f4;
+}
+
+.checkbox:hover .label {
+  color: #f2f7f8;
+}
+
+.checked .box {
+  background: #13d8f4;
+  border-color: #13d8f4;
+}
+
+.checked .label {
+  color: #f2f7f8;
+}
+
+.input:focus-visible + .box {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}

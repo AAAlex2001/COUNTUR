@@ -1,0 +1,90 @@
+.field {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+
+  min-width: 0;
+  height: 42px;
+
+  background: #151c21;
+  border: 1px solid #273138;
+  border-radius: 4px;
+  cursor: text;
+  transition: border-color 0.15s ease;
+}
+
+.field:focus-within {
+  border-color: #13d8f4;
+}
+
+.icon {
+  display: flex;
+  flex: none;
+
+  color: #8c9aa2;
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.prefix {
+  flex: none;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #f2f7f8;
+}
+
+.input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #f2f7f8;
+  background: transparent;
+  border: none;
+  outline: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: #59666d;
+  opacity: 1;
+}
+
+.input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.small {
+  padding: 0 10px;
+  gap: 6px;
+
+  height: 36px;
+
+  background: #101519;
+  border-color: #3a4851;
+  border-radius: 0;
+}
+
+.small .input {
+  font-family: "Roboto Mono";
+  font-size: 12px;
+  line-height: 16px;
+}

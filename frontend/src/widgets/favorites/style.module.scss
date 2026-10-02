@@ -1,0 +1,113 @@
+.favorites {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 24px 16px 48px;
+  gap: 24px;
+
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.eyebrow {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #13d8f4;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 35px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.count,
+.loading {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #8c9aa2;
+}
+
+.count {
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+
+  list-style: none;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .favorites {
+    padding: 32px 24px 56px;
+  }
+
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .title {
+    font-size: 42px;
+    line-height: 49px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1440px) {
+  .favorites {
+    padding: 42px 120px 72px;
+    gap: 28px;
+
+    max-width: 1440px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

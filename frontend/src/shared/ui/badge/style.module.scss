@@ -1,0 +1,22 @@
+.badge {
+  display: inline-flex;
+  padding: 5px 9px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 13px;
+  text-transform: uppercase;
+
+  color: #080b0d;
+  border-radius: 4px;
+}
+
+.accent {
+  background: #13d8f4;
+}
+
+.sale {
+  background: #ff9d3d;
+}

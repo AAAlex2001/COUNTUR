@@ -1,0 +1,63 @@
+.cart {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+}
+
+.cart:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+
+  color: #13d8f4;
+}
+
+.total {
+  display: none;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  white-space: nowrap;
+
+  color: #f2f7f8;
+}
+
+.count {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5px;
+
+  min-width: 20px;
+  height: 20px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 12px;
+
+  color: #080b0d;
+  background: #13d8f4;
+  border-radius: 999px;
+}
+
+@media (min-width: 768px) {
+  .total {
+    display: block;
+  }
+}
