@@ -1,0 +1,28 @@
+.steps {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  list-style: none;
+}
+
+.step {
+  flex: 1 1 0;
+  padding-bottom: 10px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  color: #59666d;
+  border-bottom: 2px solid #273138;
+}
+
+.active {
+  color: #13d8f4;
+  border-bottom-color: #13d8f4;
+}

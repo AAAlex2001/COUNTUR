@@ -26,7 +26,7 @@ from app.catalog.services.usecases.manage_images import (
     RemoveProductImageUseCase,
     ReorderProductImagesUseCase,
 )
-from app.catalog.services.usecases.manage_reviews import CreateReviewUseCase, UpdateReviewUseCase
+from app.catalog.services.usecases.manage_reviews import UpdateReviewUseCase
 from app.catalog.services.usecases.update_product import UpdateProductUseCase
 from app.database import get_session
 
@@ -274,14 +274,6 @@ def get_update_brand_usecase(
     """Сценарий изменения бренда."""
 
     return UpdateBrandUseCase(brands)
-
-
-def get_create_review_usecase(
-    reviews: ReviewRepository = Depends(get_review_repository),
-) -> CreateReviewUseCase:
-    """Сценарий добавления отзыва."""
-
-    return CreateReviewUseCase(reviews)
 
 
 def get_update_review_usecase(

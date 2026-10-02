@@ -1,33 +1,20 @@
-"""Администраторы: фабрики сценариев, cookie с токеном, защита админских ручек."""
+"""Администратор: фабрика сценария входа, cookie с токеном, защита админских ручек."""
 
-from fastapi import Depends, HTTPException, Request, Response, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException, Request, Response, status
 
-from app.admin.models import Admin
-from app.admin.services.repo import AdminRepository
-from app.admin.services.tokens import read_admin_id
+from app.admin.services.tokens import read_admin_login
 from app.admin.services.usecases.login import LoginAdminUseCase
+from app.admin.services.validators import normalize_login
 from app.config import get_settings
-from app.database import get_session
 
 ADMIN_COOKIE = "admin_token"
 SECONDS_IN_DAY = 60 * 60 * 24
 
 
-def get_admin_repository(
-    session: AsyncSession = Depends(get_session),
-) -> AdminRepository:
-    """Репозиторий администраторов с сессией текущего запроса."""
-
-    return AdminRepository(session)
-
-
-def get_login_usecase(
-    admins: AdminRepository = Depends(get_admin_repository),
-) -> LoginAdminUseCase:
+def get_login_usecase() -> LoginAdminUseCase:
     """Сценарий входа."""
 
-    return LoginAdminUseCase(admins)
+    return LoginAdminUseCase(get_settings())
 
 
 def set_admin_cookie(response: Response, token: str) -> None:
@@ -52,27 +39,16 @@ def clear_admin_cookie(response: Response) -> None:
     response.delete_cookie(ADMIN_COOKIE, path="/")
 
 
-async def require_admin(
-    request: Request,
-    admins: AdminRepository = Depends(get_admin_repository),
-) -> Admin:
-    """Администратор по токену из cookie. Без валидного токена — 401."""
-
-    unauthorized = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Требуется вход",
-    )
+def require_admin(request: Request) -> str:
+    """Логин администратора по токену из cookie. Без валидного токена — 401."""
 
     token = request.cookies.get(ADMIN_COOKIE)
-    if token is None:
-        raise unauthorized
+    login = read_admin_login(token) if token else None
 
-    admin_id = read_admin_id(token)
-    if admin_id is None:
-        raise unauthorized
+    if login != normalize_login(get_settings().admin_login):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Требуется вход",
+        )
 
-    admin = await admins.get_by_id(admin_id)
-    if admin is None or not admin.is_active:
-        raise unauthorized
-
-    return admin
+    return login

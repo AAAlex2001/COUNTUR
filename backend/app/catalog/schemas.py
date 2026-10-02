@@ -293,13 +293,11 @@ class ReviewAdminSchema(ReviewSchema):
     is_published: bool = Field(..., description="Виден ли на сайте")
 
 
-class ReviewCreateSchema(BaseModel):
-    """Новый отзыв о товаре."""
+class ReviewAdminListSchema(BaseModel):
+    """Страница отзывов товара в админке."""
 
-    author_name: str = Field(..., min_length=1, max_length=100, description="Имя автора")
-    rating: int = Field(..., ge=1, le=5, description="Оценка от 1 до 5")
-    text: str = Field(..., min_length=1, max_length=5000, description="Текст отзыва")
-    is_published: bool = Field(True, description="Показывать на сайте")
+    reviews: list[ReviewAdminSchema]
+    total: int = Field(..., description="Сколько всего отзывов у товара")
 
 
 class ReviewUpdateSchema(BaseModel):

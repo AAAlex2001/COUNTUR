@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import styles from "./style.module.scss";
 
 type InputProps = {
-  type?: "text" | "search" | "tel" | "email";
-  size?: "md" | "sm";
+  type?: "text" | "search" | "tel" | "email" | "password";
+  size?: "lg" | "md" | "sm";
   name?: string;
   placeholder?: string;
   ariaLabel?: string;
@@ -12,14 +12,14 @@ type InputProps = {
   onChange?: (value: string) => void;
   onBlur?: () => void;
   maxLength?: number;
-  inputMode?: "text" | "numeric" | "tel" | "email" | "search";
+  inputMode?: "text" | "numeric" | "decimal" | "tel" | "email" | "search";
   autoComplete?: string;
   icon?: ReactNode;
   prefix?: string;
   className?: string;
 };
 
-/** Поле ввода. Слева может стоять иконка или короткая подпись. */
+/** Поле ввода. Слева может стоять иконка или короткая подпись. Размер lg — высотой с кнопку. */
 const Input = ({
   type = "text",
   size = "md",
@@ -36,7 +36,14 @@ const Input = ({
   prefix,
   className,
 }: InputProps) => (
-  <label className={cn(styles.field, size === "sm" && styles.small, className)}>
+  <label
+    className={cn(
+      styles.field,
+      size === "lg" && styles.large,
+      size === "sm" && styles.small,
+      className,
+    )}
+  >
     {icon && <span className={styles.icon}>{icon}</span>}
     {prefix && <span className={styles.prefix}>{prefix}</span>}
 

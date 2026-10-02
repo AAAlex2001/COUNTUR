@@ -1,0 +1,31 @@
+.textarea {
+  box-sizing: border-box;
+  display: block;
+  padding: 12px 14px;
+
+  width: 100%;
+  min-height: 42px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+
+  color: #f2f7f8;
+  background: #101519;
+  border: 1px solid #3a4851;
+  border-radius: 4px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+.textarea:focus {
+  border-color: #13d8f4;
+}
+
+.textarea::placeholder {
+  color: #59666d;
+  opacity: 1;
+}

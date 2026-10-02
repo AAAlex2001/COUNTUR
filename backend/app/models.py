@@ -1,6 +1,5 @@
 """Все модели приложения в одном месте, чтобы их видели Alembic и SQLAlchemy."""
 
-from app.admin.models import Admin
 from app.cart.models import CartItem
 from app.catalog.models import (
     Attribute,
@@ -18,7 +17,6 @@ from app.orders.models import Order, OrderItem
 
 __all__ = [
     "Base",
-    "Admin",
     "CartItem",
     "Attribute",
     "Brand",

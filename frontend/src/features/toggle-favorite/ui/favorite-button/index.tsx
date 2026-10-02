@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { addFavorite, removeFavorite, useFavorites } from "@/entities/favorite";
 import IconButton from "@/shared/ui/icon-button";
 import { HeartIcon } from "@/shared/ui/icons";
+import { useToggleFavorite } from "../../model/use-toggle-favorite";
 
 type FavoriteButtonProps = {
   productId: number;
@@ -13,27 +12,7 @@ type FavoriteButtonProps = {
 
 /** Кнопка-сердечко: добавляет товар в избранное или убирает из него. */
 const FavoriteButton = ({ productId, size = "lg", className }: FavoriteButtonProps) => {
-  const { ids, setIds } = useFavorites();
-  const [pending, setPending] = useState(false);
-  const active = ids.includes(productId);
-
-  const toggle = async () => {
-    setPending(true);
-
-    try {
-      if (active) {
-        await removeFavorite(productId);
-        setIds(ids.filter((id) => id !== productId));
-      } else {
-        await addFavorite(productId);
-        setIds([...ids, productId]);
-      }
-    } catch {
-      return;
-    } finally {
-      setPending(false);
-    }
-  };
+  const { state, active, toggle } = useToggleFavorite(productId);
 
   return (
     <IconButton
@@ -42,7 +21,7 @@ const FavoriteButton = ({ productId, size = "lg", className }: FavoriteButtonPro
       size={size}
       pressed={active}
       ariaLabel={active ? "Убрать из избранного" : "Добавить в избранное"}
-      loading={pending}
+      loading={state.pending}
       onClick={toggle}
     >
       <HeartIcon />

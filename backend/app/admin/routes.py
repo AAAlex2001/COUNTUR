@@ -6,7 +6,6 @@ from app.admin.dependencies import (
     require_admin,
     set_admin_cookie,
 )
-from app.admin.models import Admin
 from app.admin.schemas import AdminLoginSchema, AdminOutSchema
 from app.admin.services.exceptions import InvalidCredentialsError
 from app.admin.services.tokens import create_access_token
@@ -24,17 +23,17 @@ async def login(
     """Вход в административную панель. Выдаёт cookie с токеном."""
 
     try:
-        admin = await usecase.execute(payload)
+        admin_login = usecase.execute(payload)
     except InvalidCredentialsError as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Неверный логин или пароль",
         ) from error
 
-    token = create_access_token(admin.id)
+    token = create_access_token(admin_login)
     set_admin_cookie(response, token)
 
-    return AdminOutSchema.model_validate(admin)
+    return AdminOutSchema(login=admin_login)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -45,7 +44,7 @@ async def logout(response: Response) -> None:
 
 
 @router.get("/me")
-async def me(admin: Admin = Depends(require_admin)) -> AdminOutSchema:
+async def me(admin_login: str = Depends(require_admin)) -> AdminOutSchema:
     """Текущий администратор по cookie. Панель вызывает при открытии страницы."""
 
-    return AdminOutSchema.model_validate(admin)
+    return AdminOutSchema(login=admin_login)

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SearchForm } from "@/features/product-search";
 import { HeartIcon } from "@/shared/ui/icons";
+import Logo from "@/shared/ui/logo";
 import { ANNOUNCEMENT, HEADER_NAV } from "./data";
 import CartLink from "./ui/cart-link";
 import styles from "./style.module.scss";
@@ -14,12 +15,7 @@ const Header = () => (
 
     <header className={styles.header}>
       <div className={styles.main}>
-        <Link className={styles.logo} href="/" aria-label="COUNTUR — на главную">
-          <span className={styles.logoMark} aria-hidden="true">
-            C
-          </span>
-          <span className={styles.brand}>COUNTUR</span>
-        </Link>
+        <Logo href="/" ariaLabel="COUNTUR — на главную" />
 
         <nav className={styles.nav} aria-label="Основная навигация">
           {HEADER_NAV.map((item) => (

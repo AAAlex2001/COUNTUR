@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     jwt_secret: str = Field(min_length=32)
     jwt_expires_days: int = 7
 
+    admin_login: str = "admin"
+    admin_password: str = Field(min_length=8)
+
 
 @lru_cache
 def get_settings() -> Settings:

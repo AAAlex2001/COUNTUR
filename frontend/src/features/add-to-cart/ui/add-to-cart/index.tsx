@@ -25,38 +25,30 @@ const AddToCart = ({
   onQuantityChange,
   className,
 }: AddToCartProps) => {
-  const { pending, added, error, add } = useAddToCart(productId);
+  const { state, add } = useAddToCart(productId);
 
   if (!available) {
     return (
-      <div className={cn(styles.root, className)}>
-        <Button disabled>{unavailableLabel}</Button>
-      </div>
+      <Button className={className} disabled>
+        {unavailableLabel}
+      </Button>
     );
   }
 
   const submit = async () => {
-    const isAdded = await add(quantity);
+    const added = await add(quantity);
 
-    if (isAdded) onQuantityChange(1);
+    if (added) onQuantityChange(1);
   };
 
   return (
-    <div className={cn(styles.root, className)}>
-      <div className={styles.controls}>
-        <QuantityStepper value={quantity} disabled={pending} onChange={onQuantityChange} />
+    <div className={cn(styles.controls, className)}>
+      <QuantityStepper value={quantity} disabled={state.pending} onChange={onQuantityChange} />
 
-        <Button className={styles.submit} loading={pending} onClick={submit}>
-          <CartIcon className={styles.icon} />
-          {added ? "Добавлено" : "Добавить в корзину"}
-        </Button>
-      </div>
-
-      {error && (
-        <p className={styles.error} role="alert">
-          {error}
-        </p>
-      )}
+      <Button className={styles.submit} loading={state.pending} onClick={submit}>
+        <CartIcon className={styles.icon} />
+        Добавить в корзину
+      </Button>
     </div>
   );
 };

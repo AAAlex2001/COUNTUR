@@ -12,7 +12,7 @@ type AddToCartButtonProps = {
 
 /** Кнопка-иконка «в корзину» для карточки товара. Добавляет одну штуку. */
 const AddToCartButton = ({ productId, productName, available }: AddToCartButtonProps) => {
-  const { pending, error, add } = useAddToCart(productId);
+  const { state, add } = useAddToCart(productId);
 
   if (!available) {
     return (
@@ -25,8 +25,7 @@ const AddToCartButton = ({ productId, productName, available }: AddToCartButtonP
   return (
     <IconButton
       ariaLabel={`Добавить в корзину: ${productName}`}
-      title={error ?? undefined}
-      loading={pending}
+      loading={state.pending}
       onClick={() => add(1)}
     >
       <CartIcon />

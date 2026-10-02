@@ -13,11 +13,10 @@ type CartItemProps = {
   status: ReactNode;
   quantity: ReactNode;
   remove: ReactNode;
-  error?: string | null;
 };
 
 /** Строка корзины. Наличие, количество и удаление передаются готовыми блоками. */
-const CartItem = ({ item, href, status, quantity, remove, error }: CartItemProps) => {
+const CartItem = ({ item, href, status, quantity, remove }: CartItemProps) => {
   const { product } = item;
   const specs = product.highlights.slice(0, SHOWN_HIGHLIGHTS).join(" · ");
 
@@ -55,12 +54,6 @@ const CartItem = ({ item, href, status, quantity, remove, error }: CartItemProps
           <span className={styles.subtotal}>{formatRub(item.subtotal)}</span>
           {remove}
         </div>
-
-        {error && (
-          <p className={styles.error} role="alert">
-            {error}
-          </p>
-        )}
       </div>
     </article>
   );

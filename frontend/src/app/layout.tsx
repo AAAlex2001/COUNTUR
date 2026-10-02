@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ToastProvider } from "@/shared/ui/toaster";
 import "./globals.scss";
 
 export const metadata: Metadata = {
@@ -22,7 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }

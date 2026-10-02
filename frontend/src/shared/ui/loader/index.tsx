@@ -6,7 +6,7 @@ type LoaderProps = {
   className?: string;
 };
 
-/** Индикатор загрузки: sm встаёт в кнопку и берёт её цвет, lg — отдельный блок по центру. */
+/** Индикатор загрузки: sm встаёт в кнопку и берёт её цвет, lg висит по центру экрана. */
 const Loader = ({ size = "sm", className }: LoaderProps) => (
   <span
     className={cn(styles.loader, styles[size], className)}

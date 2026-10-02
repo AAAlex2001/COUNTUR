@@ -9,8 +9,8 @@
   min-width: 0;
   height: 42px;
 
-  background: #151c21;
-  border: 1px solid #273138;
+  background: #101519;
+  border: 1px solid #3a4851;
   border-radius: 4px;
   cursor: text;
   transition: border-color 0.15s ease;
@@ -72,14 +72,16 @@
   appearance: none;
 }
 
+.large {
+  height: 46px;
+}
+
 .small {
   padding: 0 10px;
   gap: 6px;
 
   height: 36px;
 
-  background: #101519;
-  border-color: #3a4851;
   border-radius: 0;
 }
 

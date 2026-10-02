@@ -8,6 +8,11 @@
   border: 1px solid #273138;
   border-radius: 8px;
   overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.item:hover {
+  border-color: #13d8f4;
 }
 
 .image {
@@ -112,18 +117,6 @@
   white-space: nowrap;
 
   color: #f2f7f8;
-}
-
-.error {
-  flex: 1 1 100%;
-
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
-
-  color: #ff9d3d;
 }
 
 @media (min-width: 768px) {

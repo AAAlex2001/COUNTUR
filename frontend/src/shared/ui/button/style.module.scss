@@ -43,11 +43,15 @@
   border-color: #3a4851;
 }
 
-.primary:hover:not(:disabled),
-.outline:hover:not(:disabled) {
-  color: #080b0d;
+.primary:hover:not(:disabled) {
   background: #10bcd5;
   border-color: #10bcd5;
+}
+
+.outline:hover:not(:disabled) {
+  color: #080b0d;
+  background: #13d8f4;
+  border-color: #13d8f4;
 }
 
 .button:disabled {

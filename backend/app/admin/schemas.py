@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
 class AdminLoginSchema(BaseModel):
@@ -11,7 +11,4 @@ class AdminLoginSchema(BaseModel):
 class AdminOutSchema(BaseModel):
     """Администратор, под которым выполнен вход."""
 
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int = Field(..., description="ID администратора")
     login: str = Field(..., description="Логин")

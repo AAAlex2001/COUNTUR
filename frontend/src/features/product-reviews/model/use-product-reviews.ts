@@ -1,36 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { REVIEWS_PER_PAGE, fetchProductReviews, type ReviewList } from "@/entities/product";
+import { errorMessage } from "@/shared/lib/errors";
+import { useToast } from "@/shared/ui/toaster";
+import { reviewsReducer } from "./reducer";
 
 /** Отзывы товара с постраничной подгрузкой с сервера. */
 export const useProductReviews = (slug: string, initial: ReviewList) => {
-  const [list, setList] = useState(initial);
-  const [page, setPage] = useState(1);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
+  const [state, dispatch] = useReducer(reviewsReducer, { list: initial, page: 1, pending: false });
 
   /** Загрузить и показать страницу отзывов. */
-  const openPage = async (nextPage: number) => {
-    setPending(true);
-    setError(null);
+  const openPage = async (page: number) => {
+    dispatch({ type: "page/start" });
 
     try {
-      setList(await fetchProductReviews(slug, nextPage));
-      setPage(nextPage);
+      dispatch({ type: "page/success", list: await fetchProductReviews(slug, page), page });
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Не удалось загрузить отзывы");
-    } finally {
-      setPending(false);
+      dispatch({ type: "page/error" });
+      toast(errorMessage(failure, "Не удалось загрузить отзывы"), "error");
     }
   };
 
-  return {
-    reviews: list.reviews,
-    page,
-    pages: Math.ceil(list.total / REVIEWS_PER_PAGE),
-    pending,
-    error,
-    openPage,
-  };
+  return { state, pages: Math.ceil(state.list.total / REVIEWS_PER_PAGE), openPage };
 };

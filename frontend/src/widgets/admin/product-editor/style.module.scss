@@ -1,0 +1,57 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.titles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+
+  min-width: 0;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 105%;
+
+  color: #f2f7f8;
+}
+
+.error {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 155%;
+
+  color: #ff9d3d;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 42px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+}

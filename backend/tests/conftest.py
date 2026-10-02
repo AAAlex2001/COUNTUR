@@ -4,3 +4,4 @@ import os
 
 os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost:5432/test")
 os.environ.setdefault("JWT_SECRET", "test-jwt-secret-not-for-production-123456")
+os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")

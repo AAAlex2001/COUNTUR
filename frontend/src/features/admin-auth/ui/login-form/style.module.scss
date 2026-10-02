@@ -1,0 +1,26 @@
+.form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 24px;
+  gap: 18px;
+
+  width: 100%;
+  max-width: 400px;
+
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 8px;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 28px;
+  line-height: 33px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}

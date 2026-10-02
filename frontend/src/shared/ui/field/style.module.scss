@@ -1,0 +1,33 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+
+  min-width: 0;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.label {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #8c9aa2;
+}
+
+.hint {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #59666d;
+}

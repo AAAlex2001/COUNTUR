@@ -1,28 +1,8 @@
-"""Сценарии работы с отзывами. Отзывы добавляет и публикует администратор."""
+"""Сценарии работы с отзывами в админке."""
 
-from app.catalog.models import Product, Review
-from app.catalog.schemas import ReviewCreateSchema, ReviewUpdateSchema
+from app.catalog.models import Review
+from app.catalog.schemas import ReviewUpdateSchema
 from app.catalog.services.repo import ReviewRepository
-
-
-class CreateReviewUseCase:
-    """Добавить отзыв о товаре. Рейтинг товара пересчитывается при сохранении."""
-
-    def __init__(self, reviews: ReviewRepository) -> None:
-        self.reviews = reviews
-
-    async def execute(self, product: Product, payload: ReviewCreateSchema) -> Review:
-        """Вернуть сохранённый отзыв."""
-
-        review = Review(
-            product_id=product.id,
-            author_name=payload.author_name,
-            rating=payload.rating,
-            text=payload.text,
-            is_published=payload.is_published,
-        )
-
-        return await self.reviews.add(review)
 
 
 class UpdateReviewUseCase:

@@ -1,36 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { addCartItem, useCart } from "@/entities/cart";
+import { errorMessage } from "@/shared/lib/errors";
+import { useToast } from "@/shared/ui/toaster";
+import { addToCartReducer } from "./reducer";
 
-const ADDED_HINT_MS = 2000;
-
-/** Добавление товара в корзину: запрос, состояние загрузки и текст ошибки. */
+/** Добавление товара в корзину с уведомлением об успехе или ошибке. */
 export const useAddToCart = (productId: number) => {
   const { setCart } = useCart();
-  const [pending, setPending] = useState(false);
-  const [added, setAdded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
+  const [state, dispatch] = useReducer(addToCartReducer, { pending: false });
 
   /** Добавить quantity штук. Возвращает true, если получилось. */
   const add = async (quantity: number): Promise<boolean> => {
-    setPending(true);
-    setError(null);
+    dispatch({ type: "add/start" });
 
     try {
       setCart(await addCartItem(productId, quantity));
-      setAdded(true);
-      setTimeout(() => setAdded(false), ADDED_HINT_MS);
+      toast("Товар добавлен в корзину");
 
       return true;
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Не удалось добавить товар в корзину");
+      toast(errorMessage(failure, "Не удалось добавить товар в корзину"), "error");
 
       return false;
     } finally {
-      setPending(false);
+      dispatch({ type: "add/finish" });
     }
   };
 
-  return { pending, added, error, add };
+  return { state, add };
 };

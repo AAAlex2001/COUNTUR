@@ -1,30 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { removeCartItem, setCartItemQuantity, useCart, type Cart } from "@/entities/cart";
+import { useReducer } from "react";
+import { removeCartItem, setCartItemQuantity, useCart } from "@/entities/cart";
+import { errorMessage } from "@/shared/lib/errors";
+import { useToast } from "@/shared/ui/toaster";
+import { cartItemReducer } from "./reducer";
 
-/** Изменение строки корзины: количество и удаление. */
+/** Изменение строки корзины: количество и удаление через подтверждение. */
 export const useCartItem = (productId: number) => {
   const { setCart } = useCart();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
+  const [state, dispatch] = useReducer(cartItemReducer, { pending: false, confirming: false });
 
-  /** Выполнить запрос и заменить корзину той, что вернул бэкенд. */
-  const send = async (request: Promise<Cart>) => {
-    setPending(true);
-    setError(null);
+  const changeQuantity = async (quantity: number) => {
+    dispatch({ type: "request/start" });
 
     try {
-      setCart(await request);
+      setCart(await setCartItemQuantity(productId, quantity));
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Не удалось изменить корзину");
+      toast(errorMessage(failure, "Не удалось изменить количество"), "error");
     } finally {
-      setPending(false);
+      dispatch({ type: "request/finish" });
     }
   };
 
-  const changeQuantity = (quantity: number) => send(setCartItemQuantity(productId, quantity));
-  const remove = () => send(removeCartItem(productId));
+  const remove = async () => {
+    dispatch({ type: "request/start" });
 
-  return { pending, error, changeQuantity, remove };
+    try {
+      setCart(await removeCartItem(productId));
+      toast("Товар удалён из корзины");
+    } catch (failure) {
+      toast(errorMessage(failure, "Не удалось удалить товар"), "error");
+    } finally {
+      dispatch({ type: "request/finish" });
+    }
+  };
+
+  const askRemove = () => dispatch({ type: "remove/ask" });
+  const cancelRemove = () => dispatch({ type: "remove/cancel" });
+
+  return { state, changeQuantity, remove, askRemove, cancelRemove };
 };

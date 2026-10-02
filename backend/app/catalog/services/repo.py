@@ -451,12 +451,14 @@ class ReviewRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def list_published(
-        self, product_id: int, limit: int, offset: int
+    async def list_for_product(
+        self, product_id: int, limit: int, offset: int, published_only: bool
     ) -> tuple[list[Review], int]:
-        """Опубликованные отзывы товара, свежие первыми, и их общее количество."""
+        """Отзывы товара, свежие первыми, и их общее количество. Скрытые видит только админка."""
 
-        conditions = [Review.product_id == product_id, Review.is_published.is_(True)]
+        conditions = [Review.product_id == product_id]
+        if published_only:
+            conditions.append(Review.is_published.is_(True))
 
         reviews_stmt = (
             select(Review)
@@ -476,33 +478,10 @@ class ReviewRepository:
 
         return reviews, total
 
-    async def list_for_product(self, product_id: int) -> list[Review]:
-        """Все отзывы товара для админки, включая скрытые."""
-
-        stmt = (
-            select(Review)
-            .where(Review.product_id == product_id)
-            .order_by(Review.created_at.desc(), Review.id.desc())
-        )
-        result = await self.db.execute(stmt)
-
-        return list(result.scalars().all())
-
     async def get_by_id(self, review_id: int) -> Review | None:
         """Отзыв по идентификатору или None."""
 
         return await self.db.get(Review, review_id)
-
-    async def add(self, review: Review) -> Review:
-        """Сохранить новый отзыв."""
-
-        self.db.add(review)
-        await self.db.flush()
-        await self.refresh_rating(review.product_id)
-        await self.db.commit()
-        await self.db.refresh(review)
-
-        return review
 
     async def save(self, review: Review) -> Review:
         """Сохранить изменения существующего отзыва."""

@@ -47,49 +47,6 @@
   margin: 0 auto;
 }
 
-.logo {
-  display: flex;
-  flex: none;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-
-  text-decoration: none;
-}
-
-.logoMark {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  width: 34px;
-  height: 34px;
-
-  font-family: "Roboto Mono";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 24px;
-
-  color: #13d8f4;
-  border: 2px solid #13d8f4;
-  border-radius: 4px;
-}
-
-.brand {
-  display: none;
-
-  font-family: "Roboto Condensed";
-  font-style: normal;
-  font-weight: 800;
-  font-size: 26px;
-  line-height: 30px;
-
-  color: #f2f7f8;
-}
-
 .nav {
   display: none;
 }
@@ -141,7 +98,6 @@
   height: 21px;
 }
 
-.logo:focus-visible,
 .navLink:focus-visible,
 .favorites:focus-visible {
   outline: 2px solid #13d8f4;
@@ -153,10 +109,6 @@
   .main {
     padding: 0 24px;
     gap: 24px;
-  }
-
-  .brand {
-    display: block;
   }
 }
 

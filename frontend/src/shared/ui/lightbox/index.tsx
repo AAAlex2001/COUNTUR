@@ -1,8 +1,10 @@
 "use client";
 
 import lightGallery from "lightgallery";
+import lgThumbnail from "lightgallery/plugins/thumbnail";
 import "lightgallery/css/lightgallery.css";
-import { useEffect, useEffectEvent, useRef } from "react";
+import "lightgallery/css/lg-thumbnail.css";
+import { useEffect, useRef } from "react";
 
 type LightboxProps = {
   images: string[];
@@ -10,11 +12,9 @@ type LightboxProps = {
   onClose: () => void;
 };
 
-/** Полноэкранный просмотр фото со стрелками. Открыт с фото index, пока index не null. */
+/** Фото на весь экран со стрелками и миниатюрами. Открыт с фото index, пока он не null. */
 const Lightbox = ({ images, index, onClose }: LightboxProps) => {
   const element = useRef<HTMLDivElement>(null);
-  const slides = useEffectEvent(() => images.map((src) => ({ src })));
-  const close = useEffectEvent(onClose);
 
   useEffect(() => {
     const node = element.current;
@@ -24,20 +24,21 @@ const Lightbox = ({ images, index, onClose }: LightboxProps) => {
     }
 
     const gallery = lightGallery(node, {
+      plugins: [lgThumbnail],
       dynamic: true,
-      dynamicEl: slides(),
+      dynamicEl: images.map((src) => ({ src, thumb: src })),
       download: false,
       hideScrollbar: true,
     });
 
-    node.addEventListener("lgAfterClose", close);
+    node.addEventListener("lgAfterClose", onClose);
     gallery.openGallery(index);
 
     return () => {
-      node.removeEventListener("lgAfterClose", close);
+      node.removeEventListener("lgAfterClose", onClose);
       gallery.destroy();
     };
-  }, [index]);
+  }, [images, index, onClose]);
 
   return <div ref={element} hidden />;
 };

@@ -128,7 +128,7 @@ async def get_product_reviews(
 ) -> ReviewListSchema:
     """Опубликованные отзывы товара, свежие первыми."""
 
-    items, total = await reviews.list_published(product.id, limit, offset)
+    items, total = await reviews.list_for_product(product.id, limit, offset, published_only=True)
 
     return ReviewListSchema(
         reviews=[ReviewSchema.model_validate(item) for item in items],

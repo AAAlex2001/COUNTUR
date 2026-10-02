@@ -12,7 +12,6 @@ from app.catalog.dependencies import (
     get_create_brand_usecase,
     get_create_category_usecase,
     get_create_product_usecase,
-    get_create_review_usecase,
     get_delete_category_usecase,
     get_delete_product_usecase,
     get_product_by_id,
@@ -42,8 +41,8 @@ from app.catalog.schemas import (
     ProductAdminSchema,
     ProductCreateSchema,
     ProductUpdateSchema,
+    ReviewAdminListSchema,
     ReviewAdminSchema,
-    ReviewCreateSchema,
     ReviewUpdateSchema,
 )
 from app.catalog.services.exceptions import (
@@ -77,7 +76,7 @@ from app.catalog.services.usecases.manage_images import (
     RemoveProductImageUseCase,
     ReorderProductImagesUseCase,
 )
-from app.catalog.services.usecases.manage_reviews import CreateReviewUseCase, UpdateReviewUseCase
+from app.catalog.services.usecases.manage_reviews import UpdateReviewUseCase
 from app.catalog.services.usecases.update_product import UpdateProductUseCase
 
 router = APIRouter(
@@ -395,27 +394,19 @@ async def delete_product_image(
 
 @router.get("/products/{product_id}/reviews")
 async def list_product_reviews(
+    limit: int = Query(10, ge=1, le=50),
+    offset: int = Query(0, ge=0),
     product: Product = Depends(get_product_by_id),
     reviews: ReviewRepository = Depends(get_review_repository),
-) -> list[ReviewAdminSchema]:
-    """Все отзывы товара, включая скрытые."""
+) -> ReviewAdminListSchema:
+    """Отзывы товара, включая скрытые, свежие первыми."""
 
-    items = await reviews.list_for_product(product.id)
+    items, total = await reviews.list_for_product(product.id, limit, offset, published_only=False)
 
-    return [ReviewAdminSchema.model_validate(item) for item in items]
-
-
-@router.post("/products/{product_id}/reviews", status_code=status.HTTP_201_CREATED)
-async def create_review(
-    payload: ReviewCreateSchema,
-    product: Product = Depends(get_product_by_id),
-    usecase: CreateReviewUseCase = Depends(get_create_review_usecase),
-) -> ReviewAdminSchema:
-    """Добавление отзыва о товаре."""
-
-    review = await usecase.execute(product, payload)
-
-    return ReviewAdminSchema.model_validate(review)
+    return ReviewAdminListSchema(
+        reviews=[ReviewAdminSchema.model_validate(item) for item in items],
+        total=total,
+    )
 
 
 @router.patch("/reviews/{review_id}")
