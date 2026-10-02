@@ -46,7 +46,7 @@ const AddToCart = ({
       <div className={styles.controls}>
         <QuantityStepper value={quantity} disabled={pending} onChange={onQuantityChange} />
 
-        <Button className={styles.submit} disabled={pending} onClick={submit}>
+        <Button className={styles.submit} loading={pending} onClick={submit}>
           <CartIcon className={styles.icon} />
           {added ? "Добавлено" : "Добавить в корзину"}
         </Button>

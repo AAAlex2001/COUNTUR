@@ -3,7 +3,7 @@
 import cn from "classnames";
 import type { CatalogView } from "@/entities/product";
 import { GridIcon, ListIcon } from "@/shared/ui/icons";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 import styles from "./style.module.scss";
 
 const VIEWS = [

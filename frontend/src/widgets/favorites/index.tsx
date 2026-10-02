@@ -8,6 +8,7 @@ import { plural } from "@/shared/lib/text";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
 import { HeartIcon } from "@/shared/ui/icons";
+import Loader from "@/shared/ui/loader";
 import { useFavoriteProducts } from "./model/use-favorite-products";
 import styles from "./style.module.scss";
 
@@ -35,7 +36,7 @@ const Favorites = () => {
         )}
       </div>
 
-      {!loaded && <p className={styles.loading}>Загружаем избранное…</p>}
+      {!loaded && <Loader size="lg" />}
 
       {loaded && isEmpty && (
         <EmptyState

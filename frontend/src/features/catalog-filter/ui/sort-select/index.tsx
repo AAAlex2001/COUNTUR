@@ -2,7 +2,7 @@
 
 import { SORT_OPTIONS } from "@/entities/product";
 import Dropdown from "@/shared/ui/dropdown";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 
 type SortSelectProps = {
   className?: string;

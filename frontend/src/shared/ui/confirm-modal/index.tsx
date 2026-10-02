@@ -33,7 +33,7 @@ const ConfirmModal = ({
         <Button className={styles.button} variant="outline" onClick={onCancel}>
           Отмена
         </Button>
-        <Button className={styles.button} disabled={pending} onClick={onConfirm}>
+        <Button className={styles.button} loading={pending} onClick={onConfirm}>
           {confirmLabel}
         </Button>
       </>

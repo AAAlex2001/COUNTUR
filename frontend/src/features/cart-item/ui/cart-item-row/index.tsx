@@ -44,7 +44,7 @@ const CartItemRow = ({ item }: CartItemRowProps) => {
             tone="danger"
             size="sm"
             ariaLabel={`Удалить из корзины: ${product.name}`}
-            disabled={pending}
+            loading={pending}
             onClick={() => setConfirming(true)}
           >
             <TrashIcon />

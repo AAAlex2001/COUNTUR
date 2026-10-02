@@ -1,7 +1,7 @@
 "use client";
 
 import Pagination from "@/shared/ui/pagination";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 
 type CatalogPaginationProps = {
   pages: number;

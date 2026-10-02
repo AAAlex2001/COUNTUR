@@ -1,7 +1,7 @@
 "use client";
 
 import Checkbox from "@/shared/ui/checkbox";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 import FilterGroup from "../filter-group";
 
 type Option = {

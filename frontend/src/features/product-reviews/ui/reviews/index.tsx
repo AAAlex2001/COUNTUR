@@ -1,8 +1,8 @@
 "use client";
 
-import cn from "classnames";
 import { Stars, type ReviewList } from "@/entities/product";
 import { formatDate } from "@/shared/lib/date";
+import LoadingArea from "@/shared/ui/loading-area";
 import Pagination from "@/shared/ui/pagination";
 import { useProductReviews } from "../../model/use-product-reviews";
 import styles from "./style.module.scss";
@@ -21,8 +21,8 @@ const ProductReviews = ({ slug, initial }: ProductReviewsProps) => {
   }
 
   return (
-    <div className={styles.reviews}>
-      <ul className={cn(styles.list, pending && styles.pending)}>
+    <LoadingArea className={styles.reviews} loading={pending}>
+      <ul className={styles.list}>
         {reviews.map((review) => (
           <li className={styles.review} key={review.id}>
             <div className={styles.head}>
@@ -44,7 +44,7 @@ const ProductReviews = ({ slug, initial }: ProductReviewsProps) => {
       )}
 
       <Pagination page={page} pages={pages} disabled={pending} onChange={openPage} />
-    </div>
+    </LoadingArea>
   );
 };
 

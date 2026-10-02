@@ -26,7 +26,7 @@ const AddToCartButton = ({ productId, productName, available }: AddToCartButtonP
     <IconButton
       ariaLabel={`Добавить в корзину: ${productName}`}
       title={error ?? undefined}
-      disabled={pending}
+      loading={pending}
       onClick={() => add(1)}
     >
       <CartIcon />

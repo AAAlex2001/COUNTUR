@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Input from "@/shared/ui/input";
 import RangeSlider, { type Range } from "@/shared/ui/range-slider";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 import FilterGroup from "../filter-group";
 import styles from "./style.module.scss";
 

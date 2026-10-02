@@ -29,37 +29,39 @@ const CartItem = ({ item, href, status, quantity, remove, error }: CartItemProps
             src={product.image_url}
             alt=""
             fill
-            sizes="110px"
+            sizes="142px"
             unoptimized
             className={styles.photo}
           />
         )}
       </Link>
 
-      <div className={styles.info}>
-        {product.brand && <span className={styles.brand}>{product.brand.name}</span>}
+      <div className={styles.content}>
+        <div className={styles.info}>
+          {product.brand && <span className={styles.brand}>{product.brand.name}</span>}
 
-        <Link className={styles.name} href={href}>
-          {product.name}
-        </Link>
+          <Link className={styles.name} href={href}>
+            {product.name}
+          </Link>
 
-        {specs && <span className={styles.specs}>{specs}</span>}
+          {specs && <span className={styles.specs}>{specs}</span>}
 
-        {status}
+          {status}
+        </div>
+
+        {quantity}
+
+        <div className={styles.price}>
+          <span className={styles.subtotal}>{formatRub(item.subtotal)}</span>
+          {remove}
+        </div>
+
+        {error && (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        )}
       </div>
-
-      {quantity}
-
-      <div className={styles.price}>
-        <span className={styles.subtotal}>{formatRub(item.subtotal)}</span>
-        {remove}
-      </div>
-
-      {error && (
-        <p className={styles.error} role="alert">
-          {error}
-        </p>
-      )}
     </article>
   );
 };

@@ -7,6 +7,7 @@ import { plural } from "@/shared/lib/text";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
 import { CartIcon } from "@/shared/ui/icons";
+import Loader from "@/shared/ui/loader";
 import Summary from "./ui/summary";
 import styles from "./style.module.scss";
 
@@ -32,7 +33,7 @@ const Cart = () => {
         )}
       </div>
 
-      {!loaded && <p className={styles.loading}>Загружаем корзину…</p>}
+      {!loaded && <Loader size="lg" />}
 
       {loaded && isEmpty && (
         <EmptyState

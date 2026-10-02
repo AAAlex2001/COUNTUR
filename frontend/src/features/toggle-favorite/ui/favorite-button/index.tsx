@@ -42,7 +42,7 @@ const FavoriteButton = ({ productId, size = "lg", className }: FavoriteButtonPro
       size={size}
       pressed={active}
       ariaLabel={active ? "Убрать из избранного" : "Добавить в избранное"}
-      disabled={pending}
+      loading={pending}
       onClick={toggle}
     >
       <HeartIcon />

@@ -1,6 +1,7 @@
 import cn from "classnames";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import Loader from "@/shared/ui/loader";
 import styles from "./style.module.scss";
 
 type ButtonProps = {
@@ -8,22 +9,24 @@ type ButtonProps = {
   type?: "button" | "submit";
   variant?: "primary" | "outline";
   disabled?: boolean;
+  loading?: boolean;
   onClick?: () => void;
   className?: string;
   href?: string;
 };
 
-/** Кнопка с текстом. С href рендерится ссылкой. */
+/** Кнопка с текстом. С href рендерится ссылкой, с loading показывает лоадер и не нажимается. */
 const Button = ({
   children,
   type = "button",
   variant = "primary",
   disabled,
+  loading,
   onClick,
   className,
   href,
 }: ButtonProps) => {
-  const classNames = cn(styles.button, styles[variant], className);
+  const classNames = cn(styles.button, styles[variant], loading && styles.loading, className);
 
   if (href) {
     return (
@@ -34,8 +37,8 @@ const Button = ({
   }
 
   return (
-    <button type={type} className={classNames} disabled={disabled} onClick={onClick}>
-      {children}
+    <button type={type} className={classNames} disabled={disabled || loading} onClick={onClick}>
+      {loading ? <Loader /> : children}
     </button>
   );
 };

@@ -47,19 +47,15 @@
   color: #f2f7f8;
 }
 
-.count,
-.loading {
+.count {
   font-family: "Roboto Mono";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
+  text-transform: uppercase;
 
   color: #8c9aa2;
-}
-
-.count {
-  text-transform: uppercase;
 }
 
 .grid {

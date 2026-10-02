@@ -1,7 +1,7 @@
 "use client";
 
 import type { CatalogFilters, Category } from "@/entities/product";
-import { useCatalogParams } from "../../model/use-catalog-params";
+import { useCatalogParams } from "../../model/catalog-params";
 import CheckboxFilter from "../checkbox-filter";
 import PriceFilter from "../price-filter";
 import styles from "./style.module.scss";

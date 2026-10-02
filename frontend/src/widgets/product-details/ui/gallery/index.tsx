@@ -4,7 +4,9 @@ import cn from "classnames";
 import Image from "next/image";
 import { useState } from "react";
 import type { ProductImage } from "@/entities/product";
+import IconButton from "@/shared/ui/icon-button";
 import { MaximizeIcon } from "@/shared/ui/icons";
+import Lightbox from "@/shared/ui/lightbox";
 import styles from "./style.module.scss";
 
 const MAIN_IMAGE_SIZES = "(min-width: 1440px) 490px, (min-width: 768px) 630px, 100vw";
@@ -14,9 +16,10 @@ type GalleryProps = {
   images: ProductImage[];
 };
 
-/** Галерея товара: большое фото и миниатюры, которые его переключают. */
+/** Галерея товара: большое фото, миниатюры, которые его переключают, и просмотр на весь экран. */
 const Gallery = ({ name, images }: GalleryProps) => {
   const [active, setActive] = useState(images[0]);
+  const [zoomed, setZoomed] = useState<number | null>(null);
 
   if (!active) {
     return <div className={styles.main} />;
@@ -59,16 +62,21 @@ const Gallery = ({ name, images }: GalleryProps) => {
           className={styles.image}
         />
 
-        <a
+        <IconButton
+          tone="outline"
           className={styles.zoom}
-          href={active.url}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Открыть фото в полном размере"
+          ariaLabel="Открыть фото на весь экран"
+          onClick={() => setZoomed(images.indexOf(active))}
         >
-          <MaximizeIcon className={styles.zoomIcon} />
-        </a>
+          <MaximizeIcon />
+        </IconButton>
       </div>
+
+      <Lightbox
+        images={images.map((image) => image.url)}
+        index={zoomed}
+        onClose={() => setZoomed(null)}
+      />
     </div>
   );
 };

@@ -31,22 +31,10 @@
   outline-offset: 3px;
 }
 
-.button:disabled {
-  color: #59666d;
-  background: #151c21;
-  border-color: #273138;
-  cursor: default;
-}
-
 .primary {
   color: #080b0d;
   background: #13d8f4;
   border-color: #13d8f4;
-}
-
-.primary:hover:not(:disabled) {
-  background: #4be3f8;
-  border-color: #4be3f8;
 }
 
 .outline {
@@ -55,8 +43,19 @@
   border-color: #3a4851;
 }
 
+.primary:hover:not(:disabled),
 .outline:hover:not(:disabled) {
   color: #080b0d;
-  background: #13d8f4;
-  border-color: #13d8f4;
+  background: #10bcd5;
+  border-color: #10bcd5;
+}
+
+.button:disabled {
+  cursor: default;
+}
+
+.button:disabled:not(.loading) {
+  color: #59666d;
+  background: #151c21;
+  border-color: #273138;
 }
