@@ -1,19 +1,39 @@
 .controls {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   align-items: flex-start;
   gap: 10px;
 
   min-width: 0;
 }
 
-.submit {
-  flex: 1 1 auto;
+.controls .submit {
+  flex: 1 1 0;
+  padding: 0 12px;
+
+  min-width: 0;
 }
 
 .icon {
   flex: none;
   width: 17px;
   height: 17px;
+}
+
+.full {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .controls .submit {
+    padding: 0 20px;
+  }
+
+  .short {
+    display: none;
+  }
+
+  .full {
+    display: inline;
+  }
 }

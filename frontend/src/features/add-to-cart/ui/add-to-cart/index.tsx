@@ -47,7 +47,8 @@ const AddToCart = ({
 
       <Button className={styles.submit} loading={state.pending} onClick={submit}>
         <CartIcon className={styles.icon} />
-        Добавить в корзину
+        <span className={styles.short}>В корзину</span>
+        <span className={styles.full}>Добавить в корзину</span>
       </Button>
     </div>
   );
