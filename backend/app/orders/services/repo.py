@@ -15,19 +15,19 @@ class OrderRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def create(self, order: Order, visitor_id: str) -> Order:
+    async def create(self, order: Order, user_id: int) -> Order:
         """Сохранить заказ и очистить корзину одной транзакцией со списанием остатков."""
 
         self.db.add(order)
-        await self.db.execute(delete(CartItem).where(CartItem.visitor_id == visitor_id))
+        await self.db.execute(delete(CartItem).where(CartItem.user_id == user_id))
         await self.db.commit()
 
         return await self.reload(order.id)
 
-    async def get_for_visitor(self, order_id: int, visitor_id: str) -> Order | None:
-        """Заказ по номеру, но только если его оформил этот посетитель."""
+    async def get_for_user(self, order_id: int, user_id: int) -> Order | None:
+        """Заказ по номеру, но только если его оформил этот покупатель."""
 
-        stmt = select(Order).where(Order.id == order_id, Order.visitor_id == visitor_id)
+        stmt = select(Order).where(Order.id == order_id, Order.user_id == user_id)
         result = await self.db.execute(stmt)
 
         return result.scalar_one_or_none()

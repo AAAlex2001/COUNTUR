@@ -2,10 +2,10 @@
 
 from fastapi import HTTPException, Request, Response, status
 
-from app.admin.services.tokens import read_admin_login
 from app.admin.services.usecases.login import LoginAdminUseCase
 from app.admin.services.validators import normalize_login
 from app.config import get_settings
+from app.tokens import read_subject
 
 ADMIN_COOKIE = "admin_token"
 SECONDS_IN_DAY = 60 * 60 * 24
@@ -43,7 +43,7 @@ def require_admin(request: Request) -> str:
     """Логин администратора по токену из cookie. Без валидного токена — 401."""
 
     token = request.cookies.get(ADMIN_COOKIE)
-    login = read_admin_login(token) if token else None
+    login = read_subject(token) if token else None
 
     if login != normalize_login(get_settings().admin_login):
         raise HTTPException(

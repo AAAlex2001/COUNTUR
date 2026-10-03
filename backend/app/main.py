@@ -16,6 +16,7 @@ from app.landing import admin_routes as admin_landing
 from app.landing import routes as landing
 from app.orders import admin_routes as admin_orders
 from app.orders import routes as orders
+from app.users import routes as users
 
 settings = get_settings()
 
@@ -46,6 +47,7 @@ app.include_router(cart.router, prefix="/api/v1")
 app.include_router(favorites.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
 app.include_router(landing.router, prefix="/api/v1")
+app.include_router(users.router, prefix="/api/v1")
 app.include_router(admin_auth.router, prefix="/api/v1")
 app.include_router(admin_catalog.router, prefix="/api/v1")
 app.include_router(admin_collections.router, prefix="/api/v1")

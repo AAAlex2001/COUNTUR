@@ -1,0 +1,53 @@
+.segmented {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 4px;
+  gap: 4px;
+
+  background: #080b0d;
+  border: 1px solid #273138;
+  border-radius: 4px;
+}
+
+.option {
+  box-sizing: border-box;
+  flex: 1 1 0;
+  padding: 0 12px;
+
+  height: 34px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.option:hover {
+  color: #f2f7f8;
+}
+
+.option:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}
+
+.active {
+  font-weight: 700;
+
+  color: #13d8f4;
+  background: #062c33;
+  border-color: #13d8f4;
+}

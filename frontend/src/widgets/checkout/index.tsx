@@ -1,7 +1,9 @@
 "use client";
 
-import { useCart } from "@/entities/cart";
+import { useCart, type Cart } from "@/entities/cart";
 import { CATALOG_PATH } from "@/entities/product";
+import { useUser, type User } from "@/entities/user";
+import { LoginPrompt } from "@/features/auth";
 import { ContactsForm, useCheckout } from "@/features/checkout";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
@@ -12,34 +14,17 @@ import { CHECKOUT_STEPS } from "./data";
 import OrderSummary from "./ui/order-summary";
 import styles from "./style.module.scss";
 
-/** Оформление заказа: шаги, форма текущего шага и состав заказа. */
-const Checkout = () => {
-  const { cart, loaded } = useCart();
-  const { state, changeContacts, changeConsent, submitContacts, openStep } = useCheckout();
+type CheckoutStepsProps = {
+  user: User;
+  cart: Cart;
+};
 
-  if (!loaded) {
-    return <Loader size="lg" />;
-  }
-
-  if (cart.items.length === 0) {
-    return (
-      <section className={styles.checkout}>
-        <EmptyState
-          icon={<CartIcon />}
-          title="Оформлять пока нечего"
-          text="Добавьте товары в корзину — и возвращайтесь к оформлению."
-          action={
-            <Button variant="outline" href={CATALOG_PATH}>
-              Перейти в каталог
-            </Button>
-          }
-        />
-      </section>
-    );
-  }
+/** Шаги оформления: заголовок текущего шага, его форма и состав заказа. */
+const CheckoutSteps = ({ user, cart }: CheckoutStepsProps) => {
+  const { state, changeContacts, changeConsent, submitContacts, openStep } = useCheckout(user);
 
   return (
-    <section className={styles.checkout}>
+    <>
       <div className={styles.header}>
         <div className={styles.titles}>
           <p className={styles.eyebrow}>Оформление заказа</p>
@@ -73,6 +58,42 @@ const Checkout = () => {
 
         <OrderSummary className={styles.summary} cart={cart} />
       </div>
+    </>
+  );
+};
+
+/** Оформление заказа: доступно после входа и только с непустой корзиной. */
+const Checkout = () => {
+  const { user } = useUser();
+  const { cart, loaded } = useCart();
+
+  if (!loaded) {
+    return <Loader size="lg" />;
+  }
+
+  return (
+    <section className={styles.checkout}>
+      {!user && (
+        <LoginPrompt
+          title="Войдите, чтобы оформить заказ"
+          text="Заказ привяжется к аккаунту — так его проще отследить."
+        />
+      )}
+
+      {user && cart.items.length === 0 && (
+        <EmptyState
+          icon={<CartIcon />}
+          title="Оформлять пока нечего"
+          text="Добавьте товары в корзину — и возвращайтесь к оформлению."
+          action={
+            <Button variant="outline" href={CATALOG_PATH}>
+              Перейти в каталог
+            </Button>
+          }
+        />
+      )}
+
+      {user && cart.items.length > 0 && <CheckoutSteps user={user} cart={cart} />}
     </section>
   );
 };

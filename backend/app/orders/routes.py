@@ -6,7 +6,8 @@ from app.orders.schemas import OrderCreateSchema, OrderSchema
 from app.orders.services.exceptions import EmptyCartError, InvalidPhoneError
 from app.orders.services.repo import OrderRepository
 from app.orders.services.usecases.create_order import CreateOrderUseCase
-from app.visitor import get_visitor_id
+from app.users.dependencies import require_user
+from app.users.models import User
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -14,13 +15,13 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_order(
     payload: OrderCreateSchema,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: CreateOrderUseCase = Depends(get_create_order_usecase),
 ) -> OrderSchema:
     """Оформить заказ из корзины. После оформления корзина очищается."""
 
     try:
-        order = await usecase.execute(visitor_id, payload)
+        order = await usecase.execute(user.id, payload)
     except InvalidPhoneError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -43,12 +44,12 @@ async def create_order(
 @router.get("/{order_id}")
 async def get_order(
     order_id: int,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> OrderSchema:
-    """Заказ текущего посетителя. Чужой заказ выглядит как несуществующий."""
+    """Заказ текущего покупателя. Чужой заказ выглядит как несуществующий."""
 
-    order = await orders.get_for_visitor(order_id, visitor_id)
+    order = await orders.get_for_user(order_id, user.id)
     if order is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

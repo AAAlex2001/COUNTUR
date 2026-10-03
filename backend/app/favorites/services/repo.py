@@ -14,23 +14,23 @@ class FavoriteRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def list_products(self, visitor_id: str) -> list[Product]:
-        """Опубликованные товары из избранного посетителя, недавно добавленные первыми."""
+    async def list_products(self, user_id: int) -> list[Product]:
+        """Опубликованные товары из избранного покупателя, недавно добавленные первыми."""
 
         stmt = (
             select(Product)
             .join(Favorite, Favorite.product_id == Product.id)
-            .where(Favorite.visitor_id == visitor_id, PUBLISHED)
+            .where(Favorite.user_id == user_id, PUBLISHED)
             .order_by(Favorite.created_at.desc(), Product.id.desc())
         )
         result = await self.db.execute(stmt)
 
         return list(result.scalars().all())
 
-    async def get(self, visitor_id: str, product_id: int) -> Favorite | None:
+    async def get(self, user_id: int, product_id: int) -> Favorite | None:
         """Запись избранного или None, если товара в избранном нет."""
 
-        return await self.db.get(Favorite, (visitor_id, product_id))
+        return await self.db.get(Favorite, (user_id, product_id))
 
     async def add(self, favorite: Favorite) -> None:
         """Сохранить товар в избранном."""

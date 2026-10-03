@@ -1,0 +1,49 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  color: #8c9aa2;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.button:hover {
+  color: #13d8f4;
+}
+
+.button:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.icon {
+  width: 21px;
+  height: 21px;
+}
+
+.name {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+
+  color: #f2f7f8;
+}
+
+.email {
+  margin-top: 6px;
+
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}

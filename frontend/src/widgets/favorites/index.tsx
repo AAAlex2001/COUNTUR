@@ -2,7 +2,9 @@
 
 import { useFavorites } from "@/entities/favorite";
 import { CATALOG_PATH, ProductCard } from "@/entities/product";
+import { useUser } from "@/entities/user";
 import { AddToCartButton } from "@/features/add-to-cart";
+import { LoginPrompt } from "@/features/auth";
 import { FavoriteButton } from "@/features/toggle-favorite";
 import { plural } from "@/shared/lib/text";
 import Button from "@/shared/ui/button";
@@ -14,6 +16,7 @@ import styles from "./style.module.scss";
 
 /** Страница избранного. Товар исчезает из списка сразу, как только его убрали сердечком. */
 const Favorites = () => {
+  const { user } = useUser();
   const { ids, loaded: idsLoaded } = useFavorites();
   const { products, loaded: productsLoaded } = useFavoriteProducts();
 
@@ -38,7 +41,14 @@ const Favorites = () => {
 
       {!loaded && <Loader size="lg" />}
 
-      {loaded && isEmpty && (
+      {loaded && !user && (
+        <LoginPrompt
+          title="Избранное хранится в аккаунте"
+          text="Войдите, чтобы сохранять товары и возвращаться к ним с любого устройства."
+        />
+      )}
+
+      {loaded && user && isEmpty && (
         <EmptyState
           icon={<HeartIcon />}
           title="В избранном пока пусто"
@@ -51,7 +61,7 @@ const Favorites = () => {
         />
       )}
 
-      {loaded && !isEmpty && (
+      {loaded && user && !isEmpty && (
         <ul className={styles.grid}>
           {favorites.map((product) => (
             <li key={product.id}>

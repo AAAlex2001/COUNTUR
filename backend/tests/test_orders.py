@@ -21,7 +21,7 @@ from tests.fakes import (
     make_product,
 )
 
-VISITOR = "visitor-1"
+USER = 1
 
 
 def make_payload(phone: str = "+7 (999) 000-00-00") -> OrderCreateSchema:
@@ -49,11 +49,11 @@ def test_create_copies_cart_into_order() -> None:
     cpu = make_product(1, price="42990", stock_quantity=5)
     ram = make_product(2, price="9490")
     create, _, cart, orders = make_usecases(cpu, ram)
-    cart.put(VISITOR, 1, 2)
-    cart.put(VISITOR, 2, 1)
-    cart.put("visitor-2", 2, 7)
+    cart.put(USER, 1, 2)
+    cart.put(USER, 2, 1)
+    cart.put(2, 2, 7)
 
-    order = asyncio.run(create.execute(VISITOR, make_payload()))
+    order = asyncio.run(create.execute(USER, make_payload()))
 
     assert order.total == Decimal("95470")
     assert order.status == OrderStatus.NEW
@@ -65,17 +65,17 @@ def test_create_copies_cart_into_order() -> None:
     ]
     assert orders.items == [order]
 
-    assert [item.visitor_id for item in cart.items] == ["visitor-2"]
+    assert [item.user_id for item in cart.items] == [2]
 
 
 def test_create_writes_off_tracked_stock_only() -> None:
     tracked = make_product(1, stock_quantity=2)
     untracked = make_product(2)
     create, _, cart, _ = make_usecases(tracked, untracked)
-    cart.put(VISITOR, 1, 2)
-    cart.put(VISITOR, 2, 10)
+    cart.put(USER, 1, 2)
+    cart.put(USER, 2, 10)
 
-    asyncio.run(create.execute(VISITOR, make_payload()))
+    asyncio.run(create.execute(USER, make_payload()))
 
     assert tracked.stock_quantity == 0
     assert tracked.availability == Availability.OUT_OF_STOCK
@@ -87,17 +87,17 @@ def test_create_rejects_empty_cart() -> None:
     create, _, _, orders = make_usecases(make_product(1))
 
     with pytest.raises(EmptyCartError):
-        asyncio.run(create.execute(VISITOR, make_payload()))
+        asyncio.run(create.execute(USER, make_payload()))
 
     assert orders.items == []
 
 
 def test_create_rejects_invalid_phone() -> None:
     create, _, cart, orders = make_usecases(make_product(1))
-    cart.put(VISITOR, 1, 1)
+    cart.put(USER, 1, 1)
 
     with pytest.raises(InvalidPhoneError):
-        asyncio.run(create.execute(VISITOR, make_payload(phone="12345")))
+        asyncio.run(create.execute(USER, make_payload(phone="12345")))
 
     assert orders.items == []
 
@@ -106,11 +106,11 @@ def test_create_changes_nothing_when_one_item_is_short() -> None:
     plenty = make_product(1, stock_quantity=10)
     short = make_product(2, stock_quantity=1)
     create, _, cart, orders = make_usecases(plenty, short)
-    cart.put(VISITOR, 1, 3)
-    cart.put(VISITOR, 2, 2)
+    cart.put(USER, 1, 3)
+    cart.put(USER, 2, 2)
 
     with pytest.raises(NotEnoughStockError):
-        asyncio.run(create.execute(VISITOR, make_payload()))
+        asyncio.run(create.execute(USER, make_payload()))
 
     assert plenty.stock_quantity == 10
     assert short.stock_quantity == 1
@@ -121,22 +121,22 @@ def test_create_changes_nothing_when_one_item_is_short() -> None:
 def test_create_rejects_product_that_became_unavailable() -> None:
     product = make_product(1)
     create, _, cart, _ = make_usecases(product)
-    cart.put(VISITOR, 1, 1)
+    cart.put(USER, 1, 1)
     product.availability = Availability.OUT_OF_STOCK
 
     with pytest.raises(ProductUnavailableError):
-        asyncio.run(create.execute(VISITOR, make_payload()))
+        asyncio.run(create.execute(USER, make_payload()))
 
 
 def test_create_skips_products_removed_from_publication() -> None:
     kept = make_product(1, price="500")
     hidden = make_product(2, price="900")
     create, _, cart, _ = make_usecases(kept, hidden)
-    cart.put(VISITOR, 1, 1)
-    cart.put(VISITOR, 2, 1)
+    cart.put(USER, 1, 1)
+    cart.put(USER, 2, 1)
     hidden.status = PublicationStatus.UNPUBLISHED
 
-    order = asyncio.run(create.execute(VISITOR, make_payload()))
+    order = asyncio.run(create.execute(USER, make_payload()))
 
     assert order.total == Decimal("500")
     assert [item.product_id for item in order.items] == [1]
@@ -145,8 +145,8 @@ def test_create_skips_products_removed_from_publication() -> None:
 def test_cancel_returns_stock_and_is_final() -> None:
     product = make_product(1, stock_quantity=2)
     create, update, cart, _ = make_usecases(product)
-    cart.put(VISITOR, 1, 2)
-    order = asyncio.run(create.execute(VISITOR, make_payload()))
+    cart.put(USER, 1, 2)
+    order = asyncio.run(create.execute(USER, make_payload()))
     assert product.availability == Availability.OUT_OF_STOCK
 
     asyncio.run(update.execute(order, OrderStatusUpdateSchema(status=OrderStatus.CANCELED)))
@@ -165,8 +165,8 @@ def test_cancel_returns_stock_and_is_final() -> None:
 def test_update_changes_statuses_independently() -> None:
     product = make_product(1, stock_quantity=5)
     create, update, cart, _ = make_usecases(product)
-    cart.put(VISITOR, 1, 1)
-    order = asyncio.run(create.execute(VISITOR, make_payload()))
+    cart.put(USER, 1, 1)
+    order = asyncio.run(create.execute(USER, make_payload()))
 
     asyncio.run(update.execute(order, OrderStatusUpdateSchema(payment_status=PaymentStatus.PAID)))
 

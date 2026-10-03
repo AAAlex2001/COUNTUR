@@ -1,7 +1,7 @@
 "use client";
 
 import cn from "classnames";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import styles from "./style.module.scss";
 
 const HEADER_GAP = 15;
@@ -22,6 +22,11 @@ const ToastContext = createContext<ShowToast>(() => undefined);
 /** Показывает уведомление справа под шапкой. Оно само уезжает, когда добегает полоска времени. */
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toast, setToast] = useState<Toast | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (box.current && !box.current.matches(":popover-open")) box.current.showPopover();
+  }, [toast]);
 
   const show: ShowToast = (text, tone = "success") => {
     const header = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
@@ -36,6 +41,8 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
       {toast && (
         <div
           key={toast.id}
+          ref={box}
+          popover="manual"
           className={cn(styles.toast, styles[toast.tone])}
           style={{ top: toast.top }}
           role="status"

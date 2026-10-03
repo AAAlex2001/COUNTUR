@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useUser } from "@/entities/user";
 import { fetchFavoriteIds } from "../api/favorites";
 
 type FavoritesValue = {
@@ -11,27 +12,36 @@ type FavoritesValue = {
 
 const FavoritesContext = createContext<FavoritesValue | null>(null);
 
+const NO_IDS: number[] = [];
+
 type FavoritesProviderProps = {
   children: ReactNode;
 };
 
-/** Хранит id товаров в избранном: загружает их один раз и раздаёт всем компонентам. */
+/** Хранит id товаров в избранном: загружает их после входа и раздаёт всем компонентам. */
 export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
-  const [ids, setIds] = useState<number[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const { user, loaded: userLoaded } = useUser();
+  const [ids, setIds] = useState<number[]>(NO_IDS);
+  const [loadedFor, setLoadedFor] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!user) return;
+
     fetchFavoriteIds()
       .then(setIds)
       .catch(() => undefined)
-      .finally(() => setLoaded(true));
-  }, []);
+      .finally(() => setLoadedFor(user.id));
+  }, [user]);
 
-  return (
-    <FavoritesContext.Provider value={{ ids, loaded, setIds }}>
-      {children}
-    </FavoritesContext.Provider>
-  );
+  const ready = user !== null && loadedFor === user.id;
+
+  const value = {
+    ids: ready ? ids : NO_IDS,
+    loaded: userLoaded && (user === null || ready),
+    setIds,
+  };
+
+  return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
 };
 
 /** Избранное из FavoritesProvider и функция его замены. */

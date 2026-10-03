@@ -12,10 +12,10 @@ class SetCartItemQuantityUseCase:
     def __init__(self, cart: CartRepository) -> None:
         self.cart = cart
 
-    async def execute(self, visitor_id: str, product_id: int, quantity: int) -> list[CartItem]:
+    async def execute(self, user_id: int, product_id: int, quantity: int) -> list[CartItem]:
         """Вернуть корзину после изменения. Бросает CartItemNotFoundError и ошибки наличия."""
 
-        item = await self.cart.get_item(visitor_id, product_id)
+        item = await self.cart.get_item(user_id, product_id)
         if item is None:
             raise CartItemNotFoundError(product_id)
 
@@ -24,4 +24,4 @@ class SetCartItemQuantityUseCase:
         item.quantity = quantity
         await self.cart.save()
 
-        return await self.cart.list_items(visitor_id)
+        return await self.cart.list_items(user_id)

@@ -8,6 +8,7 @@ type ButtonProps = {
   children: ReactNode;
   type?: "button" | "submit";
   variant?: "primary" | "outline" | "ghost";
+  size?: "md" | "sm";
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
@@ -23,13 +24,20 @@ const Button = ({
   children,
   type = "button",
   variant = "primary",
+  size = "md",
   disabled,
   loading,
   onClick,
   className,
   href,
 }: ButtonProps) => {
-  const classNames = cn(styles.button, styles[variant], loading && styles.loading, className);
+  const classNames = cn(
+    styles.button,
+    styles[variant],
+    size === "sm" && styles.small,
+    loading && styles.loading,
+    className,
+  );
 
   if (href) {
     return (

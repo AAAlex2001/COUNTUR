@@ -57,23 +57,23 @@ class FakeCartRepository:
         self.products = products
         self.items: list[CartItem] = []
 
-    def put(self, visitor_id: str, product_id: int, quantity: int) -> None:
+    def put(self, user_id: int, product_id: int, quantity: int) -> None:
         """Положить позицию напрямую, минуя сценарии."""
 
-        item = CartItem(visitor_id=visitor_id, product_id=product_id, quantity=quantity)
+        item = CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
         item.product = self.products.items[product_id]
         self.items.append(item)
 
-    async def list_items(self, visitor_id: str) -> list[CartItem]:
+    async def list_items(self, user_id: int) -> list[CartItem]:
         return [
             item
             for item in self.items
-            if item.visitor_id == visitor_id and item.product.status == PublicationStatus.PUBLISHED
+            if item.user_id == user_id and item.product.status == PublicationStatus.PUBLISHED
         ]
 
-    async def get_item(self, visitor_id: str, product_id: int) -> CartItem | None:
+    async def get_item(self, user_id: int, product_id: int) -> CartItem | None:
         for item in self.items:
-            if item.visitor_id == visitor_id and item.product_id == product_id:
+            if item.user_id == user_id and item.product_id == product_id:
                 return item
 
         return None
@@ -88,8 +88,8 @@ class FakeCartRepository:
     async def remove(self, item: CartItem) -> None:
         self.items.remove(item)
 
-    async def clear(self, visitor_id: str) -> None:
-        self.items = [item for item in self.items if item.visitor_id != visitor_id]
+    async def clear(self, user_id: int) -> None:
+        self.items = [item for item in self.items if item.user_id != user_id]
 
 
 class FakeOrderRepository:
@@ -99,10 +99,10 @@ class FakeOrderRepository:
         self.cart = cart
         self.items: list[Order] = []
 
-    async def create(self, order: Order, visitor_id: str) -> Order:
+    async def create(self, order: Order, user_id: int) -> Order:
         order.id = len(self.items) + 1
         self.items.append(order)
-        await self.cart.clear(visitor_id)
+        await self.cart.clear(user_id)
 
         return order
 

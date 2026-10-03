@@ -18,10 +18,12 @@ type GalleryProps = {
 
 /** Галерея товара: большое фото, миниатюры, которые его переключают, и просмотр на весь экран. */
 const Gallery = ({ name, images }: GalleryProps) => {
-  const [active, setActive] = useState(images[0]);
+  const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState<number | null>(null);
 
-  if (!active) {
+  const current = images[active];
+
+  if (!current) {
     return <div className={styles.main} />;
   }
 
@@ -33,10 +35,10 @@ const Gallery = ({ name, images }: GalleryProps) => {
             <button
               key={image.id}
               type="button"
-              className={cn(styles.thumbnail, image.id === active.id && styles.active)}
+              className={cn(styles.thumbnail, index === active && styles.active)}
               aria-label={`Показать фото ${index + 1}`}
-              aria-pressed={image.id === active.id}
-              onClick={() => setActive(image)}
+              aria-pressed={index === active}
+              onClick={() => setActive(index)}
             >
               <Image
                 src={image.url}
@@ -53,7 +55,7 @@ const Gallery = ({ name, images }: GalleryProps) => {
 
       <div className={styles.main}>
         <Image
-          src={active.url}
+          src={current.url}
           alt={name}
           fill
           sizes={MAIN_IMAGE_SIZES}
@@ -66,7 +68,7 @@ const Gallery = ({ name, images }: GalleryProps) => {
           tone="outline"
           className={styles.zoom}
           ariaLabel="Открыть фото на весь экран"
-          onClick={() => setZoomed(images.indexOf(active))}
+          onClick={() => setZoomed(active)}
         >
           <MaximizeIcon />
         </IconButton>

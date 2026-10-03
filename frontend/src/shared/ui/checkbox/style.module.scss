@@ -90,3 +90,25 @@
   outline: 2px solid #13d8f4;
   outline-offset: 2px;
 }
+
+.large {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.large .box {
+  width: 18px;
+  height: 18px;
+
+  font-size: 12px;
+  line-height: 15px;
+
+  border-radius: 4px;
+}
+
+.large .label {
+  margin-top: -3px;
+
+  font-size: 12px;
+  line-height: 160%;
+}

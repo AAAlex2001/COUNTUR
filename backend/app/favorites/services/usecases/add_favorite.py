@@ -13,15 +13,15 @@ class AddFavoriteUseCase:
         self.favorites = favorites
         self.products = products
 
-    async def execute(self, visitor_id: str, product_id: int) -> None:
+    async def execute(self, user_id: int, product_id: int) -> None:
         """Добавить товар. Бросает ProductNotFoundError."""
 
         product = await self.products.get_published_by_id(product_id)
         if product is None:
             raise ProductNotFoundError(product_id)
 
-        existing = await self.favorites.get(visitor_id, product_id)
+        existing = await self.favorites.get(user_id, product_id)
         if existing is not None:
             return
 
-        await self.favorites.add(Favorite(visitor_id=visitor_id, product_id=product_id))
+        await self.favorites.add(Favorite(user_id=user_id, product_id=product_id))

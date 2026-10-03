@@ -27,3 +27,7 @@ export { FanIcon } from "./fan-icon";
 export { ArrowUpRightIcon } from "./arrow-up-right-icon";
 export { TruckIcon } from "./truck-icon";
 export { HeadphonesIcon } from "./headphones-icon";
+export { UserIcon } from "./user-icon";
+export { EyeIcon } from "./eye-icon";
+export { EyeOffIcon } from "./eye-off-icon";
+export { CloseIcon } from "./close-icon";

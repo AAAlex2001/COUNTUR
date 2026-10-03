@@ -27,12 +27,12 @@ class CreateOrderUseCase:
         self.cart = cart
         self.products = products
 
-    async def execute(self, visitor_id: str, payload: OrderCreateSchema) -> Order:
+    async def execute(self, user_id: int, payload: OrderCreateSchema) -> Order:
         """Вернуть оформленный заказ. Бросает ошибки телефона, пустой корзины и наличия."""
 
         phone = normalize_phone(payload.customer_phone)
 
-        cart_items = await self.cart.list_items(visitor_id)
+        cart_items = await self.cart.list_items(user_id)
         if not cart_items:
             raise EmptyCartError("Корзина пуста")
 
@@ -65,7 +65,7 @@ class CreateOrderUseCase:
             write_off_stock(products[item.product_id], item.quantity)
 
         order = Order(
-            visitor_id=visitor_id,
+            user_id=user_id,
             customer_name=payload.customer_name.strip(),
             customer_phone=phone,
             customer_email=payload.customer_email,
@@ -78,4 +78,4 @@ class CreateOrderUseCase:
             items=order_items,
         )
 
-        return await self.orders.create(order, visitor_id)
+        return await self.orders.create(order, user_id)

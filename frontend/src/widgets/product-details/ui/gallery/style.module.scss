@@ -74,8 +74,12 @@
   .thumbnails {
     flex: none;
     flex-direction: column;
+    padding-right: 4px;
 
-    overflow: visible;
+    max-height: 510px;
+
+    overflow-x: visible;
+    overflow-y: auto;
   }
 
   .main {

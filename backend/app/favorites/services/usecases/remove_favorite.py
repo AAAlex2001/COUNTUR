@@ -9,10 +9,10 @@ class RemoveFavoriteUseCase:
     def __init__(self, favorites: FavoriteRepository) -> None:
         self.favorites = favorites
 
-    async def execute(self, visitor_id: str, product_id: int) -> None:
+    async def execute(self, user_id: int, product_id: int) -> None:
         """Убрать товар из избранного."""
 
-        favorite = await self.favorites.get(visitor_id, product_id)
+        favorite = await self.favorites.get(user_id, product_id)
         if favorite is None:
             return
 

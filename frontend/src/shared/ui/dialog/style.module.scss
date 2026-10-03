@@ -1,0 +1,16 @@
+.dialog {
+  box-sizing: border-box;
+  margin: auto;
+  padding: 0;
+
+  color: #f2f7f8;
+  border: none;
+}
+
+.dialog:not([open]) {
+  display: none;
+}
+
+.dialog::backdrop {
+  background: rgba(4, 6, 8, 0.72);
+}

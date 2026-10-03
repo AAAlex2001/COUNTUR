@@ -14,23 +14,23 @@ class AddCartItemUseCase:
         self.cart = cart
         self.products = products
 
-    async def execute(self, visitor_id: str, product_id: int, quantity: int) -> list[CartItem]:
+    async def execute(self, user_id: int, product_id: int, quantity: int) -> list[CartItem]:
         """Вернуть корзину после добавления. Бросает ошибки товара и наличия."""
 
         product = await self.products.get_published_by_id(product_id)
         if product is None:
             raise ProductNotFoundError(product_id)
 
-        item = await self.cart.get_item(visitor_id, product_id)
+        item = await self.cart.get_item(user_id, product_id)
 
         if item is None:
             validate_purchase(product, quantity)
             await self.cart.add(
-                CartItem(visitor_id=visitor_id, product_id=product_id, quantity=quantity)
+                CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
             )
         else:
             validate_purchase(product, item.quantity + quantity)
             item.quantity += quantity
             await self.cart.save()
 
-        return await self.cart.list_items(visitor_id)
+        return await self.cart.list_items(user_id)

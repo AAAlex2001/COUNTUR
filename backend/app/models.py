@@ -15,6 +15,7 @@ from app.database import Base
 from app.favorites.models import Favorite
 from app.landing.models import Hero, Promotion
 from app.orders.models import Order, OrderItem
+from app.users.models import User
 
 __all__ = [
     "Base",
@@ -33,4 +34,5 @@ __all__ = [
     "Promotion",
     "Order",
     "OrderItem",
+    "User",
 ]

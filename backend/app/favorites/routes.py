@@ -10,19 +10,20 @@ from app.favorites.dependencies import (
 from app.favorites.services.repo import FavoriteRepository
 from app.favorites.services.usecases.add_favorite import AddFavoriteUseCase
 from app.favorites.services.usecases.remove_favorite import RemoveFavoriteUseCase
-from app.visitor import get_visitor_id
+from app.users.dependencies import require_user
+from app.users.models import User
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
 
 
 @router.get("")
 async def get_favorites(
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     favorites: FavoriteRepository = Depends(get_favorite_repository),
 ) -> list[ProductCardSchema]:
-    """Товары из избранного посетителя."""
+    """Товары из избранного покупателя."""
 
-    products = await favorites.list_products(visitor_id)
+    products = await favorites.list_products(user.id)
 
     return [ProductCardSchema.model_validate(product) for product in products]
 
@@ -30,13 +31,13 @@ async def get_favorites(
 @router.put("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def add_favorite(
     product_id: int,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: AddFavoriteUseCase = Depends(get_add_favorite_usecase),
 ) -> None:
     """Добавить товар в избранное."""
 
     try:
-        await usecase.execute(visitor_id, product_id)
+        await usecase.execute(user.id, product_id)
     except ProductNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -47,9 +48,9 @@ async def add_favorite(
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_favorite(
     product_id: int,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: RemoveFavoriteUseCase = Depends(get_remove_favorite_usecase),
 ) -> None:
     """Убрать товар из избранного."""
 
-    await usecase.execute(visitor_id, product_id)
+    await usecase.execute(user.id, product_id)

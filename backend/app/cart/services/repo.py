@@ -14,24 +14,24 @@ class CartRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def list_items(self, visitor_id: str) -> list[CartItem]:
-        """Позиции корзины посетителя в порядке добавления, только опубликованные товары."""
+    async def list_items(self, user_id: int) -> list[CartItem]:
+        """Позиции корзины покупателя в порядке добавления, только опубликованные товары."""
 
         stmt = (
             select(CartItem)
             .join(Product, Product.id == CartItem.product_id)
-            .where(CartItem.visitor_id == visitor_id, PUBLISHED)
+            .where(CartItem.user_id == user_id, PUBLISHED)
             .order_by(CartItem.created_at, CartItem.id)
         )
         result = await self.db.execute(stmt)
 
         return list(result.scalars().all())
 
-    async def get_item(self, visitor_id: str, product_id: int) -> CartItem | None:
-        """Позиция с этим товаром в корзине посетителя или None."""
+    async def get_item(self, user_id: int, product_id: int) -> CartItem | None:
+        """Позиция с этим товаром в корзине покупателя или None."""
 
         stmt = select(CartItem).where(
-            CartItem.visitor_id == visitor_id, CartItem.product_id == product_id
+            CartItem.user_id == user_id, CartItem.product_id == product_id
         )
         result = await self.db.execute(stmt)
 
@@ -54,9 +54,9 @@ class CartRepository:
         await self.db.delete(item)
         await self.db.commit()
 
-    async def clear(self, visitor_id: str) -> None:
-        """Удалить все позиции корзины посетителя."""
+    async def clear(self, user_id: int) -> None:
+        """Удалить все позиции корзины покупателя."""
 
-        stmt = delete(CartItem).where(CartItem.visitor_id == visitor_id)
+        stmt = delete(CartItem).where(CartItem.user_id == user_id)
         await self.db.execute(stmt)
         await self.db.commit()

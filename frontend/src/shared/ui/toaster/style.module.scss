@@ -1,6 +1,8 @@
 .toast {
   position: fixed;
   right: 16px;
+  bottom: auto;
+  left: auto;
   z-index: 1000;
 
   box-sizing: border-box;
@@ -12,7 +14,9 @@
 
   width: calc(100% - 32px);
   max-width: 420px;
+  margin: 0;
 
+  color: #f2f7f8;
   background: #101519;
   border: 1px solid #3a4851;
   border-radius: 8px;

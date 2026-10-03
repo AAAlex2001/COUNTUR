@@ -17,19 +17,20 @@ from app.cart.services.usecases.add_item import AddCartItemUseCase
 from app.cart.services.usecases.remove_item import RemoveCartItemUseCase
 from app.cart.services.usecases.set_quantity import SetCartItemQuantityUseCase
 from app.catalog.services.exceptions import ProductNotFoundError
-from app.visitor import get_visitor_id
+from app.users.dependencies import require_user
+from app.users.models import User
 
 router = APIRouter(prefix="/cart", tags=["cart"])
 
 
 @router.get("")
 async def get_cart(
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     cart: CartRepository = Depends(get_cart_repository),
 ) -> CartSchema:
-    """Корзина посетителя: состав и итоговая стоимость."""
+    """Корзина покупателя: состав и итоговая стоимость."""
 
-    items = await cart.list_items(visitor_id)
+    items = await cart.list_items(user.id)
 
     return build_cart_schema(items)
 
@@ -37,13 +38,13 @@ async def get_cart(
 @router.post("/items")
 async def add_item(
     payload: CartItemAddSchema,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: AddCartItemUseCase = Depends(get_add_item_usecase),
 ) -> CartSchema:
     """Добавить товар в корзину. Повторное добавление увеличивает количество."""
 
     try:
-        items = await usecase.execute(visitor_id, payload.product_id, payload.quantity)
+        items = await usecase.execute(user.id, payload.product_id, payload.quantity)
     except ProductNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,13 +63,13 @@ async def add_item(
 async def set_item_quantity(
     product_id: int,
     payload: CartItemUpdateSchema,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: SetCartItemQuantityUseCase = Depends(get_set_quantity_usecase),
 ) -> CartSchema:
     """Изменить количество товара в корзине."""
 
     try:
-        items = await usecase.execute(visitor_id, product_id, payload.quantity)
+        items = await usecase.execute(user.id, product_id, payload.quantity)
     except CartItemNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -86,13 +87,13 @@ async def set_item_quantity(
 @router.delete("/items/{product_id}")
 async def remove_item(
     product_id: int,
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     usecase: RemoveCartItemUseCase = Depends(get_remove_item_usecase),
 ) -> CartSchema:
     """Удалить товар из корзины."""
 
     try:
-        items = await usecase.execute(visitor_id, product_id)
+        items = await usecase.execute(user.id, product_id)
     except CartItemNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -104,9 +105,9 @@ async def remove_item(
 
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 async def clear_cart(
-    visitor_id: str = Depends(get_visitor_id),
+    user: User = Depends(require_user),
     cart: CartRepository = Depends(get_cart_repository),
 ) -> None:
     """Очистить корзину."""
 
-    await cart.clear(visitor_id)
+    await cart.clear(user.id)

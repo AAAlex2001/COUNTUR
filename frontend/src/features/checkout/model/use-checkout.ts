@@ -1,17 +1,18 @@
 "use client";
 
 import { useReducer } from "react";
+import type { User } from "@/entities/user";
 import { useToast } from "@/shared/ui/toaster";
 import { checkoutReducer } from "./reducer";
 import type { ContactFields } from "./types";
 import { validateContacts } from "./validate";
 
-/** Оформление заказа: текущий шаг, контактные данные и переходы между шагами. */
-export const useCheckout = () => {
+/** Оформление заказа: текущий шаг, контакты (имя и email подставляются из аккаунта) и шаги. */
+export const useCheckout = (user: User) => {
   const toast = useToast();
   const [state, dispatch] = useReducer(checkoutReducer, {
     step: 0,
-    contacts: { firstName: "", lastName: "", phone: "", email: "", city: "" },
+    contacts: { firstName: user.name, lastName: "", phone: "", email: user.email, city: "" },
     consent: false,
   });
 

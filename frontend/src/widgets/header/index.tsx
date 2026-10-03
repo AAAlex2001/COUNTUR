@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountButton } from "@/features/auth";
 import { SearchForm } from "@/features/product-search";
 import { HeartIcon } from "@/shared/ui/icons";
 import Logo from "@/shared/ui/logo";
@@ -28,6 +29,8 @@ const Header = () => (
         <SearchForm className={styles.search} />
 
         <div className={styles.actions}>
+          <AccountButton />
+
           <Link className={styles.favorites} href="/favorites" aria-label="Избранное">
             <HeartIcon className={styles.favoritesIcon} />
           </Link>

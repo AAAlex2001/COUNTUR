@@ -16,10 +16,11 @@ type InputProps = {
   autoComplete?: string;
   icon?: ReactNode;
   prefix?: string;
+  suffix?: ReactNode;
   className?: string;
 };
 
-/** Поле ввода. Слева может стоять иконка или короткая подпись. Размер lg — высотой с кнопку. */
+/** Поле ввода. Слева — иконка или подпись, справа — suffix, например кнопка показа пароля. */
 const Input = ({
   type = "text",
   size = "md",
@@ -34,6 +35,7 @@ const Input = ({
   autoComplete,
   icon,
   prefix,
+  suffix,
   className,
 }: InputProps) => (
   <label
@@ -60,6 +62,8 @@ const Input = ({
       onChange={onChange && ((event) => onChange(event.target.value))}
       onBlur={onBlur}
     />
+
+    {suffix}
   </label>
 );
 

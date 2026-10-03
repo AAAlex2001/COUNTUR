@@ -4,9 +4,9 @@ import pytest
 
 from app.admin.schemas import AdminLoginSchema
 from app.admin.services.exceptions import InvalidCredentialsError
-from app.admin.services.tokens import create_access_token, read_admin_login
 from app.admin.services.usecases.login import LoginAdminUseCase
 from app.config import Settings
+from app.tokens import create_token, read_subject
 
 PASSWORD = "strong-pass-123"
 
@@ -38,8 +38,8 @@ def test_login_rejects_wrong_login_or_password(login: str, password: str) -> Non
 
 
 def test_token_roundtrip_and_garbage() -> None:
-    token = create_access_token("admin")
+    token = create_token("admin")
 
-    assert read_admin_login(token) == "admin"
-    assert read_admin_login(token + "x") is None
-    assert read_admin_login("not-a-token") is None
+    assert read_subject(token) == "admin"
+    assert read_subject(token + "x") is None
+    assert read_subject("not-a-token") is None

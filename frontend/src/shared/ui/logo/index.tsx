@@ -1,4 +1,5 @@
 import cn from "classnames";
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./style.module.scss";
 
@@ -15,9 +16,7 @@ const Logo = ({ href, ariaLabel, caption }: LogoProps) => (
     href={href}
     aria-label={ariaLabel}
   >
-    <span className={styles.mark} aria-hidden="true">
-      C
-    </span>
+    <Image className={styles.mark} src="/logo.svg" alt="" width={34} height={34} unoptimized />
 
     <span className={styles.texts}>
       <span className={styles.brand}>COUNTUR</span>

@@ -2,6 +2,8 @@
 
 import { useCart } from "@/entities/cart";
 import { CATALOG_PATH } from "@/entities/product";
+import { useUser } from "@/entities/user";
+import { LoginPrompt } from "@/features/auth";
 import { CartItemRow } from "@/features/cart-item";
 import { plural } from "@/shared/lib/text";
 import Button from "@/shared/ui/button";
@@ -11,8 +13,9 @@ import Loader from "@/shared/ui/loader";
 import Summary from "./ui/summary";
 import styles from "./style.module.scss";
 
-/** Страница корзины: список товаров и блок «Итого» либо сообщение, что корзина пуста. */
+/** Страница корзины: список товаров и блок «Итого», либо пустая корзина, либо предложение войти. */
 const Cart = () => {
+  const { user } = useUser();
   const { cart, loaded } = useCart();
   const positions = cart.items.length;
   const isEmpty = positions === 0;
@@ -35,7 +38,14 @@ const Cart = () => {
 
       {!loaded && <Loader size="lg" />}
 
-      {loaded && isEmpty && (
+      {loaded && !user && (
+        <LoginPrompt
+          title="Корзина хранится в аккаунте"
+          text="Войдите, чтобы добавлять товары и оформлять заказы."
+        />
+      )}
+
+      {loaded && user && isEmpty && (
         <EmptyState
           icon={<CartIcon />}
           title="В корзине пока пусто"
@@ -48,7 +58,7 @@ const Cart = () => {
         />
       )}
 
-      {loaded && !isEmpty && (
+      {loaded && user && !isEmpty && (
         <div className={styles.columns}>
           <ul className={styles.items}>
             {cart.items.map((item) => (

@@ -7,12 +7,20 @@ type CheckboxProps = {
   onChange: (checked: boolean) => void;
   children: ReactNode;
   count?: number;
+  size?: "md" | "lg";
   className?: string;
 };
 
-/** Галочка с подписью и необязательным счётчиком справа. */
-const Checkbox = ({ checked, onChange, children, count, className }: CheckboxProps) => (
-  <label className={cn(styles.checkbox, checked && styles.checked, className)}>
+/** Галочка с подписью и необязательным счётчиком справа. Размер lg — для согласий в формах. */
+const Checkbox = ({ checked, onChange, children, count, size = "md", className }: CheckboxProps) => (
+  <label
+    className={cn(
+      styles.checkbox,
+      checked && styles.checked,
+      size === "lg" && styles.large,
+      className,
+    )}
+  >
     <input
       className={styles.input}
       type="checkbox"
