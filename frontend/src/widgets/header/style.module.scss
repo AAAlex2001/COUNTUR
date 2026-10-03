@@ -51,23 +51,6 @@
   display: none;
 }
 
-.navLink {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
-  text-decoration: none;
-  white-space: nowrap;
-
-  color: #8c9aa2;
-  transition: color 0.15s ease;
-}
-
-.navLink:hover {
-  color: #f2f7f8;
-}
-
 .search {
   flex: 1 1 0;
 }
@@ -77,32 +60,16 @@
   flex: none;
   flex-direction: row;
   align-items: center;
-  gap: 18px;
+  gap: 6px;
 }
 
-.favorites {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: #8c9aa2;
-  transition: color 0.15s ease;
+.iconLink {
+  padding: 6px;
 }
 
-.favorites:hover {
-  color: #13d8f4;
-}
-
-.favoritesIcon {
+.icon {
   width: 21px;
   height: 21px;
-}
-
-.navLink:focus-visible,
-.favorites:focus-visible {
-  outline: 2px solid #13d8f4;
-  outline-offset: 4px;
-  border-radius: 2px;
 }
 
 @media (min-width: 768px) {
@@ -125,6 +92,6 @@
     flex: none;
     flex-direction: row;
     align-items: center;
-    gap: 24px;
+    gap: 4px;
   }
 }

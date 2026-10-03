@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { AccountButton } from "@/features/auth";
 import { SearchForm } from "@/features/product-search";
 import { HeartIcon } from "@/shared/ui/icons";
 import Logo from "@/shared/ui/logo";
 import { ANNOUNCEMENT, HEADER_NAV } from "./data";
 import CartLink from "./ui/cart-link";
+import NavLink from "./ui/nav-link";
 import styles from "./style.module.scss";
 
 /** Шапка сайта. Объявление уезжает при прокрутке, сама шапка прилипает к верху. */
@@ -20,9 +20,9 @@ const Header = () => (
 
         <nav className={styles.nav} aria-label="Основная навигация">
           {HEADER_NAV.map((item) => (
-            <Link key={item.href} className={styles.navLink} href={item.href}>
+            <NavLink key={item.href} href={item.href}>
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
@@ -31,9 +31,9 @@ const Header = () => (
         <div className={styles.actions}>
           <AccountButton />
 
-          <Link className={styles.favorites} href="/favorites" aria-label="Избранное">
-            <HeartIcon className={styles.favoritesIcon} />
-          </Link>
+          <NavLink className={styles.iconLink} href="/favorites" ariaLabel="Избранное">
+            <HeartIcon className={styles.icon} />
+          </NavLink>
 
           <CartLink />
         </div>

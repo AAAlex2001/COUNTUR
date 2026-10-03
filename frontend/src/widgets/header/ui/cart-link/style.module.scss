@@ -1,22 +1,11 @@
 .cart {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-
-  text-decoration: none;
-}
-
-.cart:focus-visible {
-  outline: 2px solid #13d8f4;
-  outline-offset: 4px;
-  border-radius: 2px;
+  padding: 6px 10px;
 }
 
 .icon {
   flex: none;
-  width: 22px;
-  height: 22px;
+  width: 21px;
+  height: 21px;
 
   color: #13d8f4;
 }
@@ -24,14 +13,15 @@
 .total {
   display: none;
 
-  font-family: "Inter";
-  font-style: normal;
   font-weight: 700;
-  font-size: 14px;
-  line-height: 18px;
-  white-space: nowrap;
 
   color: #f2f7f8;
+  transition: color 0.15s ease;
+}
+
+.cart:hover .total,
+.cart.active .total {
+  color: #13d8f4;
 }
 
 .count {
