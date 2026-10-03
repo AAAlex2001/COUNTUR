@@ -1,0 +1,111 @@
+.picker {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.loader {
+  color: #13d8f4;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  z-index: 20;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  gap: 2px;
+
+  list-style: none;
+
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 4px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.empty {
+  padding: 10px 12px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 12px;
+
+  width: 100%;
+
+  text-align: left;
+
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: #151c21;
+  outline: none;
+}
+
+.image {
+  position: relative;
+
+  flex: none;
+  width: 40px;
+  height: 40px;
+
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.photo {
+  object-fit: contain;
+}
+
+.name {
+  flex: 1 1 0;
+  overflow: hidden;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: #f2f7f8;
+}
+
+.price {
+  flex: none;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 17px;
+  white-space: nowrap;
+
+  color: #f2f7f8;
+}

@@ -1,4 +1,5 @@
 import cn from "classnames";
+import type { Collection } from "@/entities/collection";
 import {
   CATALOG_PAGE_SIZE,
   CATALOG_PATH,
@@ -21,6 +22,7 @@ import {
 } from "@/features/catalog-filter";
 import { plural } from "@/shared/lib/text";
 import Button from "@/shared/ui/button";
+import CatalogCollections from "./ui/collections";
 import CatalogHeading from "./ui/heading";
 import styles from "./style.module.scss";
 
@@ -28,12 +30,13 @@ type CatalogProps = {
   list: ProductList;
   categories: Category[];
   filters: CatalogFilters;
+  collections: Collection[];
   view: CatalogView;
   search: string;
 };
 
-/** Страница каталога: заголовок с сортировкой, фильтры и список товаров. */
-const Catalog = ({ list, categories, filters, view, search }: CatalogProps) => (
+/** Страница каталога: заголовок с сортировкой, фильтры, подборки и список товаров. */
+const Catalog = ({ list, categories, filters, collections, view, search }: CatalogProps) => (
   <CatalogParamsProvider>
     <section className={styles.catalog}>
       <CatalogHeading>
@@ -47,6 +50,8 @@ const Catalog = ({ list, categories, filters, view, search }: CatalogProps) => (
         <Filters className={styles.filters} categories={categories} filters={filters} />
 
         <CatalogResults className={styles.results}>
+          {collections.length > 0 && <CatalogCollections collections={collections} />}
+
           <div className={styles.toolbar}>
             <SearchFilter className={styles.search} />
             <ViewToggle view={view} />

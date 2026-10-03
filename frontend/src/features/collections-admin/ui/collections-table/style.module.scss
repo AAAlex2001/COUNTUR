@@ -1,0 +1,81 @@
+.table {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+
+  list-style: none;
+}
+
+.row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 16px;
+
+  text-decoration: none;
+
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.row:hover {
+  border-color: #13d8f4;
+}
+
+.row:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.title {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #f2f7f8;
+}
+
+.meta {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}
+
+.status {
+  flex: none;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 13px;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  color: #8c9aa2;
+}
+
+.active {
+  color: #3ddc97;
+}

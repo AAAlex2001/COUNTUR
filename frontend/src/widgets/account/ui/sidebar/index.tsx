@@ -7,7 +7,7 @@ import { fullName, initials, type User } from "@/entities/user";
 import { LogoutButton } from "@/features/auth";
 import { formatMonth } from "@/shared/lib/date";
 import Button from "@/shared/ui/button";
-import { MenuIcon } from "@/shared/ui/icons";
+import { ArrowRightIcon, MenuIcon } from "@/shared/ui/icons";
 import Modal from "@/shared/ui/modal";
 import { ACCOUNT_SECTIONS, SUPPORT_PATH } from "../../data";
 import styles from "./style.module.scss";
@@ -82,7 +82,8 @@ const Sidebar = ({ user, ordersCount }: SidebarProps) => {
           <p className={styles.helpTitle}>Нужна помощь?</p>
           <p className={styles.helpText}>Поможем с заказом, доставкой или гарантией.</p>
           <Button variant="ghost" size="sm" href={SUPPORT_PATH}>
-            Написать в поддержку →
+            Написать в поддержку
+            <ArrowRightIcon />
           </Button>
         </div>
       </div>

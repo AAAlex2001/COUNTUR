@@ -1,4 +1,6 @@
 import cn from "classnames";
+import IconButton from "@/shared/ui/icon-button";
+import { ArrowRightIcon } from "@/shared/ui/icons";
 import styles from "./style.module.scss";
 
 type PaginationProps = {
@@ -9,35 +11,33 @@ type PaginationProps = {
   className?: string;
 };
 
-/** Листалка «Страница N из X» со стрелками. Не показывается, если страница одна. */
+/** Листалка «Страница N из X» со стрелками как у слайдера. Не показывается, если страница одна. */
 const Pagination = ({ page, pages, onChange, disabled, className }: PaginationProps) => {
   if (pages <= 1) return null;
 
   return (
     <nav className={cn(styles.pagination, className)} aria-label="Страницы">
-      <button
-        type="button"
-        className={styles.arrow}
-        aria-label="Предыдущая страница"
+      <IconButton
+        tone="outline"
+        ariaLabel="Предыдущая страница"
         disabled={disabled || page <= 1}
         onClick={() => onChange(page - 1)}
       >
-        ‹
-      </button>
+        <ArrowRightIcon className={styles.back} />
+      </IconButton>
 
       <span className={styles.label}>
         Страница {page} из {pages}
       </span>
 
-      <button
-        type="button"
-        className={styles.arrow}
-        aria-label="Следующая страница"
+      <IconButton
+        tone="outline"
+        ariaLabel="Следующая страница"
         disabled={disabled || page >= pages}
         onClick={() => onChange(page + 1)}
       >
-        ›
-      </button>
+        <ArrowRightIcon />
+      </IconButton>
     </nav>
   );
 };

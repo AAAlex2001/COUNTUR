@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getCollections } from "@/entities/collection";
 import {
   getCatalogFilters,
   getCategories,
@@ -23,10 +24,11 @@ export default async function CatalogRoute({
   const params = await searchParams;
   const category = typeof params.category === "string" ? params.category : null;
 
-  const [list, categories, filters] = await Promise.all([
+  const [list, categories, filters, collections] = await Promise.all([
     getProducts(params),
     getCategories(),
     getCatalogFilters(category),
+    getCollections("catalog"),
   ]);
 
   return (
@@ -35,6 +37,7 @@ export default async function CatalogRoute({
         list={list}
         categories={categories}
         filters={filters}
+        collections={collections}
         view={params.view === "list" ? "list" : "grid"}
         search={typeof params.q === "string" ? params.q : ""}
       />

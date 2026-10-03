@@ -1,4 +1,5 @@
 import Button from "@/shared/ui/button";
+import { ArrowRightIcon } from "@/shared/ui/icons";
 import styles from "./style.module.scss";
 
 type SectionHeadingProps = {
@@ -18,7 +19,8 @@ const SectionHeading = ({ eyebrow, title, actionLabel, actionHref }: SectionHead
 
     {actionLabel && actionHref && (
       <Button variant="ghost" href={actionHref}>
-        {actionLabel} →
+        {actionLabel}
+        <ArrowRightIcon />
       </Button>
     )}
   </div>

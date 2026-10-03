@@ -38,6 +38,13 @@ async def list_collections(
     return [CollectionAdminSchema.model_validate(item) for item in items]
 
 
+@router.get("/{collection_id}")
+async def get_collection(collection: Collection = Depends(get_collection_by_id)) -> CollectionAdminSchema:
+    """Подборка для редактирования."""
+
+    return CollectionAdminSchema.model_validate(collection)
+
+
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_collection(
     payload: CollectionCreateSchema,
