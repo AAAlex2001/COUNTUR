@@ -29,3 +29,5 @@ export type Cart = {
   total_quantity: number;
   total: string;
 };
+
+export const EMPTY_CART: Cart = { items: [], total_quantity: 0, total: "0" };

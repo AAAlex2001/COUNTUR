@@ -1,12 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { fetchMe } from "../api/auth";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import type { User } from "./types";
 
 type UserValue = {
   user: User | null;
-  loaded: boolean;
   setUser: (user: User | null) => void;
   authOpen: boolean;
   openAuth: () => void;
@@ -16,25 +14,17 @@ type UserValue = {
 const UserContext = createContext<UserValue | null>(null);
 
 type UserProviderProps = {
+  initialUser: User | null;
   children: ReactNode;
 };
 
-/** Хранит текущего покупателя и состояние окна входа, раздаёт их всем компонентам. */
-export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loaded, setLoaded] = useState(false);
+/** Хранит текущего покупателя и состояние окна входа. Покупатель известен с сервера сразу. */
+export const UserProvider = ({ initialUser, children }: UserProviderProps) => {
+  const [user, setUser] = useState(initialUser);
   const [authOpen, setAuthOpen] = useState(false);
-
-  useEffect(() => {
-    fetchMe()
-      .then(setUser)
-      .catch(() => undefined)
-      .finally(() => setLoaded(true));
-  }, []);
 
   const value = {
     user,
-    loaded,
     setUser,
     authOpen,
     openAuth: () => setAuthOpen(true),

@@ -1,2 +1,2 @@
 export { FavoritesProvider, useFavorites } from "./model/favorites";
-export { addFavorite, fetchFavoriteIds, removeFavorite } from "./api/favorites";
+export { addFavorite, fetchFavoriteIds, getFavoriteIds, removeFavorite } from "./api/favorites";

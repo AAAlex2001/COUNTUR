@@ -1,7 +1,11 @@
 import { API_URL, readErrorMessage } from "@/shared/api";
-import type { Cart } from "../model/types";
+import { load } from "@/shared/api/server";
+import { EMPTY_CART, type Cart } from "../model/types";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
+
+/** Корзина покупателя, запрос с сервера Next.js с его cookie. */
+export const getCart = (headers: HeadersInit) => load("/v1/cart", EMPTY_CART, headers);
 
 /** Запрос к API корзины. Любой из них возвращает корзину целиком. */
 const requestCart = async (path: string, init?: RequestInit): Promise<Cart> => {

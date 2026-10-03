@@ -25,6 +25,7 @@ export {
 export { fetchFavoriteProducts } from "./api/favorites";
 export { REVIEWS_PER_PAGE, getProduct, getProductReviews } from "./api/products";
 export { fetchProductReviews } from "./api/reviews";
+export { searchProducts } from "./api/search";
 export { AVAILABILITY_LABELS } from "./lib/availability";
 export { CATALOG_PAGE_SIZE, SORT_OPTIONS } from "./lib/catalog";
 export { CATALOG_PATH, categoryPath, productPath } from "./lib/paths";

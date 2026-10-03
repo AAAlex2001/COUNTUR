@@ -1,8 +1,13 @@
 import { API_URL, readErrorMessage } from "@/shared/api";
+import { load } from "@/shared/api/server";
 
 type FavoriteList = {
   products: { id: number }[];
 };
+
+const EMPTY_LIST: FavoriteList = { products: [] };
+
+const toIds = (list: FavoriteList) => list.products.map((product) => product.id);
 
 /** Запрос к API избранного. */
 const requestFavorites = async (path: string, method: string): Promise<Response> => {
@@ -16,12 +21,15 @@ const requestFavorites = async (path: string, method: string): Promise<Response>
   return response;
 };
 
+/** Идентификаторы товаров в избранном, запрос с сервера Next.js с cookie покупателя. */
+export const getFavoriteIds = async (headers: HeadersInit): Promise<number[]> =>
+  toIds(await load("/v1/favorites?limit=200", EMPTY_LIST, headers));
+
 /** Идентификаторы товаров в избранном покупателя. */
 export const fetchFavoriteIds = async (): Promise<number[]> => {
   const response = await requestFavorites("?limit=200", "GET");
-  const list: FavoriteList = await response.json();
 
-  return list.products.map((product) => product.id);
+  return toIds(await response.json());
 };
 
 /** Добавить товар в избранное. */

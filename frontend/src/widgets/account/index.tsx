@@ -5,7 +5,6 @@ import { LoginPrompt } from "@/features/auth";
 import { OrdersHistory, useOrders } from "@/features/orders-history";
 import { AddressCard, ProfileForm, SettingsCard } from "@/features/profile";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
-import Loader from "@/shared/ui/loader";
 import Sidebar from "./ui/sidebar";
 import styles from "./style.module.scss";
 
@@ -40,9 +39,9 @@ const AccountContent = ({ user }: AccountContentProps) => {
   );
 };
 
-/** Страница личного кабинета: шапка на месте сразу, содержимое — после проверки входа. */
+/** Страница личного кабинета. Без входа предлагает войти. */
 const Account = () => {
-  const { user, loaded } = useUser();
+  const { user } = useUser();
 
   return (
     <section className={styles.account}>
@@ -59,9 +58,7 @@ const Account = () => {
 
       <hr className={styles.divider} />
 
-      {!loaded && <Loader size="lg" />}
-
-      {loaded && !user && (
+      {!user && (
         <LoginPrompt
           title="Личный кабинет доступен после входа"
           text="Здесь будут ваши данные, адрес доставки и история заказов."

@@ -12,9 +12,6 @@ const requestAuth = async <T>(path: string, init?: RequestInit): Promise<T> => {
   return response.status === 204 ? (undefined as T) : response.json();
 };
 
-/** Текущий покупатель. Без входа запрос падает с ошибкой. */
-export const fetchMe = () => requestAuth<User>("/me");
-
 /** Зарегистрироваться. Бэкенд сразу ставит cookie со входом. */
 export const register = (name: string, email: string, password: string) =>
   requestAuth<User>("/register", {

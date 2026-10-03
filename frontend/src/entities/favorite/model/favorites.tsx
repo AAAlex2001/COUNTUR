@@ -15,29 +15,30 @@ const FavoritesContext = createContext<FavoritesValue | null>(null);
 const NO_IDS: number[] = [];
 
 type FavoritesProviderProps = {
+  initialIds: number[];
   children: ReactNode;
 };
 
-/** Хранит id товаров в избранном: загружает их после входа и раздаёт всем компонентам. */
-export const FavoritesProvider = ({ children }: FavoritesProviderProps) => {
-  const { user, loaded: userLoaded } = useUser();
-  const [ids, setIds] = useState<number[]>(NO_IDS);
-  const [loadedFor, setLoadedFor] = useState<number | null>(null);
+/** Хранит id товаров в избранном: с сервера приходят готовыми, после смены аккаунта перечитываются. */
+export const FavoritesProvider = ({ initialIds, children }: FavoritesProviderProps) => {
+  const { user } = useUser();
+  const [ids, setIds] = useState(initialIds);
+  const [loadedFor, setLoadedFor] = useState(user?.id ?? null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || user.id === loadedFor) return;
 
     fetchFavoriteIds()
       .then(setIds)
       .catch(() => undefined)
       .finally(() => setLoadedFor(user.id));
-  }, [user]);
+  }, [user, loadedFor]);
 
   const ready = user !== null && loadedFor === user.id;
 
   const value = {
     ids: ready ? ids : NO_IDS,
-    loaded: userLoaded && (user === null || ready),
+    loaded: user === null || ready,
     setIds,
   };
 

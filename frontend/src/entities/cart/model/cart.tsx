@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useUser } from "@/entities/user";
 import { fetchCart } from "../api/cart";
-import type { Cart } from "./types";
+import { EMPTY_CART, type Cart } from "./types";
 
 type CartValue = {
   cart: Cart;
@@ -13,32 +13,31 @@ type CartValue = {
 
 const CartContext = createContext<CartValue | null>(null);
 
-const EMPTY_CART: Cart = { items: [], total_quantity: 0, total: "0" };
-
 type CartProviderProps = {
+  initialCart: Cart;
   children: ReactNode;
 };
 
-/** Хранит корзину покупателя: загружает её после входа и раздаёт всем компонентам. */
-export const CartProvider = ({ children }: CartProviderProps) => {
-  const { user, loaded: userLoaded } = useUser();
-  const [cart, setCart] = useState<Cart>(EMPTY_CART);
-  const [loadedFor, setLoadedFor] = useState<number | null>(null);
+/** Хранит корзину покупателя: с сервера приходит готовой, после смены аккаунта перечитывается. */
+export const CartProvider = ({ initialCart, children }: CartProviderProps) => {
+  const { user } = useUser();
+  const [cart, setCart] = useState(initialCart);
+  const [loadedFor, setLoadedFor] = useState(user?.id ?? null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || user.id === loadedFor) return;
 
     fetchCart()
       .then(setCart)
       .catch(() => undefined)
       .finally(() => setLoadedFor(user.id));
-  }, [user]);
+  }, [user, loadedFor]);
 
   const ready = user !== null && loadedFor === user.id;
 
   const value = {
     cart: ready ? cart : EMPTY_CART,
-    loaded: userLoaded && (user === null || ready),
+    loaded: user === null || ready,
     setCart,
   };
 
