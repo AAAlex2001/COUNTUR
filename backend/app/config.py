@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str
+    db_pool_size: int = Field(20, ge=1, description="Постоянных соединений с БД на процесс")
+    db_max_overflow: int = Field(10, ge=0, description="Сколько ещё можно открыть при всплеске")
     cors_origins: list[str] = []
     debug: bool = False
 
