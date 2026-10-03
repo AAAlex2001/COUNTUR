@@ -41,6 +41,18 @@ async def create_order(
     return OrderSchema.model_validate(order)
 
 
+@router.get("")
+async def list_orders(
+    user: User = Depends(require_user),
+    orders: OrderRepository = Depends(get_order_repository),
+) -> list[OrderSchema]:
+    """Все заказы текущего покупателя, свежие первыми."""
+
+    items = await orders.list_for_user(user.id)
+
+    return [OrderSchema.model_validate(item) for item in items]
+
+
 @router.get("/{order_id}")
 async def get_order(
     order_id: int,

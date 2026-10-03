@@ -1,5 +1,5 @@
 import { API_URL, readErrorMessage } from "@/shared/api";
-import type { User } from "../model/types";
+import type { User, UserChanges } from "../model/types";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
@@ -33,3 +33,15 @@ export const login = (email: string, password: string) =>
 
 /** Выйти из аккаунта. */
 export const logout = () => requestAuth<void>("/logout", { method: "POST" });
+
+/** Изменить профиль: имя, контакты, адрес, уведомления. */
+export const updateProfile = (changes: UserChanges) =>
+  requestAuth<User>("/me", { method: "PATCH", headers: JSON_HEADERS, body: JSON.stringify(changes) });
+
+/** Сменить пароль по текущему. */
+export const changePassword = (currentPassword: string, newPassword: string) =>
+  requestAuth<void>("/password", {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+  });

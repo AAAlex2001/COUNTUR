@@ -1,0 +1,48 @@
+.switch {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 3px;
+
+  width: 36px;
+  height: 20px;
+
+  background: #3a4851;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.switch:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.switch:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}
+
+.knob {
+  width: 14px;
+  height: 14px;
+
+  background: #8c9aa2;
+  border-radius: 50%;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.on {
+  background: #13d8f4;
+}
+
+.on .knob {
+  background: #080b0d;
+  transform: translateX(16px);
+}

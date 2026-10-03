@@ -5,6 +5,7 @@ from enum import StrEnum
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.catalog.models import Product
 from app.database import Base
 
 
@@ -95,6 +96,7 @@ class OrderItem(Base):
     quantity: Mapped[int] = mapped_column(Integer)
 
     order: Mapped["Order"] = relationship(back_populates="items")
+    product: Mapped[Product | None] = relationship(lazy="selectin")
 
     __table_args__ = (
         CheckConstraint("quantity > 0", name="ck_order_items_quantity"),
@@ -105,3 +107,9 @@ class OrderItem(Base):
         """Стоимость позиции: цена на момент заказа × количество."""
 
         return self.price * self.quantity
+
+    @property
+    def image_url(self) -> str | None:
+        """Главное фото товара, если товар ещё есть в каталоге."""
+
+        return self.product.image_url if self.product is not None else None

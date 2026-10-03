@@ -1,0 +1,39 @@
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px;
+  gap: 18px;
+
+  background: #0c1114;
+  border: 1px solid #273138;
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 26px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 24px 28px;
+    gap: 20px;
+  }
+}

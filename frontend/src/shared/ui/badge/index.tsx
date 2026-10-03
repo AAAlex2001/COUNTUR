@@ -4,11 +4,11 @@ import styles from "./style.module.scss";
 
 type BadgeProps = {
   children: ReactNode;
-  tone?: "accent" | "sale";
+  tone?: "accent" | "sale" | "soft";
   className?: string;
 };
 
-/** Метка на товаре: «Хит» или размер скидки. */
+/** Метка: «Хит», размер скидки или тихий статус (soft — голубой текст на тёмной подложке). */
 const Badge = ({ children, tone = "accent", className }: BadgeProps) => (
   <span className={cn(styles.badge, styles[tone], className)}>{children}</span>
 );

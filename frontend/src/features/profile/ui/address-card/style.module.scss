@@ -1,0 +1,99 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.editor .control {
+  background: #151c21;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.editor .actions > * {
+  flex: 1 1 0;
+
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .editor .actions > * {
+    flex: none;
+  }
+}
+
+.kind {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.place {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #f2f7f8;
+}
+
+.icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+
+  color: #13d8f4;
+}
+
+.recipient {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.name {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #f2f7f8;
+}
+
+.address {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 155%;
+  white-space: pre-line;
+
+  color: #8c9aa2;
+}
+
+.phone {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}

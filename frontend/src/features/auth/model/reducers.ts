@@ -1,4 +1,4 @@
-import type { AccountAction, AccountState, AuthAction, AuthState } from "./types";
+import type { AuthAction, AuthState, LogoutAction, LogoutState } from "./types";
 
 export const INITIAL_AUTH: AuthState = {
   tab: "login",
@@ -32,19 +32,13 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
   }
 };
 
-export const accountReducer = (state: AccountState, action: AccountAction): AccountState => {
+export const logoutReducer = (state: LogoutState, action: LogoutAction): LogoutState => {
   switch (action.type) {
-    case "menu/open":
-      return { ...state, open: true };
-
-    case "menu/close":
-      return { ...state, open: false };
-
     case "logout/start":
-      return { ...state, pending: true };
+      return { pending: true };
 
     case "logout/finish":
-      return { open: false, pending: false };
+      return { pending: false };
 
     default:
       return state;

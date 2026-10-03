@@ -32,3 +32,11 @@ class UserRepository:
         await self.db.refresh(user)
 
         return user
+
+    async def save(self, user: User) -> User:
+        """Сохранить изменения покупателя."""
+
+        await self.db.commit()
+        await self.db.refresh(user)
+
+        return user

@@ -32,6 +32,18 @@ class OrderRepository:
 
         return result.scalar_one_or_none()
 
+    async def list_for_user(self, user_id: int) -> list[Order]:
+        """Все заказы покупателя, свежие первыми."""
+
+        stmt = (
+            select(Order)
+            .where(Order.user_id == user_id)
+            .order_by(Order.created_at.desc(), Order.id.desc())
+        )
+        result = await self.db.execute(stmt)
+
+        return list(result.scalars().all())
+
     async def get_by_id(self, order_id: int) -> Order | None:
         """Заказ по номеру для админки или None."""
 

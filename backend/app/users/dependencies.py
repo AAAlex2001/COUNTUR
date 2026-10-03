@@ -8,8 +8,10 @@ from app.database import get_session
 from app.tokens import read_subject
 from app.users.models import User
 from app.users.services.repo import UserRepository
+from app.users.services.usecases.change_password import ChangePasswordUseCase
 from app.users.services.usecases.login import LoginUserUseCase
 from app.users.services.usecases.register import RegisterUserUseCase
+from app.users.services.usecases.update_profile import UpdateProfileUseCase
 
 USER_COOKIE = "user_token"
 SECONDS_IN_DAY = 60 * 60 * 24
@@ -37,6 +39,22 @@ def get_login_usecase(
     """Сценарий входа."""
 
     return LoginUserUseCase(users)
+
+
+def get_update_profile_usecase(
+    users: UserRepository = Depends(get_user_repository),
+) -> UpdateProfileUseCase:
+    """Сценарий изменения профиля."""
+
+    return UpdateProfileUseCase(users)
+
+
+def get_change_password_usecase(
+    users: UserRepository = Depends(get_user_repository),
+) -> ChangePasswordUseCase:
+    """Сценарий смены пароля."""
+
+    return ChangePasswordUseCase(users)
 
 
 def set_user_cookie(response: Response, token: str) -> None:

@@ -25,6 +25,7 @@ class OrderItemSchema(BaseModel):
     product_id: int | None = Field(None, description="ID товара. Пусто, если товар удалён")
     product_name: str = Field(..., description="Название на момент заказа")
     product_sku: str | None = Field(None, description="Артикул на момент заказа")
+    image_url: str | None = Field(None, description="Главное фото товара, если он ещё в каталоге")
     price: Decimal = Field(..., description="Цена на момент заказа")
     quantity: int = Field(..., description="Количество")
     subtotal: Decimal = Field(..., description="Стоимость позиции")

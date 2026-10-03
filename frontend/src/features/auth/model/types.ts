@@ -23,13 +23,8 @@ export type AuthAction =
   | { type: "submit/error" }
   | { type: "submit/success" };
 
-export type AccountState = {
-  open: boolean;
+export type LogoutState = {
   pending: boolean;
 };
 
-export type AccountAction =
-  | { type: "menu/open" }
-  | { type: "menu/close" }
-  | { type: "logout/start" }
-  | { type: "logout/finish" };
+export type LogoutAction = { type: "logout/start" } | { type: "logout/finish" };

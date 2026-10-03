@@ -9,6 +9,7 @@ import {
   type ProductList,
 } from "@/entities/product";
 import { AddToCartButton } from "@/features/add-to-cart";
+import { FavoriteButton } from "@/features/toggle-favorite";
 import {
   CatalogPagination,
   CatalogParamsProvider,
@@ -18,8 +19,8 @@ import {
   ViewToggle,
 } from "@/features/catalog-filter";
 import { plural } from "@/shared/lib/text";
-import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
+import CatalogHeading from "./ui/heading";
 import styles from "./style.module.scss";
 
 type CatalogProps = {
@@ -34,21 +35,12 @@ type CatalogProps = {
 const Catalog = ({ list, categories, filters, view, search }: CatalogProps) => (
   <CatalogParamsProvider>
     <section className={styles.catalog}>
-      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог" }]} />
-
-      <div className={styles.header}>
-        <div className={styles.titles}>
-          <h1 className={styles.title}>Каталог комплектующих</h1>
-          <p className={styles.subtitle}>Всё необходимое для производительной сборки</p>
-        </div>
-
+      <CatalogHeading>
         <div className={styles.sort}>
           <span className={styles.sortLabel}>Сортировка</span>
           <SortSelect />
         </div>
-      </div>
-
-      <hr className={styles.divider} />
+      </CatalogHeading>
 
       <div className={styles.body}>
         <Filters className={styles.filters} categories={categories} filters={filters} />
@@ -78,11 +70,14 @@ const Catalog = ({ list, categories, filters, view, search }: CatalogProps) => (
                   product={product}
                   view={view}
                   action={
-                    <AddToCartButton
-                      productId={product.id}
-                      productName={product.name}
-                      available={product.availability === "in_stock"}
-                    />
+                    <div className={styles.actions}>
+                      <FavoriteButton productId={product.id} size="md" />
+                      <AddToCartButton
+                        productId={product.id}
+                        productName={product.name}
+                        available={product.availability === "in_stock"}
+                      />
+                    </div>
                   }
                 />
               </li>
