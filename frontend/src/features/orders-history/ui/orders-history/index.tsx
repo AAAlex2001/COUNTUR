@@ -2,12 +2,7 @@
 
 import cn from "classnames";
 import Image from "next/image";
-import {
-  ORDER_STATUS_LABELS,
-  ORDER_STATUS_TONES,
-  orderNumber,
-  type Order,
-} from "@/entities/order";
+import { OrderStatusBadge, orderNumber, type Order } from "@/entities/order";
 import { formatShortDate } from "@/shared/lib/date";
 import { formatRub } from "@/shared/lib/money";
 import { plural } from "@/shared/lib/text";
@@ -102,9 +97,7 @@ const OrdersHistory = ({ orders, loaded, filter, onFilterChange }: OrdersHistory
 
                   <span className={styles.sum}>{formatRub(order.total)}</span>
 
-                  <span className={cn(styles.status, styles[ORDER_STATUS_TONES[order.status]])}>
-                    {ORDER_STATUS_LABELS[order.status]}
-                  </span>
+                  <OrderStatusBadge className={styles.status} status={order.status} />
                 </li>
               );
             })}

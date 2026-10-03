@@ -2,6 +2,8 @@
 
 import asyncio
 
+from sqlalchemy.exc import IntegrityError
+
 from app.users.models import User
 from app.users.schemas import UserRegisterSchema
 from app.users.services.exceptions import EmailAlreadyTakenError
@@ -26,7 +28,9 @@ class RegisterUserUseCase:
             raise EmailAlreadyTakenError(email)
 
         password_hash = await asyncio.to_thread(hash_password, payload.password)
+        user = User(name=payload.name.strip(), email=email, password_hash=password_hash)
 
-        return await self.users.add(
-            User(name=payload.name.strip(), email=email, password_hash=password_hash)
-        )
+        try:
+            return await self.users.add(user)
+        except IntegrityError as error:
+            raise EmailAlreadyTakenError(email) from error

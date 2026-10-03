@@ -32,7 +32,7 @@ class CreateOrderUseCase:
 
         phone = normalize_phone(payload.customer_phone)
 
-        cart_items = await self.cart.list_items(user_id)
+        cart_items = await self.cart.list_items(user_id, lock=True)
         if not cart_items:
             raise EmptyCartError("Корзина пуста")
 

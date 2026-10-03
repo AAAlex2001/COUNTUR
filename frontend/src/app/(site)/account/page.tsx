@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
-import Account from "@/widgets/account";
+import { AccountSection } from "@/widgets/account";
 
-export const metadata: Metadata = {
-  title: "Личный кабинет",
-};
-
+/** Личные данные покупателя. */
 export default function AccountRoute() {
-  return (
-    <main>
-      <Account />
-    </main>
-  );
+  return <AccountSection section="profile" />;
 }

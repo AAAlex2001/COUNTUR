@@ -2,9 +2,11 @@
 
 import cn from "classnames";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { fullName, initials, type User } from "@/entities/user";
 import { LogoutButton } from "@/features/auth";
+import { useOrders } from "@/features/orders-history";
 import { formatMonth } from "@/shared/lib/date";
 import Button from "@/shared/ui/button";
 import { ArrowRightIcon, MenuIcon } from "@/shared/ui/icons";
@@ -14,31 +16,29 @@ import styles from "./style.module.scss";
 
 type SidebarProps = {
   user: User;
-  ordersCount: number;
 };
 
 /** Колонка кабинета: карточка покупателя и разделы. На узком экране разделы открываются в окне. */
-const Sidebar = ({ user, ordersCount }: SidebarProps) => {
-  const [active, setActive] = useState(ACCOUNT_SECTIONS[0].id);
+const Sidebar = ({ user }: SidebarProps) => {
+  const pathname = usePathname();
+  const { orders } = useOrders();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const openSection = (id: string) => {
-    setActive(id);
-    setMenuOpen(false);
-  };
+  const closeMenu = () => setMenuOpen(false);
 
   const nav = (
     <nav className={styles.nav} aria-label="Разделы кабинета">
-      {ACCOUNT_SECTIONS.map(({ id, label, Icon }) => (
+      {ACCOUNT_SECTIONS.map(({ id, href, label, Icon }) => (
         <Link
           key={id}
-          className={cn(styles.item, id === active && styles.active)}
-          href={`#${id}`}
-          onClick={() => openSection(id)}
+          className={cn(styles.item, href === pathname && styles.active)}
+          href={href}
+          onClick={closeMenu}
         >
           <Icon className={styles.icon} />
           <span className={styles.label}>{label}</span>
-          {id === "orders" && ordersCount > 0 && <span className={styles.count}>{ordersCount}</span>}
+          {id === "orders" && orders.length > 0 && (
+            <span className={styles.count}>{orders.length}</span>
+          )}
         </Link>
       ))}
 
@@ -62,7 +62,7 @@ const Sidebar = ({ user, ordersCount }: SidebarProps) => {
 
         <div className={styles.stat}>
           <span className={styles.statLabel}>Всего заказов</span>
-          <span className={styles.statValue}>{String(ordersCount).padStart(2, "0")}</span>
+          <span className={styles.statValue}>{String(orders.length).padStart(2, "0")}</span>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ const Sidebar = ({ user, ordersCount }: SidebarProps) => {
         Разделы кабинета
       </Button>
 
-      <Modal open={menuOpen} title="Разделы" onClose={() => setMenuOpen(false)}>
+      <Modal open={menuOpen} title="Разделы" onClose={closeMenu}>
         {menuOpen && nav}
       </Modal>
 

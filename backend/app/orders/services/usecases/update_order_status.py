@@ -18,15 +18,16 @@ class UpdateOrderStatusUseCase:
     async def execute(self, order: Order, payload: OrderStatusUpdateSchema) -> Order:
         """Вернуть обновлённый заказ. Бросает OrderStatusError."""
 
+        order = await self.orders.lock(order)
+
         validate_status_change(order.status, payload.status)
 
         canceling = payload.status == OrderStatus.CANCELED and order.status != OrderStatus.CANCELED
 
         if canceling:
             product_ids = [item.product_id for item in order.items if item.product_id is not None]
-            products = {
-                product.id: product for product in await self.products.list_by_ids(product_ids)
-            }
+            locked = await self.products.list_by_ids(product_ids, lock=True)
+            products = {product.id: product for product in locked}
 
             for item in order.items:
                 product = products.get(item.product_id) if item.product_id is not None else None

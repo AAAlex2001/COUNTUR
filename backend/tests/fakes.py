@@ -34,7 +34,7 @@ class FakeProductRepository:
     def __init__(self, products: list[Product]) -> None:
         self.items = {product.id: product for product in products}
 
-    async def get_published_by_id(self, product_id: int) -> Product | None:
+    async def get_published_by_id(self, product_id: int, lock: bool = False) -> Product | None:
         product = self.items.get(product_id)
         if product is None or product.status != PublicationStatus.PUBLISHED:
             return None
@@ -46,7 +46,7 @@ class FakeProductRepository:
 
         return [product for product in found if product is not None]
 
-    async def list_by_ids(self, product_ids: list[int]) -> list[Product]:
+    async def list_by_ids(self, product_ids: list[int], lock: bool = False) -> list[Product]:
         return [self.items[product_id] for product_id in product_ids if product_id in self.items]
 
 
@@ -64,7 +64,7 @@ class FakeCartRepository:
         item.product = self.products.items[product_id]
         self.items.append(item)
 
-    async def list_items(self, user_id: int) -> list[CartItem]:
+    async def list_items(self, user_id: int, lock: bool = False) -> list[CartItem]:
         return [
             item
             for item in self.items
@@ -104,6 +104,9 @@ class FakeOrderRepository:
         self.items.append(order)
         await self.cart.clear(user_id)
 
+        return order
+
+    async def lock(self, order: Order) -> Order:
         return order
 
     async def save(self, order: Order) -> Order:

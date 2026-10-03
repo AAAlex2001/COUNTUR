@@ -3,7 +3,7 @@
 import cn from "classnames";
 import {
   ORDER_STATUS_LABELS,
-  ORDER_STATUS_TONES,
+  OrderStatusBadge,
   PAYMENT_STATUS_LABELS,
   orderNumber,
   type OrderStatus,
@@ -55,9 +55,7 @@ const UserOrders = ({ userId }: UserOrdersProps) => {
                 </span>
               </div>
 
-              <span className={cn(styles.tag, styles[ORDER_STATUS_TONES[order.status]])}>
-                {ORDER_STATUS_LABELS[order.status]}
-              </span>
+              <OrderStatusBadge status={order.status} />
 
               <span className={styles.sum}>{formatRub(order.total)}</span>
             </div>

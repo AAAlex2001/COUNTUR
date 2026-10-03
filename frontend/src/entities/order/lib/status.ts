@@ -10,16 +10,6 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   canceled: "Отменён",
 };
 
-export const ORDER_STATUS_TONES: Record<OrderStatus, "progress" | "done" | "muted"> = {
-  new: "progress",
-  confirmed: "progress",
-  awaiting_payment: "progress",
-  paid: "progress",
-  shipped: "progress",
-  completed: "done",
-  canceled: "muted",
-};
-
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   unpaid: "Не оплачен",
   pending: "Ожидает оплаты",

@@ -60,6 +60,19 @@ class OrderRepository:
 
         return await self.db.get(Order, order_id)
 
+    async def lock(self, order: Order) -> Order:
+        """Перечитать заказ под блокировкой строки. Для смены статуса."""
+
+        stmt = (
+            select(Order)
+            .where(Order.id == order.id)
+            .with_for_update(of=Order)
+            .execution_options(populate_existing=True)
+        )
+        result = await self.db.execute(stmt)
+
+        return result.scalar_one()
+
     async def list_all(
         self,
         number: int | None,

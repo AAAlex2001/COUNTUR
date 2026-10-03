@@ -14,8 +14,8 @@ class CartRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def list_items(self, user_id: int) -> list[CartItem]:
-        """Позиции корзины покупателя в порядке добавления, только опубликованные товары."""
+    async def list_items(self, user_id: int, lock: bool = False) -> list[CartItem]:
+        """Позиции корзины покупателя, только опубликованные товары. С lock — под блокировкой строк."""
 
         stmt = (
             select(CartItem)
@@ -23,6 +23,9 @@ class CartRepository:
             .where(CartItem.user_id == user_id, PUBLISHED)
             .order_by(CartItem.created_at, CartItem.id)
         )
+        if lock:
+            stmt = stmt.with_for_update(of=CartItem)
+
         result = await self.db.execute(stmt)
 
         return list(result.scalars().all())

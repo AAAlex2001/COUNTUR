@@ -283,10 +283,13 @@ class ProductRepository:
 
         return result.scalar_one_or_none()
 
-    async def get_published_by_id(self, product_id: int) -> Product | None:
-        """Опубликованный товар по идентификатору. Черновик считается ненайденным."""
+    async def get_published_by_id(self, product_id: int, lock: bool = False) -> Product | None:
+        """Опубликованный товар по идентификатору, черновик — ненайденный. С lock — под блокировкой."""
 
         stmt = select(Product).where(Product.id == product_id, PUBLISHED)
+        if lock:
+            stmt = stmt.with_for_update()
+
         result = await self.db.execute(stmt)
 
         return result.scalar_one_or_none()
@@ -345,13 +348,16 @@ class ProductRepository:
 
         return products, total
 
-    async def list_by_ids(self, product_ids: list[int]) -> list[Product]:
-        """Товары по списку идентификаторов, включая черновики."""
+    async def list_by_ids(self, product_ids: list[int], lock: bool = False) -> list[Product]:
+        """Товары по списку идентификаторов, включая черновики. С lock — под блокировкой строк."""
 
         if not product_ids:
             return []
 
         stmt = select(Product).where(Product.id.in_(product_ids))
+        if lock:
+            stmt = stmt.with_for_update().execution_options(populate_existing=True)
+
         result = await self.db.execute(stmt)
 
         return list(result.scalars().all())

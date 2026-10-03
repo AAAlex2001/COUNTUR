@@ -16,7 +16,7 @@ class AddFavoriteUseCase:
     async def execute(self, user_id: int, product_id: int) -> None:
         """Добавить товар. Бросает ProductNotFoundError."""
 
-        product = await self.products.get_published_by_id(product_id)
+        product = await self.products.get_published_by_id(product_id, lock=True)
         if product is None:
             raise ProductNotFoundError(product_id)
 
