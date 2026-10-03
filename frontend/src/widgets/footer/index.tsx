@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/shared/ui/logo";
 import { FOOTER_COLUMNS, FOOTER_DESCRIPTION, SUPPORT_EMAIL } from "./data";
 import styles from "./style.module.scss";
 
@@ -8,9 +9,7 @@ const Footer = () => (
     <div className={styles.inner}>
       <div className={styles.content}>
         <div className={styles.brand}>
-          <Link className={styles.logo} href="/" aria-label="COUNTUR — на главную">
-            COUNTUR
-          </Link>
+          <Logo href="/" ariaLabel="COUNTUR — на главную" />
           <p className={styles.description}>{FOOTER_DESCRIPTION}</p>
           <a className={styles.email} href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}

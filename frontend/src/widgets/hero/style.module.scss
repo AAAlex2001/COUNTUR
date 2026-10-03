@@ -20,7 +20,7 @@
 }
 
 .overline {
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
@@ -91,7 +91,7 @@
 }
 
 .value {
-  font-family: "Roboto Mono";
+  font-family: "Roboto Condensed";
   font-style: normal;
   font-weight: 700;
   font-size: 20px;
@@ -102,9 +102,9 @@
 }
 
 .label {
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 10px;
   line-height: 13px;
   text-transform: uppercase;
@@ -142,9 +142,9 @@
   padding: 14px;
   gap: 10px;
 
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 12px;
   line-height: 16px;
   text-transform: uppercase;

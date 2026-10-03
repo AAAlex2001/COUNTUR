@@ -36,17 +36,6 @@
   max-width: 320px;
 }
 
-.logo {
-  font-family: "Roboto Condensed";
-  font-style: normal;
-  font-weight: 800;
-  font-size: 26px;
-  line-height: 30px;
-  text-decoration: none;
-
-  color: #f2f7f8;
-}
-
 .description {
   font-family: "Inter";
   font-style: normal;
@@ -58,9 +47,9 @@
 }
 
 .email {
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 12px;
   line-height: 16px;
   text-decoration: none;
@@ -86,7 +75,7 @@
 }
 
 .columnTitle {
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
@@ -129,9 +118,9 @@
 }
 
 .copyright {
-  font-family: "Roboto Mono";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 12px;
   line-height: 16px;
   text-transform: uppercase;
