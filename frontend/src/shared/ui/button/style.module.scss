@@ -61,9 +61,20 @@
   background: transparent;
 }
 
+.danger {
+  color: #f2f7f8;
+  background: #ff5a65;
+  border-color: #ff5a65;
+}
+
 .primary:hover:not(:disabled) {
   background: #10bcd5;
   border-color: #10bcd5;
+}
+
+.danger:hover:not(:disabled) {
+  background: #e64d58;
+  border-color: #e64d58;
 }
 
 .ghost:hover:not(:disabled) {

@@ -23,7 +23,7 @@ const CollectionActions = ({ collection }: CollectionActionsProps) => {
         </Button>
       )}
 
-      <Button variant="outline" disabled={state.pending} onClick={askRemove}>
+      <Button variant="danger" disabled={state.pending} onClick={askRemove}>
         Удалить
       </Button>
 

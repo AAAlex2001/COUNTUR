@@ -14,7 +14,7 @@ type ConfirmModalProps = {
   pending?: boolean;
 };
 
-/** Окно с вопросом и кнопками «Отмена» и подтверждения. */
+/** Окно с вопросом и кнопками «Отмена» и красного подтверждения — для удаления. */
 const ConfirmModal = ({
   open,
   title,
@@ -33,7 +33,7 @@ const ConfirmModal = ({
         <Button className={styles.button} variant="outline" onClick={onCancel}>
           Отмена
         </Button>
-        <Button className={styles.button} loading={pending} onClick={onConfirm}>
+        <Button className={styles.button} variant="danger" loading={pending} onClick={onConfirm}>
           {confirmLabel}
         </Button>
       </>

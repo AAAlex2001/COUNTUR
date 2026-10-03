@@ -22,7 +22,6 @@ export {
   getProducts,
   type SearchParams,
 } from "./api/catalog";
-export { fetchFavoriteProducts } from "./api/favorites";
 export { REVIEWS_PER_PAGE, getProduct, getProductReviews } from "./api/products";
 export { fetchProductReviews } from "./api/reviews";
 export { searchProducts } from "./api/search";

@@ -1,45 +1,49 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { ProductCardData } from "@/entities/product";
 import { useUser } from "@/entities/user";
-import { fetchFavoriteIds } from "../api/favorites";
+import { fetchFavorites } from "../api/favorites";
 
 type FavoritesValue = {
+  products: ProductCardData[];
   ids: number[];
   loaded: boolean;
-  setIds: (ids: number[]) => void;
+  setProducts: (products: ProductCardData[]) => void;
 };
 
 const FavoritesContext = createContext<FavoritesValue | null>(null);
 
-const NO_IDS: number[] = [];
+const NO_PRODUCTS: ProductCardData[] = [];
 
 type FavoritesProviderProps = {
-  initialIds: number[];
+  initialProducts: ProductCardData[];
   children: ReactNode;
 };
 
-/** Хранит id товаров в избранном: с сервера приходят готовыми, после смены аккаунта перечитываются. */
-export const FavoritesProvider = ({ initialIds, children }: FavoritesProviderProps) => {
+/** Хранит товары избранного: с сервера приходят готовыми, после смены аккаунта перечитываются. */
+export const FavoritesProvider = ({ initialProducts, children }: FavoritesProviderProps) => {
   const { user } = useUser();
-  const [ids, setIds] = useState(initialIds);
+  const [products, setProducts] = useState(initialProducts);
   const [loadedFor, setLoadedFor] = useState(user?.id ?? null);
 
   useEffect(() => {
     if (!user || user.id === loadedFor) return;
 
-    fetchFavoriteIds()
-      .then(setIds)
+    fetchFavorites()
+      .then(setProducts)
       .catch(() => undefined)
       .finally(() => setLoadedFor(user.id));
   }, [user, loadedFor]);
 
   const ready = user !== null && loadedFor === user.id;
+  const visible = ready ? products : NO_PRODUCTS;
 
   const value = {
-    ids: ready ? ids : NO_IDS,
+    products: visible,
+    ids: visible.map((product) => product.id),
     loaded: user === null || ready,
-    setIds,
+    setProducts,
   };
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

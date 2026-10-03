@@ -1,5 +1,5 @@
 import { CartProvider, EMPTY_CART, getCart } from "@/entities/cart";
-import { FavoritesProvider, getFavoriteIds } from "@/entities/favorite";
+import { FavoritesProvider, getFavorites } from "@/entities/favorite";
 import { UserProvider } from "@/entities/user";
 import { getSessionUser, sessionHeaders } from "@/entities/user/server";
 import { AuthModal } from "@/features/auth";
@@ -10,14 +10,14 @@ import Header from "@/widgets/header";
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const headers = await sessionHeaders();
 
-  const [user, cart, favoriteIds] = headers
-    ? await Promise.all([getSessionUser(headers), getCart(headers), getFavoriteIds(headers)])
+  const [user, cart, favorites] = headers
+    ? await Promise.all([getSessionUser(headers), getCart(headers), getFavorites(headers)])
     : [null, EMPTY_CART, []];
 
   return (
     <UserProvider initialUser={user}>
       <CartProvider initialCart={cart}>
-        <FavoritesProvider initialIds={favoriteIds}>
+        <FavoritesProvider initialProducts={favorites}>
           <Header />
           {children}
           <Footer />

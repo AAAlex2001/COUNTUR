@@ -2,30 +2,34 @@
 
 import { useFavorites } from "@/entities/favorite";
 import { CATALOG_PATH, ProductCard } from "@/entities/product";
-import { useUser } from "@/entities/user";
+import { ACCOUNT_PATH, useUser } from "@/entities/user";
 import { AddToCartButton } from "@/features/add-to-cart";
 import { LoginPrompt } from "@/features/auth";
 import { FavoriteButton } from "@/features/toggle-favorite";
 import { plural } from "@/shared/lib/text";
+import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
 import { HeartIcon } from "@/shared/ui/icons";
 import Loader from "@/shared/ui/loader";
-import { useFavoriteProducts } from "./model/use-favorite-products";
 import styles from "./style.module.scss";
 
 /** Страница избранного. Товар исчезает из списка сразу, как только его убрали сердечком. */
 const Favorites = () => {
   const { user } = useUser();
-  const { ids, loaded: idsLoaded } = useFavorites();
-  const { products, loaded: productsLoaded } = useFavoriteProducts();
-
-  const favorites = products.filter((product) => ids.includes(product.id));
-  const loaded = idsLoaded && productsLoaded;
+  const { products: favorites, loaded } = useFavorites();
   const isEmpty = favorites.length === 0;
 
   return (
     <section className={styles.favorites}>
+      <Breadcrumbs
+        items={[
+          { label: "Главная", href: "/" },
+          { label: "Личный кабинет", href: ACCOUNT_PATH },
+          { label: "Избранное" },
+        ]}
+      />
+
       <div className={styles.header}>
         <div className={styles.titles}>
           <p className={styles.eyebrow}>Ваш список</p>

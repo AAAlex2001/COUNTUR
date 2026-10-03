@@ -7,7 +7,7 @@ import styles from "./style.module.scss";
 type ButtonProps = {
   children: ReactNode;
   type?: "button" | "submit";
-  variant?: "primary" | "outline" | "ghost";
+  variant?: "primary" | "outline" | "ghost" | "danger";
   size?: "md" | "sm";
   disabled?: boolean;
   loading?: boolean;
@@ -19,6 +19,7 @@ type ButtonProps = {
 /**
  * Кнопка с текстом. С href рендерится ссылкой, с loading показывает лоадер и не нажимается.
  * Вариант ghost — без фона, для второстепенных действий вроде «Все категории» и «Сбросить».
+ * Вариант danger — красный, для удаления.
  */
 const Button = ({
   children,

@@ -29,7 +29,7 @@ const ProductActions = ({ product, onChange }: ProductActionsProps) => {
         {published ? "Снять с публикации" : "Опубликовать"}
       </Button>
 
-      <Button variant="outline" disabled={state.pending} onClick={askRemove}>
+      <Button variant="danger" disabled={state.pending} onClick={askRemove}>
         Удалить
       </Button>
 

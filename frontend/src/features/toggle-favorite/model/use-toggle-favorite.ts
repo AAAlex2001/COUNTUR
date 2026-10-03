@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
-import { addFavorite, removeFavorite, useFavorites } from "@/entities/favorite";
+import { addFavorite, fetchFavorites, removeFavorite, useFavorites } from "@/entities/favorite";
 import { useUser } from "@/entities/user";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
@@ -10,7 +10,7 @@ import { favoriteReducer } from "./reducer";
 /** Добавление товара в избранное и удаление из него. Без входа открывает окно входа. */
 export const useToggleFavorite = (productId: number) => {
   const { user, openAuth } = useUser();
-  const { ids, setIds } = useFavorites();
+  const { products, ids, setProducts } = useFavorites();
   const toast = useToast();
   const [state, dispatch] = useReducer(favoriteReducer, { pending: false });
   const active = ids.includes(productId);
@@ -27,11 +27,11 @@ export const useToggleFavorite = (productId: number) => {
     try {
       if (active) {
         await removeFavorite(productId);
-        setIds(ids.filter((id) => id !== productId));
+        setProducts(products.filter((product) => product.id !== productId));
         toast("Товар убран из избранного");
       } else {
         await addFavorite(productId);
-        setIds([...ids, productId]);
+        setProducts(await fetchFavorites());
         toast("Товар добавлен в избранное");
       }
     } catch (failure) {

@@ -2,10 +2,11 @@
 
 import { useCart } from "@/entities/cart";
 import { CATALOG_PATH } from "@/entities/product";
-import { useUser } from "@/entities/user";
+import { ACCOUNT_PATH, useUser } from "@/entities/user";
 import { LoginPrompt } from "@/features/auth";
 import { CartItemRow } from "@/features/cart-item";
 import { plural } from "@/shared/lib/text";
+import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
 import EmptyState from "@/shared/ui/empty-state";
 import { CartIcon } from "@/shared/ui/icons";
@@ -22,6 +23,14 @@ const Cart = () => {
 
   return (
     <section className={styles.cart}>
+      <Breadcrumbs
+        items={[
+          { label: "Главная", href: "/" },
+          { label: "Личный кабинет", href: ACCOUNT_PATH },
+          { label: "Корзина" },
+        ]}
+      />
+
       <div className={styles.header}>
         <div className={styles.titles}>
           <p className={styles.eyebrow}>Ваш заказ</p>
