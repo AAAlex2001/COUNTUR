@@ -3,3 +3,4 @@ export { useCollectionsList } from "./model/use-collections-list";
 export { default as CollectionActions } from "./ui/collection-actions";
 export { default as CollectionForm } from "./ui/collection-form";
 export { default as CollectionsTable } from "./ui/collections-table";
+export { default as ProductCollections } from "./ui/product-collections";

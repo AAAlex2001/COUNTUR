@@ -24,6 +24,7 @@ const toFields = (product: AdminProduct | null, categories: AdminCategory[]): Pr
   stockQuantity: String(product?.stock_quantity ?? ""),
   availability: product?.availability ?? "in_stock",
   isHit: product?.is_hit ?? false,
+  sortOrder: String(product?.sort_order ?? 0),
   specs: Object.fromEntries(product?.specs.map((spec) => [spec.attribute_id, spec.value]) ?? []),
 });
 
@@ -44,6 +45,7 @@ const toPayload = (fields: ProductFields, category: AdminCategory): ProductPaylo
   stock_quantity: fields.stockQuantity.trim() ? Number(fields.stockQuantity) : null,
   availability: fields.availability,
   is_hit: fields.isHit,
+  sort_order: Number(fields.sortOrder) || 0,
   specs: category.attributes
     .map((attribute) => ({
       attribute_id: attribute.id,

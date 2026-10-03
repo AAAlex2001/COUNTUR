@@ -24,6 +24,9 @@ export type AdminProduct = Product & {
   brand_id: number | null;
   stock_quantity: number | null;
   status: PublicationStatus;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
 };
 
 export type AdminProductList = {
@@ -44,6 +47,7 @@ export type ProductPayload = {
   stock_quantity: number | null;
   availability: Availability;
   is_hit: boolean;
+  sort_order: number;
   specs: { attribute_id: number; value: string }[];
 };
 
@@ -60,6 +64,7 @@ export type ProductFields = {
   stockQuantity: string;
   availability: Availability;
   isHit: boolean;
+  sortOrder: string;
   specs: Record<number, string>;
 };
 

@@ -35,6 +35,24 @@
   color: #f2f7f8;
 }
 
+.meta {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.dates {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}
+
 .error {
   font-family: "Inter";
   font-style: normal;

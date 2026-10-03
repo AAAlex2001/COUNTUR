@@ -53,6 +53,15 @@ const MainFields = ({ fields, categories, brands, onChange }: MainFieldsProps) =
           onChange={(sku) => onChange({ sku })}
         />
       </Field>
+
+      <Field label="Порядок в каталоге" hint="Чем меньше число, тем выше товар">
+        <Input
+          ariaLabel="Порядок в каталоге"
+          inputMode="numeric"
+          value={fields.sortOrder}
+          onChange={(sortOrder) => onChange({ sortOrder })}
+        />
+      </Field>
     </FieldGrid>
   </Panel>
 );
