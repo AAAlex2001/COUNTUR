@@ -1,0 +1,90 @@
+.drawer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  width: 100%;
+  max-width: 100vw;
+  max-height: 85vh;
+  margin: 0 auto auto;
+
+  background: #0c1114;
+  border-bottom: 1px solid #273138;
+  border-radius: 0 0 12px 12px;
+  transform: translateY(-100%);
+  transition:
+    transform 0.25s ease,
+    display 0.25s allow-discrete,
+    overlay 0.25s allow-discrete;
+}
+
+.drawer[open] {
+  transform: translateY(0);
+
+  @starting-style {
+    transform: translateY(-100%);
+  }
+}
+
+.drawer::backdrop {
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    display 0.25s allow-discrete,
+    overlay 0.25s allow-discrete;
+}
+
+.drawer[open]::backdrop {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.head {
+  flex: none;
+
+  border-bottom: 1px solid #273138;
+}
+
+.row,
+.body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 23px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.body {
+  flex: 1 1 auto;
+
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .row,
+  .body {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}

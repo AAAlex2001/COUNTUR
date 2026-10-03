@@ -63,13 +63,22 @@
   gap: 6px;
 }
 
-.iconLink {
+.favorites {
   padding: 6px;
 }
 
 .icon {
   width: 21px;
   height: 21px;
+}
+
+.actions .desktop,
+.actions .favorites {
+  display: none;
+}
+
+.actions .burger {
+  margin-left: 6px;
 }
 
 @media (min-width: 768px) {
@@ -93,5 +102,14 @@
     flex-direction: row;
     align-items: center;
     gap: 4px;
+  }
+
+  .actions .desktop,
+  .actions .favorites {
+    display: flex;
+  }
+
+  .actions .burger {
+    display: none;
   }
 }

@@ -7,12 +7,13 @@ type LogoProps = {
   href: string;
   ariaLabel: string;
   caption?: string;
+  full?: boolean;
 };
 
-/** Логотип COUNTUR со ссылкой. Без подписи caption на узком экране остаётся только значок. */
-const Logo = ({ href, ariaLabel, caption }: LogoProps) => (
+/** Логотип COUNTUR со ссылкой. На узком экране остаётся только значок, если нет caption или full. */
+const Logo = ({ href, ariaLabel, caption, full }: LogoProps) => (
   <Link
-    className={cn(styles.logo, caption && styles.captioned)}
+    className={cn(styles.logo, caption && styles.captioned, full && styles.full)}
     href={href}
     aria-label={ariaLabel}
   >

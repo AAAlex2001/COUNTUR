@@ -28,7 +28,7 @@ const CartItem = ({ item, href, status, quantity, remove }: CartItemProps) => {
             src={product.image_url}
             alt=""
             fill
-            sizes="142px"
+            sizes="(min-width: 768px) 142px, 100vw"
             unoptimized
             className={styles.photo}
           />

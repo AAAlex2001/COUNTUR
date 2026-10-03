@@ -1,7 +1,7 @@
 .item {
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
 
   background: #101519;
@@ -20,7 +20,7 @@
 
   display: block;
   flex: none;
-  width: 96px;
+  height: 180px;
 
   background: #fff;
 }
@@ -121,11 +121,14 @@
 
 @media (min-width: 768px) {
   .item {
+    flex-direction: row;
+
     min-height: 142px;
   }
 
   .image {
     width: 142px;
+    height: auto;
   }
 
   .content {
