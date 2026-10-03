@@ -15,6 +15,7 @@ import {
   CatalogParamsProvider,
   CatalogResults,
   Filters,
+  SearchFilter,
   SortSelect,
   ViewToggle,
 } from "@/features/catalog-filter";
@@ -47,12 +48,14 @@ const Catalog = ({ list, categories, filters, view, search }: CatalogProps) => (
 
         <CatalogResults className={styles.results}>
           <div className={styles.toolbar}>
-            <p className={styles.found}>
-              Найдено: {list.total} {plural(list.total, ["товар", "товара", "товаров"])}
-              {search && ` по запросу «${search}»`}
-            </p>
+            <SearchFilter className={styles.search} />
             <ViewToggle view={view} />
           </div>
+
+          <p className={styles.found}>
+            Найдено: {list.total} {plural(list.total, ["товар", "товара", "товаров"])}
+            {search && ` по запросу «${search}»`}
+          </p>
 
           {list.total === 0 && (
             <div className={styles.empty}>
