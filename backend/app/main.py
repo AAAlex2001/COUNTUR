@@ -16,6 +16,7 @@ from app.landing import admin_routes as admin_landing
 from app.landing import routes as landing
 from app.orders import admin_routes as admin_orders
 from app.orders import routes as orders
+from app.users import admin_routes as admin_users
 from app.users import routes as users
 
 settings = get_settings()
@@ -53,6 +54,7 @@ app.include_router(admin_catalog.router, prefix="/api/v1")
 app.include_router(admin_collections.router, prefix="/api/v1")
 app.include_router(admin_orders.router, prefix="/api/v1")
 app.include_router(admin_landing.router, prefix="/api/v1")
+app.include_router(admin_users.router, prefix="/api/v1")
 
 Path(settings.media_dir).mkdir(parents=True, exist_ok=True)
 app.mount(MEDIA_URL, StaticFiles(directory=settings.media_dir), name="media")

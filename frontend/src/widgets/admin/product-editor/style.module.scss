@@ -5,6 +5,10 @@
   gap: 16px;
 }
 
+.back {
+  align-self: flex-start;
+}
+
 .header {
   display: flex;
   flex-direction: column;

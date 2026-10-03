@@ -1,6 +1,6 @@
 """Репозиторий корзины: только запросы к таблице cart_items."""
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.cart.models import CartItem
@@ -26,6 +26,37 @@ class CartRepository:
         result = await self.db.execute(stmt)
 
         return list(result.scalars().all())
+
+    async def page_items(
+        self, user_id: int, limit: int, offset: int
+    ) -> tuple[list[CartItem], int]:
+        """Страница корзины покупателя для админки и общее число позиций."""
+
+        conditions = [CartItem.user_id == user_id, PUBLISHED]
+
+        items_stmt = (
+            select(CartItem)
+            .join(Product, Product.id == CartItem.product_id)
+            .where(*conditions)
+            .order_by(CartItem.created_at, CartItem.id)
+            .limit(limit)
+            .offset(offset)
+        )
+        count_stmt = (
+            select(func.count())
+            .select_from(CartItem)
+            .join(Product, Product.id == CartItem.product_id)
+            .where(*conditions)
+        )
+
+        result = await self.db.execute(items_stmt)
+        items = list(result.scalars().all())
+
+        total = await self.db.scalar(count_stmt)
+        if total is None:
+            total = 0
+
+        return items, total
 
     async def get_item(self, user_id: int, product_id: int) -> CartItem | None:
         """Позиция с этим товаром в корзине покупателя или None."""

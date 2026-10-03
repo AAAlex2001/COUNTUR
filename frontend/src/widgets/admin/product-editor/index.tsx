@@ -8,6 +8,7 @@ import {
   useProductEditor,
 } from "@/features/products-admin";
 import { ReviewsManager } from "@/features/reviews-admin";
+import BackButton from "@/shared/ui/back-button";
 import Loader from "@/shared/ui/loader";
 import styles from "./style.module.scss";
 
@@ -17,7 +18,7 @@ type ProductEditorProps = {
 
 /** Страница товара в админке: фото, поля, публикация и отзывы. Без productId — новый товар. */
 const ProductEditor = ({ productId }: ProductEditorProps) => {
-  const { state, changeProduct } = useProductEditor(productId);
+  const { state, changeProduct, changeCategory } = useProductEditor(productId);
   const { product } = state;
 
   if (state.status === "loading") {
@@ -30,6 +31,8 @@ const ProductEditor = ({ productId }: ProductEditorProps) => {
 
   return (
     <section className={styles.editor}>
+      <BackButton className={styles.back} />
+
       <div className={styles.header}>
         <div className={styles.titles}>
           <h1 className={styles.title}>{product?.name ?? "Новый товар"}</h1>
@@ -46,6 +49,7 @@ const ProductEditor = ({ productId }: ProductEditorProps) => {
         brands={state.brands}
         product={product}
         onSaved={changeProduct}
+        onCategoryChange={changeCategory}
       />
 
       {product && <ReviewsManager productId={product.id} />}

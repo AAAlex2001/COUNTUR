@@ -1,7 +1,7 @@
 import { API_URL, readErrorMessage } from "@/shared/api";
 
-type FavoriteProduct = {
-  id: number;
+type FavoriteList = {
+  products: { id: number }[];
 };
 
 /** Запрос к API избранного. */
@@ -16,12 +16,12 @@ const requestFavorites = async (path: string, method: string): Promise<Response>
   return response;
 };
 
-/** Идентификаторы товаров в избранном посетителя. */
+/** Идентификаторы товаров в избранном покупателя. */
 export const fetchFavoriteIds = async (): Promise<number[]> => {
-  const response = await requestFavorites("", "GET");
-  const products: FavoriteProduct[] = await response.json();
+  const response = await requestFavorites("?limit=200", "GET");
+  const list: FavoriteList = await response.json();
 
-  return products.map((product) => product.id);
+  return list.products.map((product) => product.id);
 };
 
 /** Добавить товар в избранное. */

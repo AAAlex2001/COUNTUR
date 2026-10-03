@@ -16,10 +16,17 @@ type ProductFormProps = {
   brands: Brand[];
   product: AdminProduct | null;
   onSaved: (product: AdminProduct) => void;
+  onCategoryChange: (category: AdminCategory) => void;
 };
 
 /** Форма товара. У нового товара фото выбираются здесь же и загружаются при создании. */
-const ProductForm = ({ categories, brands, product, onSaved }: ProductFormProps) => {
+const ProductForm = ({
+  categories,
+  brands,
+  product,
+  onSaved,
+  onCategoryChange,
+}: ProductFormProps) => {
   const { state, category, change, addDrafts, moveDraft, removeDraft, save } = useProductForm(
     product,
     categories,
@@ -48,8 +55,13 @@ const ProductForm = ({ categories, brands, product, onSaved }: ProductFormProps)
       <PriceFields fields={fields} onChange={change} />
       <DescriptionFields fields={fields} onChange={change} />
 
-      {category && category.attributes.length > 0 && (
-        <SpecFields fields={fields} attributes={category.attributes} onChange={change} />
+      {category && (
+        <SpecFields
+          fields={fields}
+          category={category}
+          onChange={change}
+          onCategoryChange={onCategoryChange}
+        />
       )}
 
       <Button className={styles.submit} type="submit" loading={state.pending} disabled={!category}>

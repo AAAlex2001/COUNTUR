@@ -50,6 +50,13 @@ class OrderSchema(BaseModel):
     created_at: datetime = Field(..., description="Когда оформлен")
 
 
+class OrderListSchema(BaseModel):
+    """Страница заказов покупателя."""
+
+    orders: list[OrderSchema]
+    total: int = Field(..., description="Сколько всего заказов")
+
+
 class OrderAdminSchema(OrderSchema):
     """Заказ для админки."""
 

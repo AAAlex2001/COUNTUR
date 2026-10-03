@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.cart.services.exceptions import NotEnoughStockError, ProductUnavailableError
 from app.orders.dependencies import get_create_order_usecase, get_order_repository
-from app.orders.schemas import OrderCreateSchema, OrderSchema
+from app.orders.schemas import OrderCreateSchema, OrderListSchema, OrderSchema
 from app.orders.services.exceptions import EmptyCartError, InvalidPhoneError
 from app.orders.services.repo import OrderRepository
 from app.orders.services.usecases.create_order import CreateOrderUseCase
@@ -43,14 +43,16 @@ async def create_order(
 
 @router.get("")
 async def list_orders(
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
     user: User = Depends(require_user),
     orders: OrderRepository = Depends(get_order_repository),
-) -> list[OrderSchema]:
-    """Все заказы текущего покупателя, свежие первыми."""
+) -> OrderListSchema:
+    """Заказы текущего покупателя, свежие первыми."""
 
-    items = await orders.list_for_user(user.id)
+    items, total = await orders.list_for_user(user.id, limit, offset)
 
-    return [OrderSchema.model_validate(item) for item in items]
+    return OrderListSchema(orders=[OrderSchema.model_validate(item) for item in items], total=total)
 
 
 @router.get("/{order_id}")

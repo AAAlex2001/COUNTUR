@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.catalog.schemas import ProductCardSchema
+from app.catalog.schemas import ProductCardSchema, ProductListSchema
 from app.catalog.services.exceptions import ProductNotFoundError
 from app.favorites.dependencies import (
     get_add_favorite_usecase,
@@ -18,14 +18,19 @@ router = APIRouter(prefix="/favorites", tags=["favorites"])
 
 @router.get("")
 async def get_favorites(
+    limit: int = Query(100, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     user: User = Depends(require_user),
     favorites: FavoriteRepository = Depends(get_favorite_repository),
-) -> list[ProductCardSchema]:
-    """Товары из избранного покупателя."""
+) -> ProductListSchema:
+    """Товары из избранного покупателя, недавно добавленные первыми."""
 
-    products = await favorites.list_products(user.id)
+    products, total = await favorites.list_products(user.id, limit, offset)
 
-    return [ProductCardSchema.model_validate(product) for product in products]
+    return ProductListSchema(
+        products=[ProductCardSchema.model_validate(product) for product in products],
+        total=total,
+    )
 
 
 @router.put("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

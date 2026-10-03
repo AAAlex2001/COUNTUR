@@ -7,6 +7,8 @@ export type OrderStatus =
   | "completed"
   | "canceled";
 
+export type PaymentStatus = "unpaid" | "pending" | "paid" | "failed" | "refunded";
+
 export type OrderItem = {
   product_id: number | null;
   product_name: string;
@@ -20,7 +22,7 @@ export type OrderItem = {
 export type Order = {
   id: number;
   status: OrderStatus;
-  payment_status: string;
+  payment_status: PaymentStatus;
   customer_name: string;
   customer_phone: string;
   customer_email: string | null;

@@ -1,4 +1,4 @@
-import type { OrderStatus } from "../model/types";
+import type { OrderStatus, PaymentStatus } from "../model/types";
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   new: "Новый",
@@ -18,6 +18,14 @@ export const ORDER_STATUS_TONES: Record<OrderStatus, "progress" | "done" | "mute
   shipped: "progress",
   completed: "done",
   canceled: "muted",
+};
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  unpaid: "Не оплачен",
+  pending: "Ожидает оплаты",
+  paid: "Оплачен",
+  failed: "Ошибка оплаты",
+  refunded: "Возврат",
 };
 
 /** Номер заказа вида CT-000012. */

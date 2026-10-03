@@ -37,3 +37,5 @@ export { LockIcon } from "./lock-icon";
 export { ChevronRightIcon } from "./chevron-right-icon";
 export { PlusIcon } from "./plus-icon";
 export { CircleCheckIcon } from "./circle-check-icon";
+export { UsersIcon } from "./users-icon";
+export { ArrowLeftIcon } from "./arrow-left-icon";

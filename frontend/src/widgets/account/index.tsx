@@ -18,48 +18,46 @@ const AccountContent = ({ user }: AccountContentProps) => {
   const { state, changeFilter } = useOrders();
 
   return (
-    <>
-      <div className={styles.header}>
-        <div className={styles.titles}>
-          <p className={styles.eyebrow}>Личный кабинет</p>
-          <h1 className={styles.title}>Профиль пользователя</h1>
-        </div>
+    <div className={styles.columns}>
+      <Sidebar user={user} ordersCount={state.orders.length} />
 
-        <p className={styles.customer}>ID: {customerNumber(user)}</p>
-      </div>
+      <div className={styles.content}>
+        <ProfileForm user={user} />
 
-      <hr className={styles.divider} />
+        <OrdersHistory
+          orders={state.orders}
+          loaded={state.loaded}
+          filter={state.filter}
+          onFilterChange={changeFilter}
+        />
 
-      <div className={styles.columns}>
-        <Sidebar user={user} ordersCount={state.orders.length} />
-
-        <div className={styles.content}>
-          <ProfileForm user={user} />
-
-          <OrdersHistory
-            orders={state.orders}
-            loaded={state.loaded}
-            filter={state.filter}
-            onFilterChange={changeFilter}
-          />
-
-          <div className={styles.pair}>
-            <AddressCard user={user} />
-            <SettingsCard user={user} />
-          </div>
+        <div className={styles.pair}>
+          <AddressCard user={user} />
+          <SettingsCard user={user} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-/** Страница личного кабинета. Без входа предлагает войти. */
+/** Страница личного кабинета: шапка на месте сразу, содержимое — после проверки входа. */
 const Account = () => {
   const { user, loaded } = useUser();
 
   return (
     <section className={styles.account}>
       <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Личный кабинет" }]} />
+
+      <div className={styles.header}>
+        <div className={styles.titles}>
+          <p className={styles.eyebrow}>Личный кабинет</p>
+          <h1 className={styles.title}>Профиль пользователя</h1>
+        </div>
+
+        {user && <p className={styles.customer}>ID: {customerNumber(user)}</p>}
+      </div>
+
+      <hr className={styles.divider} />
 
       {!loaded && <Loader size="lg" />}
 

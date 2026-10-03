@@ -45,6 +45,13 @@ class CartItemSchema(BaseModel):
     subtotal: Decimal = Field(..., description="Стоимость строки")
 
 
+class CartPageSchema(BaseModel):
+    """Страница корзины покупателя в админке."""
+
+    items: list[CartItemSchema]
+    total: int = Field(..., description="Сколько всего позиций в корзине")
+
+
 class CartSchema(BaseModel):
     """Корзина целиком: состав и итоговая стоимость."""
 
@@ -53,10 +60,10 @@ class CartSchema(BaseModel):
     total: Decimal = Field(..., description="Итоговая стоимость")
 
 
-def build_cart_schema(items: list[CartItem]) -> CartSchema:
-    """Собрать корзину для ответа: строки с подытогами и общий итог."""
+def build_cart_rows(items: list[CartItem]) -> list[CartItemSchema]:
+    """Строки корзины с подытогами."""
 
-    rows = [
+    return [
         CartItemSchema(
             product=CartProductSchema.model_validate(item.product),
             quantity=item.quantity,
@@ -64,6 +71,12 @@ def build_cart_schema(items: list[CartItem]) -> CartSchema:
         )
         for item in items
     ]
+
+
+def build_cart_schema(items: list[CartItem]) -> CartSchema:
+    """Собрать корзину для ответа: строки с подытогами и общий итог."""
+
+    rows = build_cart_rows(items)
 
     return CartSchema(
         items=rows,

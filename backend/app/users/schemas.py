@@ -51,3 +51,10 @@ class UserSchema(BaseModel):
     notify_orders: bool = Field(..., description="Присылать уведомления о заказах")
     notify_promo: bool = Field(..., description="Присылать акции и новинки")
     created_at: datetime = Field(..., description="Когда зарегистрирован")
+
+
+class UserAdminListSchema(BaseModel):
+    """Страница списка покупателей в админке."""
+
+    users: list[UserSchema]
+    total: int = Field(..., description="Сколько покупателей подходит под поиск")

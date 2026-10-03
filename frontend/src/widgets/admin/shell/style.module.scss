@@ -77,11 +77,12 @@
   }
 
   .main {
+    box-sizing: content-box;
     flex: 1 1 0;
     padding: 36px 40px 72px;
 
     min-width: 0;
-    max-width: none;
+    max-width: 1500px;
     margin: 0;
   }
 }

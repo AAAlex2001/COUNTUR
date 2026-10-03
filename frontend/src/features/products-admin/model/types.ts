@@ -14,6 +14,11 @@ export type AdminCategory = {
   attributes: AdminAttribute[];
 };
 
+export type AttributePayload = {
+  group: string;
+  name: string;
+};
+
 export type AdminProduct = Product & {
   category_id: number;
   brand_id: number | null;
@@ -94,7 +99,8 @@ export type EditorAction =
       product: AdminProduct | null;
     }
   | { type: "load/error" }
-  | { type: "product/change"; product: AdminProduct };
+  | { type: "product/change"; product: AdminProduct }
+  | { type: "category/change"; category: AdminCategory };
 
 export type FormState = {
   fields: ProductFields;
@@ -113,6 +119,17 @@ export type ImagesState = {
 };
 
 export type ImagesAction = { type: "request/start" } | { type: "request/finish" };
+
+export type AttributeState = {
+  fields: AttributePayload;
+  pending: boolean;
+};
+
+export type AttributeAction =
+  | { type: "fields/change"; changes: Partial<AttributePayload> }
+  | { type: "save/start" }
+  | { type: "save/success" }
+  | { type: "save/error" };
 
 export type ActionsState = {
   pending: boolean;

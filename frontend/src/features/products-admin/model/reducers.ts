@@ -1,6 +1,8 @@
 import type {
   ActionsAction,
   ActionsState,
+  AttributeAction,
+  AttributeState,
   EditorAction,
   EditorState,
   FormAction,
@@ -45,6 +47,33 @@ export const editorReducer = (state: EditorState, action: EditorAction): EditorS
 
     case "product/change":
       return { ...state, product: action.product };
+
+    case "category/change":
+      return {
+        ...state,
+        categories: state.categories.map((category) =>
+          category.id === action.category.id ? action.category : category,
+        ),
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const attributeReducer = (state: AttributeState, action: AttributeAction): AttributeState => {
+  switch (action.type) {
+    case "fields/change":
+      return { ...state, fields: { ...state.fields, ...action.changes } };
+
+    case "save/start":
+      return { ...state, pending: true };
+
+    case "save/success":
+      return { fields: { ...state.fields, name: "" }, pending: false };
+
+    case "save/error":
+      return { ...state, pending: false };
 
     default:
       return state;

@@ -57,6 +57,22 @@ def get_change_password_usecase(
     return ChangePasswordUseCase(users)
 
 
+async def get_user_by_id(
+    user_id: int,
+    users: UserRepository = Depends(get_user_repository),
+) -> User:
+    """Покупатель по id из пути для админки. Отсутствующий — 404."""
+
+    user = await users.get_by_id(user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Покупатель не найден",
+        )
+
+    return user
+
+
 def set_user_cookie(response: Response, token: str) -> None:
     """Положить токен в httponly-cookie: JavaScript её не видит, браузер шлёт сам."""
 

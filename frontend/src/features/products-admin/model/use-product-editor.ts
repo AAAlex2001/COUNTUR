@@ -3,7 +3,7 @@
 import { useEffect, useReducer } from "react";
 import { fetchAdminBrands, fetchAdminCategories, fetchAdminProduct } from "../api/products";
 import { editorReducer } from "./reducers";
-import type { AdminProduct } from "./types";
+import type { AdminCategory, AdminProduct } from "./types";
 
 /** Данные страницы товара: категории, бренды и сам товар. Без productId — новый товар. */
 export const useProductEditor = (productId?: number) => {
@@ -35,6 +35,8 @@ export const useProductEditor = (productId?: number) => {
   }, [productId]);
 
   const changeProduct = (product: AdminProduct) => dispatch({ type: "product/change", product });
+  const changeCategory = (category: AdminCategory) =>
+    dispatch({ type: "category/change", category });
 
-  return { state, changeProduct };
+  return { state, changeProduct, changeCategory };
 };

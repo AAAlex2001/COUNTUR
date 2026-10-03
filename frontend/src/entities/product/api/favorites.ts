@@ -1,11 +1,13 @@
 import { API_URL, readErrorMessage } from "@/shared/api";
-import type { ProductCardData } from "../model/types";
+import type { ProductCardData, ProductList } from "../model/types";
 
-/** Карточки товаров из избранного посетителя. */
+/** Карточки товаров из избранного покупателя. */
 export const fetchFavoriteProducts = async (): Promise<ProductCardData[]> => {
-  const response = await fetch(`${API_URL}/v1/favorites`, { credentials: "include" });
+  const response = await fetch(`${API_URL}/v1/favorites?limit=200`, { credentials: "include" });
 
   if (!response.ok) throw new Error(await readErrorMessage(response));
 
-  return response.json();
+  const list: ProductList = await response.json();
+
+  return list.products;
 };

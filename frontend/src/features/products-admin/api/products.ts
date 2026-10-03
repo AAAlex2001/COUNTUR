@@ -4,6 +4,7 @@ import type {
   AdminCategory,
   AdminProduct,
   AdminProductList,
+  AttributePayload,
   ProductPayload,
   PublicationStatus,
 } from "../model/types";
@@ -22,6 +23,10 @@ export const fetchAdminProduct = (id: number) => adminRequest<AdminProduct>(`/pr
 
 /** Категории вместе с параметрами характеристик. */
 export const fetchAdminCategories = () => adminRequest<AdminCategory[]>("/categories");
+
+/** Добавить параметр в набор характеристик категории. Возвращает категорию целиком. */
+export const createAttribute = (categoryId: number, payload: AttributePayload) =>
+  adminRequest<AdminCategory>(`/categories/${categoryId}/attributes`, jsonBody("POST", payload));
 
 /** Все бренды. */
 export const fetchAdminBrands = () => adminRequest<Brand[]>("/brands");
