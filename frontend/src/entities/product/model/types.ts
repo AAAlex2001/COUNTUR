@@ -63,6 +63,11 @@ export type ProductList = {
   total: number;
 };
 
+export type SitemapEntry = {
+  slug: string;
+  updated_at: string;
+};
+
 export type Review = {
   id: number;
   author_name: string;

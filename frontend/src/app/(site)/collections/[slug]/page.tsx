@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCollection } from "@/entities/collection";
+import { collectionPath, getCollection } from "@/entities/collection";
+import { absoluteUrl } from "@/shared/config/site";
 import CollectionPage from "@/widgets/collection";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +13,23 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const collection = await getCollection(slug);
 
-  if (!collection) return { title: "Подборка не найдена" };
+  if (!collection) return { title: "Подборка не найдена", robots: { index: false } };
 
-  return { title: collection.title, description: collection.description ?? undefined };
+  const description =
+    collection.description ?? `Подборка «${collection.title}»: комплектующие, которые хорошо работают вместе.`;
+  const cover = collection.products.find((product) => product.image_url)?.image_url;
+
+  return {
+    title: collection.title,
+    description,
+    alternates: { canonical: collectionPath(collection.slug) },
+    openGraph: {
+      title: collection.title,
+      description,
+      url: collectionPath(collection.slug),
+      images: cover ? [{ url: absoluteUrl(cover), alt: collection.title }] : [],
+    },
+  };
 }
 
 /** Страница подборки. Если подборки нет или она выключена — 404. */

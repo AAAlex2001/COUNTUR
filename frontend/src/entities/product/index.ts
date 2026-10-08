@@ -14,12 +14,14 @@ export type {
   ProductSpec,
   Review,
   ReviewList,
+  SitemapEntry,
 } from "./model/types";
 export {
   getCatalogFilters,
   getCategories,
   getFeaturedProducts,
   getProducts,
+  getProductsSitemap,
   type SearchParams,
 } from "./api/catalog";
 export { REVIEWS_PER_PAGE, getProduct, getProductReviews } from "./api/products";

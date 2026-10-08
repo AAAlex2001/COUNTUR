@@ -1,6 +1,6 @@
 import { load } from "@/shared/api/server";
 import { CATALOG_PAGE_SIZE } from "../lib/catalog";
-import type { CatalogFilters, Category, ProductList } from "../model/types";
+import type { CatalogFilters, Category, ProductList, SitemapEntry } from "../model/types";
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -41,6 +41,9 @@ export const getFeaturedProducts = (): Promise<ProductList> =>
 
 /** Категории с количеством товаров в каждой. */
 export const getCategories = (): Promise<Category[]> => load("/v1/categories", []);
+
+/** Адреса всех опубликованных товаров с датой изменения — для карты сайта. */
+export const getProductsSitemap = (): Promise<SitemapEntry[]> => load("/v1/products/sitemap", []);
 
 /** Данные для панели фильтров: цены, бренды и характеристики категории. */
 export const getCatalogFilters = (categorySlug: string | null): Promise<CatalogFilters> => {

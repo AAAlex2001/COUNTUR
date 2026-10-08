@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getCollections } from "@/entities/collection";
 import { getHero, getPromotion } from "@/entities/landing";
 import { getCategories, getFeaturedProducts } from "@/entities/product";
@@ -9,6 +10,10 @@ import Hits from "@/widgets/hits";
 import Promotion from "@/widgets/promotion";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** Главная страница. Рекламный блок, хиты и подборки показываются, только когда им есть что показать. */
 export default async function HomePage() {

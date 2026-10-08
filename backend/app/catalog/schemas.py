@@ -98,6 +98,15 @@ class ProductListSchema(BaseModel):
     total: int = Field(..., description="Сколько товаров подходит под фильтры")
 
 
+class SitemapEntrySchema(BaseModel):
+    """Запись карты сайта: адрес товара и дата последнего изменения."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    slug: str = Field(..., description="Адрес страницы товара")
+    updated_at: datetime = Field(..., description="Когда изменён")
+
+
 class ReviewSchema(BaseModel):
     """Отзыв на странице товара."""
 

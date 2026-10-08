@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Готовые подборки",
   description: "Комплектующие, собранные в подборки под игры, работу и бюджет",
+  alternates: { canonical: "/collections" },
 };
 
 /** Все включённые подборки, по блоку со слайдером на каждую. */

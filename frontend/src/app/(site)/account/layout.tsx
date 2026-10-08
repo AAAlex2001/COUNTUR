@@ -3,6 +3,7 @@ import Account from "@/widgets/account";
 
 export const metadata: Metadata = {
   title: "Личный кабинет",
+  robots: { index: false, follow: false },
 };
 
 /** Общая оболочка разделов кабинета: шапка, колонка слева, заказы грузятся один раз. */

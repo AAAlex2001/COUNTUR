@@ -1,6 +1,7 @@
 """Репозитории каталога: только запросы к таблицам категорий, брендов, товаров и отзывов."""
 
 from dataclasses import dataclass, field
+from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import ColumnElement, and_, func, or_, select, update
@@ -274,6 +275,14 @@ class ProductRepository:
             total = 0
 
         return products, total
+
+    async def list_published_slugs(self) -> list[tuple[str, datetime]]:
+        """Адреса всех опубликованных товаров с датой изменения. Для карты сайта."""
+
+        stmt = select(Product.slug, Product.updated_at).where(PUBLISHED).order_by(Product.id)
+        result = await self.db.execute(stmt)
+
+        return [(slug, updated_at) for slug, updated_at in result.all()]
 
     async def get_published(self, slug: str) -> Product | None:
         """Опубликованный товар по slug. Черновик считается ненайденным."""

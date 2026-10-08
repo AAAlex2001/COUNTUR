@@ -19,6 +19,7 @@ from app.catalog.schemas import (
     ProductSort,
     ReviewListSchema,
     ReviewSchema,
+    SitemapEntrySchema,
 )
 from app.catalog.services.exceptions import CategoryNotFoundError, InvalidFilterError
 from app.catalog.services.repo import (
@@ -110,6 +111,17 @@ async def get_products(
         products=[ProductCardSchema.model_validate(item) for item in items],
         total=total,
     )
+
+
+@router.get("/products/sitemap")
+async def get_products_sitemap(
+    products: ProductRepository = Depends(get_product_repository),
+) -> list[SitemapEntrySchema]:
+    """Адреса всех опубликованных товаров для карты сайта."""
+
+    entries = await products.list_published_slugs()
+
+    return [SitemapEntrySchema(slug=slug, updated_at=updated_at) for slug, updated_at in entries]
 
 
 @router.get("/products/{slug}")
