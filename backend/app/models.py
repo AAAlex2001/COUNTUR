@@ -13,6 +13,7 @@ from app.catalog.models import (
 from app.collections.models import Collection, collection_products
 from app.database import Base
 from app.favorites.models import Favorite
+from app.feedback.models import FeedbackMessage
 from app.landing.models import Hero, Promotion
 from app.orders.models import Order, OrderItem
 from app.users.models import User
@@ -30,6 +31,7 @@ __all__ = [
     "Collection",
     "collection_products",
     "Favorite",
+    "FeedbackMessage",
     "Hero",
     "Promotion",
     "Order",

@@ -8,6 +8,11 @@ export const ADMIN_LANDING_PATH = "/admin/landing";
 
 export const ADMIN_USERS_PATH = "/admin/users";
 
+export const ADMIN_FEEDBACK_PATH = "/admin/feedback";
+
+/** Адрес карточки обращения. */
+export const adminFeedbackPath = (id: number) => `${ADMIN_FEEDBACK_PATH}/${id}`;
+
 export const ADMIN_COLLECTIONS_PATH = "/admin/collections";
 
 export const ADMIN_NEW_COLLECTION_PATH = "/admin/collections/new";

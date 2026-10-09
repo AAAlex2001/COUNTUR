@@ -1,3 +1,5 @@
+import type { Requisite } from "@/shared/ui/requisites-card";
+
 export type DocumentSection = {
   id: string;
   title: string;
@@ -5,12 +7,6 @@ export type DocumentSection = {
   subtitle?: string;
   items?: string[];
   fields?: string[];
-};
-
-export type DocumentRequisite = {
-  label: string;
-  value: string;
-  href?: string;
 };
 
 export type LegalDocument = {
@@ -21,6 +17,7 @@ export type LegalDocument = {
   revision: string;
   notice: { title: string; text: string };
   sections: DocumentSection[];
-  requisites: { title: string; items: DocumentRequisite[]; note: string };
+  statement?: { label: string; text: string; note: string };
+  requisites: { title: string; items: Requisite[]; note: string };
   status: string;
 };

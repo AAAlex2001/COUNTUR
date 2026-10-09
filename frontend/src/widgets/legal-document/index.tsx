@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { CONTACTS_PATH, SUPPORT_EMAIL } from "@/shared/config/site";
-import { formatShortDate } from "@/shared/lib/date";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
+import Button from "@/shared/ui/button";
 import { ArrowRightIcon, InfoIcon } from "@/shared/ui/icons";
+import RequisitesCard from "@/shared/ui/requisites-card";
 import type { LegalDocument } from "./model/types";
 import Section from "./ui/section";
 import Toc from "./ui/toc";
@@ -18,7 +18,9 @@ type LegalDocumentPageProps = {
 const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
   <section className={styles.page}>
     <div className={styles.intro}>
-      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: document.title }]} />
+      <Breadcrumbs
+        items={[{ label: "Главная", href: "/" }, { label: "Документы" }, { label: document.title }]}
+      />
 
       <div className={styles.heading}>
         <p className={styles.eyebrow}>{document.eyebrow}</p>
@@ -27,8 +29,8 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
       </div>
 
       <p className={styles.revision}>
-        Редакция
-        <span className={styles.date}>{formatShortDate(document.revision)}</span>
+        Дата редакции
+        <span className={styles.date}>{document.revision}</span>
       </p>
     </div>
 
@@ -44,10 +46,10 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
           <a className={styles.helpEmail} href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </a>
-          <Link className={styles.helpLink} href={CONTACTS_PATH}>
+          <Button variant="ghost" size="sm" href={CONTACTS_PATH}>
             Контакты
             <ArrowRightIcon />
-          </Link>
+          </Button>
         </div>
       </aside>
 
@@ -66,26 +68,19 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
           ))}
         </div>
 
-        <dl className={styles.requisites}>
-          <p className={styles.requisitesTitle}>{document.requisites.title}</p>
+        {document.statement && (
+          <div className={styles.statement}>
+            <p className={styles.statementLabel}>{document.statement.label}</p>
+            <p className={styles.statementText}>{document.statement.text}</p>
+            <p className={styles.statementNote}>{document.statement.note}</p>
+          </div>
+        )}
 
-          {document.requisites.items.map((item) => (
-            <div className={styles.requisite} key={item.label}>
-              <dt className={styles.requisiteLabel}>{item.label}</dt>
-              <dd className={styles.requisiteValue}>
-                {item.href ? (
-                  <a className={styles.requisiteLink} href={item.href}>
-                    {item.value}
-                  </a>
-                ) : (
-                  item.value
-                )}
-              </dd>
-            </div>
-          ))}
-
-          <p className={styles.requisitesNote}>{document.requisites.note}</p>
-        </dl>
+        <RequisitesCard
+          title={document.requisites.title}
+          items={document.requisites.items}
+          note={document.requisites.note}
+        />
 
         <div className={styles.end}>
           <span className={styles.status}>{document.status}</span>

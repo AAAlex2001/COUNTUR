@@ -1,13 +1,13 @@
-import { SUPPORT_EMAIL, SUPPORT_PHONE } from "@/shared/config/site";
+import { COMPANY_REQUISITES, COMPANY_REQUISITES_NOTE } from "@/shared/config/site";
 import type { LegalDocument } from "../model/types";
 
 export const PRIVACY_POLICY: LegalDocument = {
   path: "/privacy",
-  eyebrow: "Документы",
+  eyebrow: "Документы магазина",
   title: "Политика конфиденциальности",
   description:
     "Как магазин COUNTUR собирает, хранит и использует данные покупателей. Шаблон для заполнения перед публикацией.",
-  revision: "2026-10-09",
+  revision: "[Дата редакции]",
   notice: {
     title: "Шаблон — требует заполнения и юридической проверки",
     text: "Примерная структура, не готовый юридический документ. Заполните поля в квадратных скобках и проверьте текст до публикации.",
@@ -94,14 +94,8 @@ export const PRIVACY_POLICY: LegalDocument = {
   ],
   requisites: {
     title: "Контакты оператора",
-    items: [
-      { label: "Наименование", value: "[Наименование оператора]" },
-      { label: "ИНН / ОГРН", value: "[ИНН] / [ОГРН]" },
-      { label: "Юридический адрес", value: "[Юридический адрес]" },
-      { label: "Электронная почта", value: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}` },
-      { label: "Телефон магазина", value: SUPPORT_PHONE },
-    ],
-    note: "Контакты магазина взяты с текущих страниц. Канал для юридических обращений: [Контакт оператора].",
+    items: COMPANY_REQUISITES,
+    note: COMPANY_REQUISITES_NOTE,
   },
   status: "Конец шаблона",
 };

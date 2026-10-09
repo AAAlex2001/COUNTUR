@@ -1,0 +1,53 @@
+.meta {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #8c9aa2;
+}
+
+.email {
+  text-decoration: none;
+
+  color: #13d8f4;
+}
+
+.email:hover {
+  text-decoration: underline;
+}
+
+.text {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 160%;
+  white-space: pre-wrap;
+
+  color: #f2f7f8;
+}
+
+.reply {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px;
+  gap: 8px;
+
+  background: #102820;
+  border: 1px solid #273138;
+  border-radius: 4px;
+}
+
+.replyLabel {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 15px;
+  text-transform: uppercase;
+
+  color: #3ddc97;
+}

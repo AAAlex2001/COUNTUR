@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     admin_login: str = "admin"
     admin_password: str = Field(min_length=8)
 
+    smtp_host: str | None = Field(None, description="Без него ответы на обращения не уходят")
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = Field("", description="Адрес отправителя, по умолчанию — smtp_user")
+    smtp_tls: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:

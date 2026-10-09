@@ -1,0 +1,25 @@
+.badge {
+  display: inline-flex;
+  flex: none;
+  padding: 5px 9px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 13px;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  border-radius: 4px;
+}
+
+.new {
+  color: #ff9d3d;
+  background: #33200c;
+}
+
+.answered {
+  color: #3ddc97;
+  background: #102820;
+}

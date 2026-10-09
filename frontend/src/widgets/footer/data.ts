@@ -40,6 +40,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "О Countur", href: "/about" },
       { label: "Контакты", href: "/contacts" },
       { label: "Политика конфиденциальности", href: "/privacy" },
+      { label: "Обработка персональных данных", href: "/personal-data" },
       { label: "Панель управления", href: "/admin" },
     ],
   },
