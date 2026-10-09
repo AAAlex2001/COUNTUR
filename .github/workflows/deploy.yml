@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.14"
           cache: pip
-      - run: pip install -r requirements.txt ruff
+      - run: pip install -r requirements.txt ruff==0.8.6
       - run: python -m ruff check app tests migrations
       - run: python -m pytest -q
 
