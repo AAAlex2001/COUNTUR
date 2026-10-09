@@ -1,5 +1,7 @@
 import { categoryPath } from "@/entities/product";
 
+export { SUPPORT_EMAIL } from "@/shared/config/site";
+
 export type FooterLink = {
   label: string;
   href: string;
@@ -9,8 +11,6 @@ export type FooterColumn = {
   title: string;
   links: FooterLink[];
 };
-
-export const SUPPORT_EMAIL = "support@countur.ru";
 
 export const FOOTER_DESCRIPTION =
   "Комплектующие для тех, кто знает, из чего складывается производительность.";
@@ -39,7 +39,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
     links: [
       { label: "О Countur", href: "/about" },
       { label: "Контакты", href: "/contacts" },
-      { label: "Вакансии", href: "/careers" },
+      { label: "Политика конфиденциальности", href: "/privacy" },
       { label: "Панель управления", href: "/admin" },
     ],
   },

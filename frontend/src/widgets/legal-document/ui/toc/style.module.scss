@@ -1,0 +1,75 @@
+.toc {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 18px;
+  gap: 14px;
+
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 8px;
+}
+
+.title {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 8px;
+  gap: 10px;
+
+  text-decoration: none;
+
+  border-radius: 4px;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.number {
+  flex: none;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 19px;
+
+  color: #13d8f4;
+}
+
+.label {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 145%;
+
+  color: #8c9aa2;
+  transition: color 0.15s ease;
+}
+
+.item:hover .label,
+.active .label {
+  color: #13d8f4;
+}
+
+.active {
+  background: #062c33;
+}
+
+.item:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}

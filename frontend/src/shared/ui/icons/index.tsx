@@ -40,3 +40,4 @@ export { CircleCheckIcon } from "./circle-check-icon";
 export { UsersIcon } from "./users-icon";
 export { ArrowLeftIcon } from "./arrow-left-icon";
 export { LayersIcon } from "./layers-icon";
+export { InfoIcon } from "./info-icon";
