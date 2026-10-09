@@ -6,6 +6,7 @@ import { useToast } from "@/shared/ui/toaster";
 import { sendFeedback } from "../api/feedback";
 import { EMPTY_FIELDS, feedbackReducer } from "./reducer";
 import type { FeedbackFields } from "./types";
+import { validateFeedback } from "./validate";
 
 /** Форма обратной связи: поля, согласие и отправка. */
 export const useFeedbackForm = () => {
@@ -22,16 +23,11 @@ export const useFeedbackForm = () => {
 
   const reset = () => dispatch({ type: "reset" });
 
-  const filled =
-    fields.name.trim().length >= 2 &&
-    fields.email.includes("@") &&
-    fields.subject.trim().length >= 2 &&
-    fields.message.trim().length >= 10 &&
-    fields.consent;
-
   const send = async () => {
-    if (!filled) {
-      toast("Заполните все поля и подтвердите согласие", "error");
+    const error = validateFeedback(fields);
+
+    if (error) {
+      toast(error, "error");
 
       return;
     }
