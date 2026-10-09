@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FeedbackForm } from "@/features/feedback";
 import {
   COMPANY_REQUISITES,
@@ -8,6 +7,7 @@ import {
   SUPPORT_PHONE,
 } from "@/shared/config/site";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
+import Button from "@/shared/ui/button";
 import { ArrowRightIcon, MailIcon, MapPinIcon, PhoneIcon } from "@/shared/ui/icons";
 import RequisitesCard from "@/shared/ui/requisites-card";
 import ChannelCard from "./ui/channel-card";
@@ -102,10 +102,10 @@ const Contacts = () => (
         <nav className={styles.documents} aria-label="Документы магазина">
           <p className={styles.documentsTitle}>Документы магазина</p>
           {SITE_DOCUMENTS.map((document) => (
-            <Link className={styles.documentLink} href={document.href} key={document.href}>
+            <Button variant="ghost" size="sm" href={document.href} key={document.href}>
               {document.label}
               <ArrowRightIcon />
-            </Link>
+            </Button>
           ))}
         </nav>
       </aside>

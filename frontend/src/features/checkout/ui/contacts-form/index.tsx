@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { PERSONAL_DATA_PATH, TERMS_PATH } from "@/shared/config/site";
 import Button from "@/shared/ui/button";
 import Checkbox from "@/shared/ui/checkbox";
 import Field from "@/shared/ui/field";
@@ -92,7 +94,14 @@ const ContactsForm = ({
     </FieldGrid>
 
     <Checkbox checked={consent} onChange={onConsentChange}>
-      Согласен на обработку персональных данных
+      Согласен на{" "}
+      <Link className={styles.link} href={PERSONAL_DATA_PATH}>
+        обработку персональных данных
+      </Link>{" "}
+      и с{" "}
+      <Link className={styles.link} href={TERMS_PATH}>
+        условиями заказа
+      </Link>
     </Checkbox>
 
     <Button className={styles.submit} type="submit">

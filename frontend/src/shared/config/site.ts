@@ -27,9 +27,16 @@ export const COMPANY_REQUISITES = [
 export const COMPANY_REQUISITES_NOTE =
   "Контакты магазина взяты с текущих страниц. Канал для юридических обращений: [Контакт оператора].";
 
+export const PRIVACY_PATH = "/privacy";
+
+export const PERSONAL_DATA_PATH = "/personal-data";
+
+export const TERMS_PATH = "/terms";
+
 export const SITE_DOCUMENTS = [
-  { label: "Политика конфиденциальности", href: "/privacy" },
-  { label: "Обработка персональных данных", href: "/personal-data" },
+  { label: "Политика конфиденциальности", href: PRIVACY_PATH },
+  { label: "Обработка персональных данных", href: PERSONAL_DATA_PATH },
+  { label: "Пользовательское соглашение", href: TERMS_PATH },
 ];
 
 /** Абсолютный адрес страницы или файла сайта. */

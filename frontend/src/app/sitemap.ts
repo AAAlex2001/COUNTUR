@@ -7,7 +7,7 @@ import {
   getProductsSitemap,
   productPath,
 } from "@/entities/product";
-import { absoluteUrl } from "@/shared/config/site";
+import { CONTACTS_PATH, SITE_DOCUMENTS, absoluteUrl } from "@/shared/config/site";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +23,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/"), changeFrequency: "daily", priority: 1 },
     { url: absoluteUrl(CATALOG_PATH), changeFrequency: "daily", priority: 0.9 },
     { url: absoluteUrl(COLLECTIONS_PATH), changeFrequency: "weekly", priority: 0.7 },
-    { url: absoluteUrl("/contacts"), changeFrequency: "monthly", priority: 0.5 },
-    { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.3 },
-    { url: absoluteUrl("/personal-data"), changeFrequency: "yearly", priority: 0.3 },
+    { url: absoluteUrl(CONTACTS_PATH), changeFrequency: "monthly", priority: 0.5 },
+    ...SITE_DOCUMENTS.map((document) => ({
+      url: absoluteUrl(document.href),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
     ...categories.map((category) => ({
       url: absoluteUrl(categoryPath(category.slug)),
       changeFrequency: "daily" as const,

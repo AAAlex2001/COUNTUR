@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PERSONAL_DATA_PATH, PRIVACY_PATH } from "@/shared/config/site";
 import Button from "@/shared/ui/button";
 import Checkbox from "@/shared/ui/checkbox";
 import Field from "@/shared/ui/field";
@@ -88,11 +89,11 @@ const FeedbackForm = () => {
 
       <Checkbox size="lg" checked={fields.consent} onChange={(consent) => change({ consent })}>
         Я даю согласие на{" "}
-        <Link className={styles.link} href="/personal-data">
+        <Link className={styles.link} href={PERSONAL_DATA_PATH}>
           обработку персональных данных
         </Link>{" "}
         для рассмотрения обращения и ознакомлен(а) с{" "}
-        <Link className={styles.link} href="/privacy">
+        <Link className={styles.link} href={PRIVACY_PATH}>
           политикой конфиденциальности
         </Link>
         .

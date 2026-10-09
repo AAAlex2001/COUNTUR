@@ -148,32 +148,7 @@
   color: #13d8f4;
 }
 
-.helpLink,
-.up {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 16px;
-  text-decoration: none;
-
-  color: #13d8f4;
-}
-
-.helpLink svg,
-.upIcon {
-  width: 16px;
-  height: 16px;
-}
-
-.helpEmail:hover,
-.helpLink:hover,
-.up:hover {
+.helpEmail:hover {
   text-decoration: underline;
 }
 
@@ -312,6 +287,8 @@
 }
 
 .upIcon {
+  width: 16px;
+  height: 16px;
   transform: rotate(-90deg);
 }
 

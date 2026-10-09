@@ -15,6 +15,14 @@
   align-self: flex-end;
 }
 
+.link {
+  color: #13d8f4;
+}
+
+.link:hover {
+  text-decoration: none;
+}
+
 .icon {
   flex: none;
   width: 17px;

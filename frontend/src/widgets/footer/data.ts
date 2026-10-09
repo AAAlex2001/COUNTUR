@@ -1,5 +1,7 @@
 import { categoryPath } from "@/entities/product";
 
+import { CONTACTS_PATH, SITE_DOCUMENTS } from "@/shared/config/site";
+
 export { SUPPORT_EMAIL } from "@/shared/config/site";
 
 export type FooterLink = {
@@ -38,9 +40,8 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
     title: "Компания",
     links: [
       { label: "О Countur", href: "/about" },
-      { label: "Контакты", href: "/contacts" },
-      { label: "Политика конфиденциальности", href: "/privacy" },
-      { label: "Обработка персональных данных", href: "/personal-data" },
+      { label: "Контакты", href: CONTACTS_PATH },
+      ...SITE_DOCUMENTS,
       { label: "Панель управления", href: "/admin" },
     ],
   },

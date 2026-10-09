@@ -84,10 +84,10 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
 
         <div className={styles.end}>
           <span className={styles.status}>{document.status}</span>
-          <a className={styles.up} href="#top">
+          <Button variant="ghost" size="sm" href="#top">
             К началу документа
             <ArrowRightIcon className={styles.upIcon} />
-          </a>
+          </Button>
         </div>
       </article>
     </div>

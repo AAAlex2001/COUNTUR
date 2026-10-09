@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@/entities/user";
+import { PRIVACY_PATH, TERMS_PATH } from "@/shared/config/site";
 import Button from "@/shared/ui/button";
 import Checkbox from "@/shared/ui/checkbox";
 import CloseButton from "@/shared/ui/close-button";
@@ -147,11 +148,11 @@ const AuthModal = () => {
 
             <Checkbox size="lg" checked={fields.agree} onChange={(agree) => change({ agree })}>
               Я принимаю{" "}
-              <Link className={styles.link} href="/terms">
+              <Link className={styles.link} href={TERMS_PATH}>
                 условия использования
               </Link>{" "}
               и даю согласие на обработку данных согласно{" "}
-              <Link className={styles.link} href="/privacy">
+              <Link className={styles.link} href={PRIVACY_PATH}>
                 политике конфиденциальности
               </Link>
               .
