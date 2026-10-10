@@ -1,0 +1,110 @@
+/* Разделы нумеруются сами: «1. Общие положения», «2. …» — номер не нужно писать в тексте. */
+.content {
+  counter-reset: section;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 165%;
+
+  color: #b7c3ca;
+}
+
+.content > * + * {
+  margin-top: 12px;
+}
+
+.content h2 {
+  scroll-margin-top: 100px;
+
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 26px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.content h2::before {
+  counter-increment: section;
+  content: counter(section) ". ";
+}
+
+.content > h2:not(:first-child) {
+  margin-top: 28px;
+  padding-top: 28px;
+
+  border-top: 1px solid #273138;
+}
+
+.content h3 {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #f2f7f8;
+}
+
+.content strong {
+  font-weight: 600;
+
+  color: #f2f7f8;
+}
+
+.content a {
+  color: #13d8f4;
+}
+
+.content a:hover {
+  text-decoration: none;
+}
+
+.content ul,
+.content ol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 27px;
+}
+
+.content ul {
+  list-style: none;
+}
+
+.content li {
+  position: relative;
+
+  line-height: 160%;
+}
+
+.content ul > li::before {
+  content: "—";
+
+  position: absolute;
+  left: -27px;
+
+  color: #13d8f4;
+}
+
+.content ol > li::marker {
+  color: #13d8f4;
+}
+
+.content blockquote {
+  box-sizing: border-box;
+  padding: 14px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 160%;
+
+  color: #13d8f4;
+  background: #101519;
+  border: 1px solid #273138;
+  border-radius: 4px;
+}

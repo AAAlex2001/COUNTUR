@@ -1,18 +1,22 @@
-import type { Metadata } from "next";
-import LegalDocumentPage from "@/widgets/legal-document";
-import { TERMS } from "@/widgets/legal-document/documents/terms";
+import { notFound } from "next/navigation";
+import { getDocument } from "@/entities/document";
+import LegalDocumentPage, { documentMetadata } from "@/widgets/legal-document";
 
-export const metadata: Metadata = {
-  title: TERMS.title,
-  description: TERMS.description,
-  alternates: { canonical: TERMS.path },
-};
+const SLUG = "terms";
 
-/** Пользовательское соглашение. */
-export default function TermsRoute() {
+export const dynamic = "force-dynamic";
+
+export const generateMetadata = () => documentMetadata(SLUG);
+
+/** Пользовательское соглашение. Текст правится в админке. */
+export default async function TermsRoute() {
+  const document = await getDocument(SLUG);
+
+  if (!document) notFound();
+
   return (
     <main>
-      <LegalDocumentPage document={TERMS} />
+      <LegalDocumentPage document={document} />
     </main>
   );
 }

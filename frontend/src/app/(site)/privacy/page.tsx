@@ -1,18 +1,22 @@
-import type { Metadata } from "next";
-import LegalDocumentPage from "@/widgets/legal-document";
-import { PRIVACY_POLICY } from "@/widgets/legal-document/documents/privacy";
+import { notFound } from "next/navigation";
+import { getDocument } from "@/entities/document";
+import LegalDocumentPage, { documentMetadata } from "@/widgets/legal-document";
 
-export const metadata: Metadata = {
-  title: PRIVACY_POLICY.title,
-  description: PRIVACY_POLICY.description,
-  alternates: { canonical: PRIVACY_POLICY.path },
-};
+const SLUG = "privacy";
 
-/** Политика конфиденциальности. */
-export default function PrivacyRoute() {
+export const dynamic = "force-dynamic";
+
+export const generateMetadata = () => documentMetadata(SLUG);
+
+/** Политика конфиденциальности. Текст правится в админке. */
+export default async function PrivacyRoute() {
+  const document = await getDocument(SLUG);
+
+  if (!document) notFound();
+
   return (
     <main>
-      <LegalDocumentPage document={PRIVACY_POLICY} />
+      <LegalDocumentPage document={document} />
     </main>
   );
 }

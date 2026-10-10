@@ -168,122 +168,12 @@
   border-radius: 8px;
 }
 
-.notice {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 18px;
-  gap: 12px;
-
-  background: #062c33;
-  border: 1px solid #273138;
-  border-radius: 4px;
-}
-
-.noticeIcon {
-  flex: none;
-  width: 20px;
-  height: 20px;
-
-  color: #13d8f4;
-}
-
-.noticeTexts {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.noticeTitle {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 17px;
-
-  color: #13d8f4;
-}
-
-.noticeText {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 155%;
-
-  color: #b7c3ca;
-}
-
-.sections {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 28px;
-}
-
-.statement {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 20px;
-  gap: 10px;
-
-  background: #101519;
-  border: 1px solid #273138;
-  border-radius: 8px;
-}
-
-.statementLabel {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 11px;
-  line-height: 15px;
-  text-transform: uppercase;
-
-  color: #13d8f4;
-}
-
-.statementText {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 165%;
-
-  color: #f2f7f8;
-}
-
-.statementNote {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 155%;
-
-  color: #8c9aa2;
-}
-
 .end {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 16px;
-}
-
-.status {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 11px;
-  line-height: 15px;
-  text-transform: uppercase;
-
-  color: #8c9aa2;
 }
 
 .upIcon {

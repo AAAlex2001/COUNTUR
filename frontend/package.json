@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/react": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
     "classnames": "^2.5.1",
     "keen-slider": "^6.8.6",
     "lightgallery": "^2.9.0",

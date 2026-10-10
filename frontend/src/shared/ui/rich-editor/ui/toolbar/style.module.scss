@@ -1,0 +1,40 @@
+.toolbar {
+  position: sticky;
+  top: 77px;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px;
+  gap: 6px;
+
+  background: #101519;
+  border-bottom: 1px solid #273138;
+  border-radius: 4px 4px 0 0;
+}
+
+.group,
+.history {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.group + .group {
+  padding-left: 6px;
+
+  border-left: 1px solid #273138;
+}
+
+.history {
+  margin-left: auto;
+}
+
+@media (min-width: 1440px) {
+  .toolbar {
+    top: 0;
+  }
+}

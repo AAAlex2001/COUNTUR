@@ -1,0 +1,53 @@
+.button {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  width: 32px;
+  height: 32px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+
+  color: #8c9aa2;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.button:hover:not(:disabled) {
+  color: #f2f7f8;
+  background: #151c21;
+}
+
+.button[aria-pressed="true"] {
+  color: #13d8f4;
+  background: #062c33;
+  border-color: #13d8f4;
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.button:focus-visible {
+  outline: 2px solid #13d8f4;
+  outline-offset: 2px;
+}

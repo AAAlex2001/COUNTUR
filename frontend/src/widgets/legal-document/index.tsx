@@ -1,97 +1,99 @@
-import { CONTACTS_PATH, SUPPORT_EMAIL } from "@/shared/config/site";
+import type { Metadata } from "next";
+import { documentPath, getDocument, type LegalDocument } from "@/entities/document";
+import {
+  COMPANY_REQUISITES,
+  COMPANY_REQUISITES_NOTE,
+  CONTACTS_PATH,
+  SUPPORT_EMAIL,
+} from "@/shared/config/site";
+import { formatShortDate } from "@/shared/lib/date";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
-import { ArrowRightIcon, InfoIcon } from "@/shared/ui/icons";
+import { ArrowRightIcon } from "@/shared/ui/icons";
 import RequisitesCard from "@/shared/ui/requisites-card";
-import type { LegalDocument } from "./model/types";
-import Section from "./ui/section";
+import RichContent from "@/shared/ui/rich-content";
+import { withHeadings } from "./lib/headings";
 import Toc from "./ui/toc";
 import styles from "./style.module.scss";
 
-export type { LegalDocument } from "./model/types";
+/** Заголовок, описание и canonical страницы документа из базы. */
+export const documentMetadata = async (slug: string): Promise<Metadata> => {
+  const document = await getDocument(slug);
+
+  if (!document) return { title: "Документ не найден", robots: { index: false } };
+
+  return {
+    title: document.title,
+    description: document.description || undefined,
+    alternates: { canonical: documentPath(slug) },
+  };
+};
 
 type LegalDocumentPageProps = {
   document: LegalDocument;
 };
 
-/** Страница документа: шапка с редакцией, оглавление и помощь слева, текст и реквизиты справа. */
-const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => (
-  <section className={styles.page}>
-    <div className={styles.intro}>
-      <Breadcrumbs
-        items={[{ label: "Главная", href: "/" }, { label: "Документы" }, { label: document.title }]}
-      />
+/** Страница документа: шапка с датой редакции, оглавление и помощь слева, текст и реквизиты справа. */
+const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => {
+  const { content, headings } = withHeadings(document.content);
 
-      <div className={styles.heading}>
-        <p className={styles.eyebrow}>{document.eyebrow}</p>
-        <h1 className={styles.title}>{document.title}</h1>
-        <p className={styles.description}>{document.description}</p>
-      </div>
-
-      <p className={styles.revision}>
-        Дата редакции
-        <span className={styles.date}>{document.revision}</span>
-      </p>
-    </div>
-
-    <hr className={styles.divider} />
-
-    <div className={styles.columns}>
-      <aside className={styles.sidebar}>
-        <Toc sections={document.sections} />
-
-        <div className={styles.help}>
-          <p className={styles.helpTitle}>Есть вопрос?</p>
-          <p className={styles.helpText}>Уточните информацию у поддержки магазина.</p>
-          <a className={styles.helpEmail} href={`mailto:${SUPPORT_EMAIL}`}>
-            {SUPPORT_EMAIL}
-          </a>
-          <Button variant="ghost" size="sm" href={CONTACTS_PATH}>
-            Контакты
-            <ArrowRightIcon />
-          </Button>
-        </div>
-      </aside>
-
-      <article className={styles.document} id="top">
-        <div className={styles.notice}>
-          <InfoIcon className={styles.noticeIcon} />
-          <div className={styles.noticeTexts}>
-            <p className={styles.noticeTitle}>{document.notice.title}</p>
-            <p className={styles.noticeText}>{document.notice.text}</p>
-          </div>
-        </div>
-
-        <div className={styles.sections}>
-          {document.sections.map((section, index) => (
-            <Section key={section.id} section={section} number={index + 1} />
-          ))}
-        </div>
-
-        {document.statement && (
-          <div className={styles.statement}>
-            <p className={styles.statementLabel}>{document.statement.label}</p>
-            <p className={styles.statementText}>{document.statement.text}</p>
-            <p className={styles.statementNote}>{document.statement.note}</p>
-          </div>
-        )}
-
-        <RequisitesCard
-          title={document.requisites.title}
-          items={document.requisites.items}
-          note={document.requisites.note}
+  return (
+    <section className={styles.page}>
+      <div className={styles.intro}>
+        <Breadcrumbs
+          items={[{ label: "Главная", href: "/" }, { label: "Документы" }, { label: document.title }]}
         />
 
-        <div className={styles.end}>
-          <span className={styles.status}>{document.status}</span>
-          <Button variant="ghost" size="sm" href="#top">
-            К началу документа
-            <ArrowRightIcon className={styles.upIcon} />
-          </Button>
+        <div className={styles.heading}>
+          <p className={styles.eyebrow}>Документы магазина</p>
+          <h1 className={styles.title}>{document.title}</h1>
+          {document.description && <p className={styles.description}>{document.description}</p>}
         </div>
-      </article>
-    </div>
-  </section>
-);
+
+        <p className={styles.revision}>
+          Дата редакции
+          <span className={styles.date}>{formatShortDate(document.updated_at)}</span>
+        </p>
+      </div>
+
+      <hr className={styles.divider} />
+
+      <div className={styles.columns}>
+        <aside className={styles.sidebar}>
+          {headings.length > 0 && <Toc headings={headings} />}
+
+          <div className={styles.help}>
+            <p className={styles.helpTitle}>Есть вопрос?</p>
+            <p className={styles.helpText}>Уточните информацию у поддержки магазина.</p>
+            <a className={styles.helpEmail} href={`mailto:${SUPPORT_EMAIL}`}>
+              {SUPPORT_EMAIL}
+            </a>
+            <Button variant="ghost" size="sm" href={CONTACTS_PATH}>
+              Контакты
+              <ArrowRightIcon />
+            </Button>
+          </div>
+        </aside>
+
+        <article className={styles.document} id="top">
+          <RichContent html={content} />
+
+          <RequisitesCard
+            title="Контакты оператора"
+            items={COMPANY_REQUISITES}
+            note={COMPANY_REQUISITES_NOTE}
+          />
+
+          <div className={styles.end}>
+            <Button variant="ghost" size="sm" href="#top">
+              К началу документа
+              <ArrowRightIcon className={styles.upIcon} />
+            </Button>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+};
 
 export default LegalDocumentPage;

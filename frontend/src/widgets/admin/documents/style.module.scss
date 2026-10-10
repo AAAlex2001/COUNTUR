@@ -1,0 +1,46 @@
+.documents {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.title {
+  font-family: "Roboto Condensed";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 35px;
+  text-transform: uppercase;
+
+  color: #f2f7f8;
+}
+
+.description,
+.error {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+
+  color: #8c9aa2;
+}
+
+.error {
+  color: #ff9d3d;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 42px;
+    line-height: 49px;
+  }
+}

@@ -1,0 +1,34 @@
+.editor {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  background: #0c1114;
+  border: 1px solid #3a4851;
+  border-radius: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.editor:focus-within {
+  border-color: #13d8f4;
+}
+
+.area {
+  box-sizing: border-box;
+  padding: 20px;
+
+  min-height: 420px;
+
+  outline: none;
+}
+
+.placeholder {
+  min-height: 465px;
+}
+
+@media (min-width: 768px) {
+  .area {
+    padding: 28px 32px;
+  }
+}

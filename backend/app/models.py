@@ -12,6 +12,7 @@ from app.catalog.models import (
 )
 from app.collections.models import Collection, collection_products
 from app.database import Base
+from app.documents.models import Document
 from app.favorites.models import Favorite
 from app.feedback.models import FeedbackMessage
 from app.landing.models import Hero, Promotion
@@ -30,6 +31,7 @@ __all__ = [
     "Review",
     "Collection",
     "collection_products",
+    "Document",
     "Favorite",
     "FeedbackMessage",
     "Hero",
