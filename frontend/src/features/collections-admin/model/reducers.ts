@@ -45,6 +45,9 @@ export const formReducer = (state: FormState, action: FormAction): FormState => 
     case "fields/change":
       return { ...state, fields: { ...state.fields, ...action.changes } };
 
+    case "errors/show":
+      return { ...state, showErrors: true };
+
     case "save/start":
       return { ...state, pending: true };
 

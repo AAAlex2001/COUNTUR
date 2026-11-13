@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { errorMessage } from "@/shared/lib/errors";
+import { errorMessage, INVALID_FORM_MESSAGE } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
 import { fetchMessage, replyToMessage } from "../api/feedback";
 import { messageReducer } from "./reducers";
+
+const REPLY_MIN_LENGTH = 2;
 
 /** Карточка обращения в админке и отправка ответа на почту. */
 export const useFeedbackMessage = (messageId: number) => {
@@ -14,7 +16,10 @@ export const useFeedbackMessage = (messageId: number) => {
     failed: false,
     reply: "",
     pending: false,
+    showErrors: false,
   });
+  const replyError =
+    state.showErrors && state.reply.trim().length < REPLY_MIN_LENGTH ? "Напишите текст ответа" : undefined;
 
   useEffect(() => {
     fetchMessage(messageId)
@@ -28,7 +33,11 @@ export const useFeedbackMessage = (messageId: number) => {
   const send = async () => {
     const text = state.reply.trim();
 
-    if (text.length < 2) return;
+    if (text.length < REPLY_MIN_LENGTH) {
+      dispatch({ type: "errors/show" });
+      toast(INVALID_FORM_MESSAGE, "error");
+      return;
+    }
 
     dispatch({ type: "send/start" });
 
@@ -41,5 +50,5 @@ export const useFeedbackMessage = (messageId: number) => {
     }
   };
 
-  return { state, changeReply, send };
+  return { state, replyError, changeReply, send };
 };

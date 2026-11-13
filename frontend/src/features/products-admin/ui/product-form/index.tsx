@@ -27,7 +27,7 @@ const ProductForm = ({
   onSaved,
   onCategoryChange,
 }: ProductFormProps) => {
-  const { state, category, change, addDrafts, moveDraft, removeDraft, save } = useProductForm(
+  const { state, category, errors, change, addDrafts, moveDraft, removeDraft, save } = useProductForm(
     product,
     categories,
     onSaved,
@@ -51,9 +51,15 @@ const ProductForm = ({
         />
       )}
 
-      <MainFields fields={fields} categories={categories} brands={brands} onChange={change} />
-      <PriceFields fields={fields} onChange={change} />
-      <DescriptionFields fields={fields} onChange={change} />
+      <MainFields
+        fields={fields}
+        errors={errors}
+        categories={categories}
+        brands={brands}
+        onChange={change}
+      />
+      <PriceFields fields={fields} errors={errors} onChange={change} />
+      <DescriptionFields fields={fields} errors={errors} onChange={change} />
 
       {category && (
         <SpecFields
@@ -64,7 +70,7 @@ const ProductForm = ({
         />
       )}
 
-      <Button className={styles.submit} type="submit" loading={state.pending} disabled={!category}>
+      <Button className={styles.submit} type="submit" loading={state.pending}>
         {product ? "Сохранить" : "Создать товар"}
       </Button>
     </form>

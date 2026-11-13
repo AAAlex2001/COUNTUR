@@ -27,11 +27,14 @@ export const messageReducer = (state: MessageState, action: MessageAction): Mess
     case "reply/change":
       return { ...state, reply: action.reply };
 
+    case "errors/show":
+      return { ...state, showErrors: true };
+
     case "send/start":
       return { ...state, pending: true };
 
     case "send/success":
-      return { ...state, message: action.message, reply: "", pending: false };
+      return { ...state, message: action.message, reply: "", pending: false, showErrors: false };
 
     case "send/error":
       return { ...state, pending: false };

@@ -14,7 +14,7 @@
 
   color: #f2f7f8;
   background: #101519;
-  border: 1px solid #3a4851;
+  border: 1px solid var(--field-border, #3a4851);
   border-radius: 4px;
   outline: none;
   resize: vertical;

@@ -33,6 +33,8 @@ export type CollectionFields = {
   products: ProductCardData[];
 };
 
+export type CollectionErrors = Partial<Record<keyof CollectionFields, string>>;
+
 export type ListState = {
   collections: AdminCollection[] | null;
   failed: boolean;
@@ -53,10 +55,12 @@ export type EditorAction =
 export type FormState = {
   fields: CollectionFields;
   pending: boolean;
+  showErrors: boolean;
 };
 
 export type FormAction =
   | { type: "fields/change"; changes: Partial<CollectionFields> }
+  | { type: "errors/show" }
   | { type: "save/start" }
   | { type: "save/finish" };
 

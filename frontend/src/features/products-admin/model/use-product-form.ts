@@ -4,18 +4,19 @@ import { useRouter } from "next/navigation";
 import { useReducer } from "react";
 import { adminProductPath } from "@/shared/lib/admin-paths";
 import { swap } from "@/shared/lib/array";
-import { errorMessage } from "@/shared/lib/errors";
+import { errorMessage, INVALID_FORM_MESSAGE } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
 import { createProduct, updateProduct, uploadProductImage } from "../api/products";
 import { formReducer } from "./reducers";
 import type { AdminCategory, AdminProduct, ProductFields, ProductPayload } from "./types";
+import { validateProduct } from "./validate";
 
 /** Поля формы из товара. Для нового товара — пустые, с первой категорией. */
 const toFields = (product: AdminProduct | null, categories: AdminCategory[]): ProductFields => ({
   name: product?.name ?? "",
   sku: product?.sku ?? "",
   categoryId: String(product?.category_id ?? categories[0]?.id ?? ""),
-  brandId: String(product?.brand_id ?? ""),
+  brand: product?.brand?.name ?? "",
   shortDescription: product?.short_description ?? "",
   description: product?.description ?? "",
   highlights: product?.highlights.join("\n") ?? "",
@@ -33,7 +34,7 @@ const toPayload = (fields: ProductFields, category: AdminCategory): ProductPaylo
   name: fields.name.trim(),
   sku: fields.sku.trim() || null,
   category_id: category.id,
-  brand_id: fields.brandId ? Number(fields.brandId) : null,
+  brand_name: fields.brand.trim() || null,
   short_description: fields.shortDescription.trim() || null,
   description: fields.description.trim() || null,
   highlights: fields.highlights
@@ -66,10 +67,12 @@ export const useProductForm = (
     fields: toFields(product, categories),
     drafts: [],
     pending: false,
+    showErrors: false,
   });
   const { fields, drafts } = state;
 
   const category = categories.find((item) => String(item.id) === fields.categoryId);
+  const errors = state.showErrors ? validateProduct(fields, category) : {};
 
   const change = (changes: Partial<ProductFields>) => dispatch({ type: "fields/change", changes });
 
@@ -91,7 +94,11 @@ export const useProductForm = (
 
   /** Сохранить товар. Новый товар создаётся, получает выбранные фото и открывается. */
   const save = async () => {
-    if (!category) return;
+    if (!category || Object.keys(validateProduct(fields, category)).length) {
+      dispatch({ type: "errors/show" });
+      toast(INVALID_FORM_MESSAGE, "error");
+      return;
+    }
 
     dispatch({ type: "save/start" });
 
@@ -121,5 +128,5 @@ export const useProductForm = (
     }
   };
 
-  return { state, category, change, addDrafts, moveDraft, removeDraft, save };
+  return { state, category, errors, change, addDrafts, moveDraft, removeDraft, save };
 };

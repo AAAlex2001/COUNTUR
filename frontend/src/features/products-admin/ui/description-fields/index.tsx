@@ -1,15 +1,16 @@
 import Field from "@/shared/ui/field";
 import Panel from "@/shared/ui/panel";
 import Textarea from "@/shared/ui/textarea";
-import type { ProductFields } from "../../model/types";
+import type { ProductErrors, ProductFields } from "../../model/types";
 
 type DescriptionFieldsProps = {
   fields: ProductFields;
+  errors: ProductErrors;
   onChange: (changes: Partial<ProductFields>) => void;
 };
 
 /** Тексты товара: краткое и полное описание, ключевые характеристики. */
-const DescriptionFields = ({ fields, onChange }: DescriptionFieldsProps) => (
+const DescriptionFields = ({ fields, errors, onChange }: DescriptionFieldsProps) => (
   <Panel title="Описание">
     <Field label="Краткое описание">
       <Textarea
@@ -30,7 +31,11 @@ const DescriptionFields = ({ fields, onChange }: DescriptionFieldsProps) => (
       />
     </Field>
 
-    <Field label="Ключевые характеристики" hint="Каждая с новой строки, не больше восьми">
+    <Field
+      label="Ключевые характеристики"
+      hint="Каждая с новой строки, не больше восьми"
+      error={errors.highlights}
+    >
       <Textarea
         ariaLabel="Ключевые характеристики"
         value={fields.highlights}

@@ -236,7 +236,9 @@ class ProductCreateSchema(BaseModel):
     slug: str | None = Field(None, max_length=255, pattern=SLUG_PATTERN)
     sku: str | None = Field(None, min_length=1, max_length=64, description="Артикул")
     category_id: int = Field(..., description="ID категории")
-    brand_id: int | None = Field(None, description="ID бренда")
+    brand_name: str | None = Field(
+        None, max_length=100, description="Бренд. Если такого нет, он создаётся"
+    )
     short_description: str | None = Field(None, max_length=500)
     description: str | None = None
     highlights: list[str] = Field(default_factory=list, max_length=8)
@@ -256,7 +258,7 @@ class ProductUpdateSchema(BaseModel):
     slug: str | None = Field(None, max_length=255, pattern=SLUG_PATTERN)
     sku: str | None = Field(None, min_length=1, max_length=64)
     category_id: int | None = None
-    brand_id: int | None = None
+    brand_name: str | None = Field(None, max_length=100, description="Пусто — без бренда")
     short_description: str | None = Field(None, max_length=500)
     description: str | None = None
     highlights: list[str] | None = Field(None, max_length=8)

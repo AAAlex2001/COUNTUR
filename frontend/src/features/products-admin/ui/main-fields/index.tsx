@@ -4,20 +4,23 @@ import Field from "@/shared/ui/field";
 import FieldGrid from "@/shared/ui/field-grid";
 import Input from "@/shared/ui/input";
 import Panel from "@/shared/ui/panel";
-import type { AdminCategory, ProductFields } from "../../model/types";
+import type { AdminCategory, ProductErrors, ProductFields } from "../../model/types";
+
+const BRANDS_LIST_ID = "product-brands";
 
 type MainFieldsProps = {
   fields: ProductFields;
+  errors: ProductErrors;
   categories: AdminCategory[];
   brands: Brand[];
   onChange: (changes: Partial<ProductFields>) => void;
 };
 
-/** Основные поля товара: название, категория, бренд и артикул. */
-const MainFields = ({ fields, categories, brands, onChange }: MainFieldsProps) => (
+/** Основные поля товара: название, категория, бренд и артикул. Бренд вписывается текстом. */
+const MainFields = ({ fields, errors, categories, brands, onChange }: MainFieldsProps) => (
   <Panel title="Основное">
     <FieldGrid>
-      <Field label="Название" wide>
+      <Field label="Название" error={errors.name} wide>
         <Input
           ariaLabel="Название"
           maxLength={255}
@@ -26,7 +29,7 @@ const MainFields = ({ fields, categories, brands, onChange }: MainFieldsProps) =
         />
       </Field>
 
-      <Field label="Категория">
+      <Field label="Категория" error={errors.categoryId}>
         <Dropdown
           value={fields.categoryId}
           options={categories.map((item) => ({ value: String(item.id), label: item.name }))}
@@ -34,15 +37,20 @@ const MainFields = ({ fields, categories, brands, onChange }: MainFieldsProps) =
         />
       </Field>
 
-      <Field label="Бренд">
-        <Dropdown
-          value={fields.brandId}
-          options={[
-            { value: "", label: "Без бренда" },
-            ...brands.map((brand) => ({ value: String(brand.id), label: brand.name })),
-          ]}
-          onChange={(brandId) => onChange({ brandId })}
+      <Field label="Бренд" hint="Если такого бренда ещё нет, он создастся при сохранении">
+        <Input
+          ariaLabel="Бренд"
+          placeholder="Без бренда"
+          maxLength={100}
+          list={BRANDS_LIST_ID}
+          value={fields.brand}
+          onChange={(brand) => onChange({ brand })}
         />
+        <datalist id={BRANDS_LIST_ID}>
+          {brands.map((brand) => (
+            <option key={brand.id} value={brand.name} />
+          ))}
+        </datalist>
       </Field>
 
       <Field label="Артикул">

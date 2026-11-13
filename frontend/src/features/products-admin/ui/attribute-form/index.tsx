@@ -14,12 +14,12 @@ type AttributeFormProps = {
 
 /** Строка «добавить параметр»: группа, название и кнопка. Параметр появится у всей категории. */
 const AttributeForm = ({ category, onSaved }: AttributeFormProps) => {
-  const { state, change, save } = useAttributeForm(category, onSaved);
+  const { state, errors, change, save } = useAttributeForm(category, onSaved);
   const { fields } = state;
 
   return (
     <div className={styles.form}>
-      <Field label="Группа">
+      <Field label="Группа" error={errors.group}>
         <Input
           ariaLabel="Группа параметра"
           maxLength={60}
@@ -29,7 +29,11 @@ const AttributeForm = ({ category, onSaved }: AttributeFormProps) => {
         />
       </Field>
 
-      <Field label="Новый параметр" hint={`Добавится ко всем товарам категории «${category.name}»`}>
+      <Field
+        label="Новый параметр"
+        hint={`Добавится ко всем товарам категории «${category.name}»`}
+        error={errors.name}
+      >
         <Input
           ariaLabel="Название параметра"
           maxLength={100}
@@ -43,7 +47,6 @@ const AttributeForm = ({ category, onSaved }: AttributeFormProps) => {
         className={styles.submit}
         variant="outline"
         loading={state.pending}
-        disabled={!fields.name.trim()}
         onClick={save}
       >
         Добавить

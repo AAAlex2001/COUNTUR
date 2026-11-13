@@ -45,8 +45,16 @@ export const editorReducer = (state: EditorState, action: EditorAction): EditorS
     case "load/error":
       return { ...state, status: "failed" };
 
-    case "product/change":
-      return { ...state, product: action.product };
+    case "product/change": {
+      const { brand } = action.product;
+      const known = !brand || state.brands.some((item) => item.id === brand.id);
+
+      return {
+        ...state,
+        product: action.product,
+        brands: known ? state.brands : [...state.brands, brand],
+      };
+    }
 
     case "category/change":
       return {
@@ -69,8 +77,11 @@ export const attributeReducer = (state: AttributeState, action: AttributeAction)
     case "save/start":
       return { ...state, pending: true };
 
+    case "errors/show":
+      return { ...state, showErrors: true };
+
     case "save/success":
-      return { fields: { ...state.fields, name: "" }, pending: false };
+      return { fields: { ...state.fields, name: "" }, pending: false, showErrors: false };
 
     case "save/error":
       return { ...state, pending: false };
@@ -87,6 +98,9 @@ export const formReducer = (state: FormState, action: FormAction): FormState => 
 
     case "drafts/change":
       return { ...state, drafts: action.drafts };
+
+    case "errors/show":
+      return { ...state, showErrors: true };
 
     case "save/start":
       return { ...state, pending: true };

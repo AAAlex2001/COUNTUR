@@ -9,7 +9,7 @@ export const SITE_NAME = "COUNTUR";
 export const SITE_DESCRIPTION =
   "Интернет-магазин комплектующих для ПК: процессоры, видеокарты, материнские платы, память, накопители и готовые подборки для производительной сборки.";
 
-export const SUPPORT_EMAIL = "support@countur.ru";
+export const SUPPORT_EMAIL = "sohinaleksandr724@gmail.com";
 
 export const SUPPORT_PHONE = "8 800 555-01-90";
 
@@ -33,10 +33,13 @@ export const PERSONAL_DATA_PATH = "/personal-data";
 
 export const TERMS_PATH = "/terms";
 
+export const OFFER_PATH = "/offer";
+
 export const SITE_DOCUMENTS = [
   { label: "Политика конфиденциальности", href: PRIVACY_PATH },
   { label: "Обработка персональных данных", href: PERSONAL_DATA_PATH },
   { label: "Пользовательское соглашение", href: TERMS_PATH },
+  { label: "Договор оферты", href: OFFER_PATH },
 ];
 
 /** Абсолютный адрес страницы или файла сайта. */

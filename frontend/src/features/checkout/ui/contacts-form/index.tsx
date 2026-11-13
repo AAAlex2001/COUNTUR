@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PERSONAL_DATA_PATH, TERMS_PATH } from "@/shared/config/site";
+import { OFFER_PATH, PERSONAL_DATA_PATH } from "@/shared/config/site";
 import Button from "@/shared/ui/button";
 import Checkbox from "@/shared/ui/checkbox";
 import Field from "@/shared/ui/field";
@@ -99,7 +99,7 @@ const ContactsForm = ({
         обработку персональных данных
       </Link>{" "}
       и с{" "}
-      <Link className={styles.link} href={TERMS_PATH}>
+      <Link className={styles.link} href={OFFER_PATH}>
         условиями заказа
       </Link>
     </Checkbox>

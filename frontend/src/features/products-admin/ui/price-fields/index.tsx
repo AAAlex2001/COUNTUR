@@ -5,7 +5,7 @@ import Field from "@/shared/ui/field";
 import FieldGrid from "@/shared/ui/field-grid";
 import Input from "@/shared/ui/input";
 import Panel from "@/shared/ui/panel";
-import type { ProductFields } from "../../model/types";
+import type { ProductErrors, ProductFields } from "../../model/types";
 
 const AVAILABILITY_OPTIONS = Object.entries(AVAILABILITY_LABELS).map(([value, label]) => ({
   value,
@@ -14,14 +14,15 @@ const AVAILABILITY_OPTIONS = Object.entries(AVAILABILITY_LABELS).map(([value, la
 
 type PriceFieldsProps = {
   fields: ProductFields;
+  errors: ProductErrors;
   onChange: (changes: Partial<ProductFields>) => void;
 };
 
 /** Цена, скидка, наличие, остаток и метка «Хит». */
-const PriceFields = ({ fields, onChange }: PriceFieldsProps) => (
+const PriceFields = ({ fields, errors, onChange }: PriceFieldsProps) => (
   <Panel title="Цена и наличие">
     <FieldGrid>
-      <Field label="Цена, ₽">
+      <Field label="Цена, ₽" error={errors.price}>
         <Input
           ariaLabel="Цена"
           inputMode="decimal"
@@ -30,7 +31,7 @@ const PriceFields = ({ fields, onChange }: PriceFieldsProps) => (
         />
       </Field>
 
-      <Field label="Цена до скидки, ₽" hint="Пусто — товар без скидки">
+      <Field label="Цена до скидки, ₽" hint="Пусто — товар без скидки" error={errors.oldPrice}>
         <Input
           ariaLabel="Цена до скидки"
           inputMode="decimal"
@@ -47,7 +48,11 @@ const PriceFields = ({ fields, onChange }: PriceFieldsProps) => (
         />
       </Field>
 
-      <Field label="Остаток, шт." hint="Пусто — остаток не учитывается">
+      <Field
+        label="Остаток, шт."
+        hint="Пусто — остаток не учитывается"
+        error={errors.stockQuantity}
+      >
         <Input
           ariaLabel="Остаток"
           inputMode="numeric"

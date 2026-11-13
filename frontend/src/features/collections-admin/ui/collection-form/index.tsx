@@ -19,7 +19,7 @@ type CollectionFormProps = {
 
 /** Форма подборки: название, описание, где показывать и состав. */
 const CollectionForm = ({ collection, onSaved }: CollectionFormProps) => {
-  const { state, change, addProduct, removeProduct, save } = useCollectionForm(collection, onSaved);
+  const { state, errors, change, addProduct, removeProduct, save } = useCollectionForm(collection, onSaved);
   const { fields } = state;
 
   return (
@@ -32,7 +32,7 @@ const CollectionForm = ({ collection, onSaved }: CollectionFormProps) => {
     >
       <Panel title="Основное">
         <FieldGrid>
-          <Field label="Название" wide>
+          <Field label="Название" error={errors.title} wide>
             <Input
               ariaLabel="Название"
               maxLength={150}
@@ -83,7 +83,6 @@ const CollectionForm = ({ collection, onSaved }: CollectionFormProps) => {
         className={styles.submit}
         type="submit"
         loading={state.pending}
-        disabled={fields.title.trim().length < 2}
       >
         {collection ? "Сохранить" : "Создать подборку"}
       </Button>

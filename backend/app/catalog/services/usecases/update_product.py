@@ -2,11 +2,7 @@
 
 from app.catalog.models import Product, PublicationStatus
 from app.catalog.schemas import ProductUpdateSchema
-from app.catalog.services.exceptions import (
-    BrandNotFoundError,
-    CategoryNotFoundError,
-    SkuAlreadyTakenError,
-)
+from app.catalog.services.exceptions import CategoryNotFoundError, SkuAlreadyTakenError
 from app.catalog.services.repo import BrandRepository, CategoryRepository, ProductRepository
 from app.catalog.services.validators import (
     apply_specs,
@@ -46,9 +42,10 @@ class UpdateProductUseCase:
         if category is None:
             raise CategoryNotFoundError(category_id)
 
-        brand_id = changes.get("brand_id")
-        if brand_id is not None and await self.brands.get_by_id(brand_id) is None:
-            raise BrandNotFoundError(brand_id)
+        if "brand_name" in changes:
+            brand_name = changes.pop("brand_name")
+            brand = await self.brands.get_or_create(brand_name) if brand_name else None
+            changes["brand_id"] = brand.id if brand else None
 
         sku = changes.get("sku")
         if sku and await self.products.sku_taken(sku, exclude_id=product.id):

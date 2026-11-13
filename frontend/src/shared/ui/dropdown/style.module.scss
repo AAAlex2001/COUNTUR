@@ -17,14 +17,14 @@
   height: 42px;
 
   background: #101519;
-  border: 1px solid #273138;
+  border: 1px solid var(--field-border, #273138);
   border-radius: 4px;
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
 
 .trigger:hover {
-  border-color: #3a4851;
+  border-color: var(--field-border, #3a4851);
 }
 
 .trigger:focus-visible,

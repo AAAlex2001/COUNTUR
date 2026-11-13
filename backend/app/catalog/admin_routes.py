@@ -47,7 +47,6 @@ from app.catalog.schemas import (
 )
 from app.catalog.services.exceptions import (
     AttributeAlreadyExistsError,
-    BrandNotFoundError,
     CategoryInUseError,
     CategoryNotFoundError,
     ImageNotFoundError,
@@ -263,10 +262,10 @@ async def create_product(
 
     try:
         product = await usecase.execute(payload)
-    except (CategoryNotFoundError, BrandNotFoundError) as error:
+    except CategoryNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Категория или бренд не найдены",
+            detail="Категория не найдена",
         ) from error
     except SkuAlreadyTakenError as error:
         raise HTTPException(
@@ -301,10 +300,10 @@ async def update_product(
 
     try:
         updated = await usecase.execute(product, payload)
-    except (CategoryNotFoundError, BrandNotFoundError) as error:
+    except CategoryNotFoundError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Категория или бренд не найдены",
+            detail="Категория не найдена",
         ) from error
     except SkuAlreadyTakenError as error:
         raise HTTPException(

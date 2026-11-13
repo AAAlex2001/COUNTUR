@@ -37,12 +37,14 @@ export type MessageState = {
   failed: boolean;
   reply: string;
   pending: boolean;
+  showErrors: boolean;
 };
 
 export type MessageAction =
   | { type: "load/success"; message: FeedbackMessage }
   | { type: "load/error" }
   | { type: "reply/change"; reply: string }
+  | { type: "errors/show" }
   | { type: "send/start" }
   | { type: "send/success"; message: FeedbackMessage }
   | { type: "send/error" };

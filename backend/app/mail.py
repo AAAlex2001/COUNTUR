@@ -21,9 +21,13 @@ def deliver(to: str, subject: str, body: str) -> None:
     letter["Subject"] = subject
     letter.set_content(body)
 
+    # 465 — сразу шифрованное соединение (Яндекс, Mail.ru), 587 — обычное с переходом на TLS.
+    ssl = settings.smtp_port == 465
+    connect = smtplib.SMTP_SSL if ssl else smtplib.SMTP
+
     try:
-        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
-            if settings.smtp_tls:
+        with connect(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
+            if settings.smtp_tls and not ssl:
                 smtp.starttls()
             if settings.smtp_user:
                 smtp.login(settings.smtp_user, settings.smtp_password)

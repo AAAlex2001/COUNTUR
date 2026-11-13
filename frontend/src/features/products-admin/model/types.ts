@@ -38,7 +38,7 @@ export type ProductPayload = {
   name: string;
   sku: string | null;
   category_id: number;
-  brand_id: number | null;
+  brand_name: string | null;
   short_description: string | null;
   description: string | null;
   highlights: string[];
@@ -55,7 +55,7 @@ export type ProductFields = {
   name: string;
   sku: string;
   categoryId: string;
-  brandId: string;
+  brand: string;
   shortDescription: string;
   description: string;
   highlights: string;
@@ -67,6 +67,8 @@ export type ProductFields = {
   sortOrder: string;
   specs: Record<number, string>;
 };
+
+export type ProductErrors = Partial<Record<keyof ProductFields, string>>;
 
 export type DraftImage = {
   id: string;
@@ -111,11 +113,13 @@ export type FormState = {
   fields: ProductFields;
   drafts: DraftImage[];
   pending: boolean;
+  showErrors: boolean;
 };
 
 export type FormAction =
   | { type: "fields/change"; changes: Partial<ProductFields> }
   | { type: "drafts/change"; drafts: DraftImage[] }
+  | { type: "errors/show" }
   | { type: "save/start" }
   | { type: "save/finish" };
 
@@ -125,13 +129,17 @@ export type ImagesState = {
 
 export type ImagesAction = { type: "request/start" } | { type: "request/finish" };
 
+export type AttributeErrors = Partial<Record<keyof AttributePayload, string>>;
+
 export type AttributeState = {
   fields: AttributePayload;
   pending: boolean;
+  showErrors: boolean;
 };
 
 export type AttributeAction =
   | { type: "fields/change"; changes: Partial<AttributePayload> }
+  | { type: "errors/show" }
   | { type: "save/start" }
   | { type: "save/success" }
   | { type: "save/error" };

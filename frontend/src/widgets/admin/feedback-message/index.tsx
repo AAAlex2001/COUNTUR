@@ -11,7 +11,7 @@ type AdminFeedbackMessageProps = {
 
 /** Карточка обращения: текст, уже отправленный ответ и форма нового ответа. */
 const AdminFeedbackMessage = ({ messageId }: AdminFeedbackMessageProps) => {
-  const { state, changeReply, send } = useFeedbackMessage(messageId);
+  const { state, replyError, changeReply, send } = useFeedbackMessage(messageId);
   const { message } = state;
 
   if (state.failed) {
@@ -31,6 +31,7 @@ const AdminFeedbackMessage = ({ messageId }: AdminFeedbackMessageProps) => {
       <ReplyForm
         email={message.email}
         reply={state.reply}
+        error={replyError}
         pending={state.pending}
         onChange={changeReply}
         onSend={send}

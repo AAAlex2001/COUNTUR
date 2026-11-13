@@ -2,11 +2,7 @@
 
 from app.catalog.models import Product, ProductSpec, PublicationStatus
 from app.catalog.schemas import ProductCreateSchema
-from app.catalog.services.exceptions import (
-    BrandNotFoundError,
-    CategoryNotFoundError,
-    SkuAlreadyTakenError,
-)
+from app.catalog.services.exceptions import CategoryNotFoundError, SkuAlreadyTakenError
 from app.catalog.services.repo import BrandRepository, CategoryRepository, ProductRepository
 from app.catalog.services.validators import validate_prices, validate_specs
 from app.slugs import make_slug
@@ -26,16 +22,12 @@ class CreateProductUseCase:
         self.brands = brands
 
     async def execute(self, payload: ProductCreateSchema) -> Product:
-        """Вернуть сохранённый товар. Бросает ошибки категории, бренда, артикула и данных."""
+        """Вернуть сохранённый товар. Новый бренд создаётся по названию. Бросает ошибки категории,
+        артикула и данных."""
 
         category = await self.categories.get_by_id(payload.category_id)
         if category is None:
             raise CategoryNotFoundError(payload.category_id)
-
-        if payload.brand_id is not None:
-            brand = await self.brands.get_by_id(payload.brand_id)
-            if brand is None:
-                raise BrandNotFoundError(payload.brand_id)
 
         validate_prices(payload.price, payload.old_price)
         spec_values = validate_specs(category, payload.specs)
@@ -44,13 +36,14 @@ class CreateProductUseCase:
             raise SkuAlreadyTakenError(payload.sku)
 
         slug = await self.products.unique_slug(payload.slug or make_slug(payload.name))
+        brand = await self.brands.get_or_create(payload.brand_name) if payload.brand_name else None
 
         product = Product(
             slug=slug,
             name=payload.name,
             sku=payload.sku,
             category_id=payload.category_id,
-            brand_id=payload.brand_id,
+            brand_id=brand.id if brand else None,
             short_description=payload.short_description,
             description=payload.description,
             highlights=payload.highlights,

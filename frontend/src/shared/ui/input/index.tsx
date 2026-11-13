@@ -14,13 +14,17 @@ type InputProps = {
   maxLength?: number;
   inputMode?: "text" | "numeric" | "decimal" | "tel" | "email" | "search";
   autoComplete?: string;
+  list?: string;
   icon?: ReactNode;
   prefix?: string;
   suffix?: ReactNode;
   className?: string;
 };
 
-/** Поле ввода. Слева — иконка или подпись, справа — suffix, например кнопка показа пароля. */
+/**
+ * Поле ввода. Слева — иконка или подпись, справа — suffix, например кнопка показа пароля.
+ * list — id datalist с подсказками.
+ */
 const Input = ({
   type = "text",
   size = "md",
@@ -33,6 +37,7 @@ const Input = ({
   maxLength,
   inputMode,
   autoComplete,
+  list,
   icon,
   prefix,
   suffix,
@@ -59,6 +64,7 @@ const Input = ({
       maxLength={maxLength}
       inputMode={inputMode}
       autoComplete={autoComplete}
+      list={list}
       onChange={onChange && ((event) => onChange(event.target.value))}
       onBlur={onBlur}
     />

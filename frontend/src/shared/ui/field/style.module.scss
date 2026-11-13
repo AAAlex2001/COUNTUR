@@ -43,3 +43,18 @@
 
   color: #59666d;
 }
+
+/* Поля внутри берут цвет рамки из этой переменной. */
+.invalid {
+  --field-border: #ff5a65;
+}
+
+.error {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #ff5a65;
+}

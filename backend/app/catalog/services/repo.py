@@ -17,7 +17,7 @@ from app.catalog.models import (
     PublicationStatus,
     Review,
 )
-from app.slugs import unique_slug
+from app.slugs import make_slug, unique_slug
 
 PUBLISHED = Product.status == PublicationStatus.PUBLISHED
 
@@ -220,6 +220,21 @@ class BrandRepository:
         """Бренд по идентификатору или None."""
 
         return await self.db.get(Brand, brand_id)
+
+    async def get_or_create(self, name: str) -> Brand:
+        """Бренд с таким названием без учёта регистра, а если его нет — новый.
+        Новый не коммитится: он сохранится вместе с товаром."""
+
+        name = name.strip()
+        stmt = select(Brand).where(func.lower(Brand.name) == name.lower())
+        brand = (await self.db.execute(stmt)).scalar_one_or_none()
+
+        if brand is None:
+            brand = Brand(name=name, slug=await self.unique_slug(make_slug(name)))
+            self.db.add(brand)
+            await self.db.flush()
+
+        return brand
 
     async def unique_slug(self, wanted: str, exclude_id: int | None = None) -> str:
         """Свободный slug бренда на основе wanted."""

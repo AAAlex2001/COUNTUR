@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { useReducer } from "react";
 import type { ProductCardData } from "@/entities/product";
 import { adminCollectionPath } from "@/shared/lib/admin-paths";
-import { errorMessage } from "@/shared/lib/errors";
+import { errorMessage, INVALID_FORM_MESSAGE } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
 import { createCollection, updateCollection } from "../api/collections";
 import { formReducer } from "./reducers";
 import type { AdminCollection, CollectionFields, CollectionPayload } from "./types";
+import { validateCollection } from "./validate";
 
 /** Поля формы из подборки. Для новой — пустые с показом на главной. */
 const toFields = (collection: AdminCollection | null): CollectionFields => ({
@@ -42,8 +43,10 @@ export const useCollectionForm = (
   const [state, dispatch] = useReducer(formReducer, {
     fields: toFields(collection),
     pending: false,
+    showErrors: false,
   });
   const { fields } = state;
+  const errors = state.showErrors ? validateCollection(fields) : {};
 
   const change = (changes: Partial<CollectionFields>) =>
     dispatch({ type: "fields/change", changes });
@@ -59,6 +62,12 @@ export const useCollectionForm = (
 
   /** Сохранить подборку. Новая создаётся и открывается на редактирование. */
   const save = async () => {
+    if (Object.keys(validateCollection(fields)).length) {
+      dispatch({ type: "errors/show" });
+      toast(INVALID_FORM_MESSAGE, "error");
+      return;
+    }
+
     dispatch({ type: "save/start" });
 
     try {
@@ -78,5 +87,5 @@ export const useCollectionForm = (
     }
   };
 
-  return { state, change, addProduct, removeProduct, save };
+  return { state, errors, change, addProduct, removeProduct, save };
 };
