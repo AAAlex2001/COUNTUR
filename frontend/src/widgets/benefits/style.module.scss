@@ -50,6 +50,11 @@
   color: #f2f7f8;
 }
 
+.title a:hover,
+.title a:focus-visible {
+  color: #13d8f4;
+}
+
 .text {
   font-family: "Inter";
   font-style: normal;

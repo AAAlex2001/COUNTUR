@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getCollections } from "@/entities/collection";
-import { getHero, getPromotion } from "@/entities/landing";
+import { getHero, getHeroContent, getPromotion } from "@/entities/landing";
 import { getCategories, getFeaturedProducts } from "@/entities/product";
 import Benefits from "@/widgets/benefits";
 import Categories from "@/widgets/categories";
@@ -17,8 +17,9 @@ export const metadata: Metadata = {
 
 /** Главная страница. Рекламный блок, хиты и подборки показываются, только когда им есть что показать. */
 export default async function HomePage() {
-  const [hero, categories, promotion, featured, collections] = await Promise.all([
+  const [hero, heroContent, categories, promotion, featured, collections] = await Promise.all([
     getHero(),
+    getHeroContent(),
     getCategories(),
     getPromotion(),
     getFeaturedProducts(),
@@ -27,7 +28,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      <Hero imageUrl={hero.image_url} />
+      <Hero imageUrl={hero.image_url} content={heroContent} />
       <Categories categories={categories} />
       {promotion && <Promotion promotion={promotion} />}
       {featured.products.length > 0 && <Hits products={featured.products} />}

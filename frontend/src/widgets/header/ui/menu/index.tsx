@@ -40,11 +40,13 @@ const HeaderMenu = ({ className }: HeaderMenuProps) => {
 
       <Drawer open={open} title="Меню" onClose={close}>
         <nav className={styles.nav} aria-label="Меню сайта">
-          {HEADER_NAV.map(({ href, label, Icon }) => (
+          {HEADER_NAV.map(({ href, label, Icon, newTab }) => (
             <Link
               key={href}
               className={cn(styles.item, pathname.startsWith(href) && styles.active)}
               href={href}
+              target={newTab ? "_blank" : undefined}
+              rel={newTab ? "noopener noreferrer" : undefined}
               onClick={close}
             >
               <Icon className={styles.icon} />

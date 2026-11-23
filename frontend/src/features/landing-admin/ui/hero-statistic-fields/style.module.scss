@@ -1,0 +1,15 @@
+.statistics,
+.statistic {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  color: #f2f7f8;
+  font: 700 14px/20px "Inter";
+}
+
+.action {
+  align-self: flex-start;
+}

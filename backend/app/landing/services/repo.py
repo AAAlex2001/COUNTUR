@@ -3,7 +3,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.landing.models import Hero, Promotion
+from app.landing.models import Hero, HeroContent, Promotion
+
+HERO_CONTENT_ID = 1
 
 
 class HeroRepository:
@@ -12,10 +14,13 @@ class HeroRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def get(self) -> Hero | None:
+    async def get(self, for_update: bool = False) -> Hero | None:
         """Первый экран или None, если его ещё не настраивали."""
 
-        result = await self.db.execute(select(Hero))
+        query = select(Hero).order_by(Hero.id).limit(1)
+        if for_update:
+            query = query.with_for_update()
+        result = await self.db.execute(query)
 
         return result.scalars().first()
 
@@ -24,9 +29,24 @@ class HeroRepository:
 
         self.db.add(hero)
         await self.db.commit()
-        await self.db.refresh(hero)
 
         return hero
+
+
+class HeroContentRepository:
+    """Доступ к настройкам текста первого экрана."""
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def get(self) -> HeroContent:
+        query = select(HeroContent).where(HeroContent.id == HERO_CONTENT_ID)
+        result = await self.db.execute(query)
+        return result.scalar_one()
+
+    async def save(self, content: HeroContent) -> HeroContent:
+        await self.db.commit()
+        return content
 
 
 class PromotionRepository:

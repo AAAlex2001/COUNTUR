@@ -14,6 +14,7 @@ type ButtonProps = {
   onClick?: () => void;
   className?: string;
   href?: string;
+  newTab?: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ const Button = ({
   onClick,
   className,
   href,
+  newTab,
 }: ButtonProps) => {
   const classNames = cn(
     styles.button,
@@ -42,7 +44,13 @@ const Button = ({
 
   if (href) {
     return (
-      <Link href={href} onClick={onClick} className={classNames}>
+      <Link
+        href={href}
+        target={newTab ? "_blank" : undefined}
+        rel={newTab ? "noopener noreferrer" : undefined}
+        onClick={onClick}
+        className={classNames}
+      >
         {children}
       </Link>
     );

@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
+import { getContacts, getOperatorRequisites } from "@/entities/contacts";
 import { documentPath, getDocument, type LegalDocument } from "@/entities/document";
-import {
-  COMPANY_REQUISITES,
-  COMPANY_REQUISITES_NOTE,
-  CONTACTS_PATH,
-  SUPPORT_EMAIL,
-} from "@/shared/config/site";
+import { CONTACTS_PATH } from "@/shared/config/site";
 import { formatShortDate } from "@/shared/lib/date";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
@@ -34,8 +30,10 @@ type LegalDocumentPageProps = {
 };
 
 /** Страница документа: шапка с датой редакции, оглавление и помощь слева, текст и реквизиты справа. */
-const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => {
+const LegalDocumentPage = async ({ document }: LegalDocumentPageProps) => {
+  const contacts = await getContacts();
   const { content, headings } = withHeadings(document.content);
+  const requisites = contacts ? getOperatorRequisites(contacts) : [];
 
   return (
     <section className={styles.page}>
@@ -65,9 +63,9 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => {
           <div className={styles.help}>
             <p className={styles.helpTitle}>Есть вопрос?</p>
             <p className={styles.helpText}>Уточните информацию у поддержки магазина.</p>
-            <a className={styles.helpEmail} href={`mailto:${SUPPORT_EMAIL}`}>
-              {SUPPORT_EMAIL}
-            </a>
+            {contacts?.email && (
+              <a className={styles.helpEmail} href={`mailto:${contacts.email}`}>{contacts.email}</a>
+            )}
             <Button variant="ghost" size="sm" href={CONTACTS_PATH}>
               Контакты
               <ArrowRightIcon />
@@ -78,11 +76,13 @@ const LegalDocumentPage = ({ document }: LegalDocumentPageProps) => {
         <article className={styles.document} id="top">
           <RichContent html={content} />
 
-          <RequisitesCard
-            title="Контакты оператора"
-            items={COMPANY_REQUISITES}
-            note={COMPANY_REQUISITES_NOTE}
-          />
+          {contacts && (requisites.length > 0 || contacts.operator_note) && (
+            <RequisitesCard
+              title={contacts.operator_title}
+              items={requisites}
+              note={contacts.operator_note}
+            />
+          )}
 
           <div className={styles.end}>
             <Button variant="ghost" size="sm" href="#top">

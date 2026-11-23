@@ -11,11 +11,12 @@ from app.catalog.models import (
     Review,
 )
 from app.collections.models import Collection, collection_products
+from app.contacts.models import ContactsSettings
 from app.database import Base
 from app.documents.models import Document
 from app.favorites.models import Favorite
 from app.feedback.models import FeedbackMessage
-from app.landing.models import Hero, Promotion
+from app.landing.models import Hero, HeroContent, Promotion
 from app.orders.models import Order, OrderItem
 from app.users.models import User
 
@@ -31,10 +32,12 @@ __all__ = [
     "Review",
     "Collection",
     "collection_products",
+    "ContactsSettings",
     "Document",
     "Favorite",
     "FeedbackMessage",
     "Hero",
+    "HeroContent",
     "Promotion",
     "Order",
     "OrderItem",

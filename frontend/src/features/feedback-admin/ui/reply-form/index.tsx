@@ -11,12 +11,13 @@ type ReplyFormProps = {
   reply: string;
   error?: string;
   pending: boolean;
+  disabled?: boolean;
   onChange: (reply: string) => void;
   onSend: () => void;
 };
 
 /** Ответ на обращение: текст письма и кнопка отправки на почту отправителя. */
-const ReplyForm = ({ email, reply, error, pending, onChange, onSend }: ReplyFormProps) => (
+const ReplyForm = ({ email, reply, error, pending, disabled, onChange, onSend }: ReplyFormProps) => (
   <Panel title="Ответить">
     <p className={styles.hint}>Письмо уйдёт на {email} с темой обращения.</p>
 
@@ -31,7 +32,7 @@ const ReplyForm = ({ email, reply, error, pending, onChange, onSend }: ReplyForm
       />
     </Field>
 
-    <Button className={styles.submit} loading={pending} onClick={onSend}>
+    <Button className={styles.submit} loading={pending} disabled={disabled} onClick={onSend}>
       Отправить на почту
     </Button>
   </Panel>

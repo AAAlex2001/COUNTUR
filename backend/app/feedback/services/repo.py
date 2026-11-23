@@ -1,6 +1,6 @@
 """Репозиторий обращений: только запросы к таблице feedback_messages."""
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.feedback.models import FeedbackMessage
@@ -37,10 +37,19 @@ class FeedbackRepository:
 
         return messages, total
 
-    async def get_by_id(self, message_id: int) -> FeedbackMessage | None:
+    async def get_by_id(
+        self, message_id: int, for_update: bool = False
+    ) -> FeedbackMessage | None:
         """Обращение по номеру или None."""
 
-        return await self.db.get(FeedbackMessage, message_id)
+        return await self.db.get(FeedbackMessage, message_id, with_for_update=for_update)
+
+    async def delete(self, message_id: int) -> None:
+        """Удалить обращение и сохранённый ответ."""
+
+        statement = delete(FeedbackMessage).where(FeedbackMessage.id == message_id)
+        await self.db.execute(statement)
+        await self.db.commit()
 
     async def add(self, message: FeedbackMessage) -> FeedbackMessage:
         """Сохранить новое обращение."""

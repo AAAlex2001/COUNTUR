@@ -2,18 +2,23 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 
 from app.admin.dependencies import require_admin
 from app.landing.dependencies import (
+    get_delete_hero_image_usecase,
+    get_hero_content_repository,
     get_promotion_repository,
     get_set_hero_image_usecase,
     get_set_promotion_image_usecase,
+    get_update_hero_content_usecase,
     get_update_promotion_usecase,
 )
-from app.landing.schemas import HeroSchema, PromotionSchema, PromotionUpdateSchema
-from app.landing.services.repo import PromotionRepository
+from app.landing.schemas import HeroContentSchema, HeroSchema, PromotionSchema, PromotionUpdateSchema
+from app.landing.services.repo import HeroContentRepository, PromotionRepository
+from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
 from app.landing.services.usecases.manage_promotion import (
     SetPromotionImageUseCase,
     UpdatePromotionUseCase,
 )
 from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
 from app.uploads import UploadError
 
 router = APIRouter(
@@ -21,6 +26,23 @@ router = APIRouter(
     tags=["admin: landing"],
     dependencies=[Depends(require_admin)],
 )
+
+
+@router.get("/hero/content")
+async def get_hero_content(
+    hero_content: HeroContentRepository = Depends(get_hero_content_repository),
+) -> HeroContentSchema:
+    content = await hero_content.get()
+    return HeroContentSchema.model_validate(content)
+
+
+@router.put("/hero/content")
+async def update_hero_content(
+    payload: HeroContentSchema,
+    usecase: UpdateHeroContentUseCase = Depends(get_update_hero_content_usecase),
+) -> HeroContentSchema:
+    content = await usecase.execute(payload)
+    return HeroContentSchema.model_validate(content)
 
 
 @router.put("/hero/image")
@@ -37,6 +59,17 @@ async def set_hero_image(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=str(error),
         ) from error
+
+    return HeroSchema.model_validate(hero)
+
+
+@router.delete("/hero/image")
+async def delete_hero_image(
+    usecase: DeleteHeroImageUseCase = Depends(get_delete_hero_image_usecase),
+) -> HeroSchema:
+    hero = await usecase.execute()
+    if hero is None:
+        return HeroSchema()
 
     return HeroSchema.model_validate(hero)
 

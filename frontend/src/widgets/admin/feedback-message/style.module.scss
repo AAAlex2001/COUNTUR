@@ -5,8 +5,11 @@
   gap: 16px;
 }
 
-.back {
-  align-self: flex-start;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .error {

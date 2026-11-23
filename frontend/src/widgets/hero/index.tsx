@@ -1,67 +1,83 @@
 import Image from "next/image";
+import type { HeroContent } from "@/entities/landing";
 import { CATALOG_PATH } from "@/entities/product";
+import { TELEGRAM_SUPPORT_URL } from "@/shared/config/telegram";
 import Button from "@/shared/ui/button";
 import { ArrowRightIcon, WrenchIcon } from "@/shared/ui/icons";
-import { HELP_PATH, HERO_STATS } from "./data";
 import styles from "./style.module.scss";
 
 type HeroProps = {
   imageUrl: string | null;
+  content: HeroContent;
 };
 
-/** Первый экран главной: заголовок, кнопки, цифры магазина и картинка из админки. */
-const Hero = ({ imageUrl }: HeroProps) => (
-  <section className={styles.hero}>
-    <div className={styles.copy}>
-      <p className={styles.overline}>Комплектующие / Сборка / Поддержка</p>
-      <h1 className={styles.title}>Соберите ПК мечты сегодня</h1>
+const Hero = ({ imageUrl, content }: HeroProps) => {
+  const hasActions = Boolean(content.catalog_button_label || content.support_button_label);
+  const hasText = Boolean(content.overline || content.title || content.description);
+  const hasStatistics = content.statistics.length > 0;
+  const hasCopy = hasText || hasActions || hasStatistics;
 
-      <p className={styles.description}>
-        Более 5 000 комплектующих от ведущих производителей. Гарантия, быстрая доставка, помощь
-        в сборке.
-      </p>
+  if (!content.is_visible || (!hasCopy && !imageUrl)) return null;
 
-      <div className={styles.actions}>
-        <Button className={styles.action} href={CATALOG_PATH}>
-          <ArrowRightIcon className={styles.icon} />
-          Перейти в каталог
-        </Button>
+  return (
+    <section className={styles.hero}>
+      {hasCopy && (
+        <div className={styles.copy}>
+          {content.overline && <p className={styles.overline}>{content.overline}</p>}
+          {content.title && <h1 className={styles.title}>{content.title}</h1>}
+          {content.description && <p className={styles.description}>{content.description}</p>}
 
-        <Button className={styles.action} variant="outline" href={HELP_PATH}>
-          <WrenchIcon className={styles.icon} />
-          Помощь в сборке
-        </Button>
-      </div>
+          {hasActions && (
+            <div className={styles.actions}>
+              {content.catalog_button_label && (
+                <Button className={styles.action} href={CATALOG_PATH}>
+                  <ArrowRightIcon className={styles.icon} />
+                  {content.catalog_button_label}
+                </Button>
+              )}
+              {content.support_button_label && (
+                <Button className={styles.action} variant="outline" href={TELEGRAM_SUPPORT_URL} newTab>
+                  <WrenchIcon className={styles.icon} />
+                  {content.support_button_label}
+                </Button>
+              )}
+            </div>
+          )}
 
-      <ul className={styles.stats}>
-        {HERO_STATS.map((stat) => (
-          <li className={styles.stat} key={stat.label}>
-            <span className={styles.value}>{stat.value}</span>
-            <span className={styles.label}>{stat.label}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-
-    <div className={styles.media}>
-      {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt="Игровой компьютер с подсветкой"
-          fill
-          sizes="(min-width: 1440px) 574px, 100vw"
-          unoptimized
-          loading="eager"
-          className={styles.image}
-        />
+          {hasStatistics && (
+            <ul className={styles.stats}>
+              {content.statistics.map(({ value, label }, index) => (
+                <li className={styles.stat} key={index}>
+                  {value && <span className={styles.value}>{value}</span>}
+                  {label && <span className={styles.label}>{label}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
-      <p className={styles.tag}>
-        <span className={styles.dot} aria-hidden="true" />
-        Сборка готова к игре
-      </p>
-    </div>
-  </section>
-);
+      {imageUrl && (
+        <div className={styles.media}>
+          <Image
+            src={imageUrl}
+            alt={content.image_alt}
+            fill
+            sizes="(min-width: 1440px) 574px, 100vw"
+            unoptimized
+            loading="eager"
+            className={styles.image}
+          />
+          {content.image_badge && (
+            <p className={styles.tag}>
+              <span className={styles.dot} aria-hidden="true" />
+              {content.image_badge}
+            </p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+};
 
 export default Hero;

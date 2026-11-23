@@ -18,3 +18,6 @@ export const uploadHeroImage = (file: File) => {
 
   return adminRequest<Hero>("/landing/hero/image", { method: "PUT", body });
 };
+
+export const deleteHeroImage = () =>
+  adminRequest<Hero>("/landing/hero/image", { method: "DELETE" });

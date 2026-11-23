@@ -15,7 +15,7 @@ type RequisitesCardProps = {
 /** Карточка реквизитов: подпись и значение в столбик, ссылочные значения голубые. */
 const RequisitesCard = ({ title, items, note }: RequisitesCardProps) => (
   <dl className={styles.card}>
-    <p className={styles.title}>{title}</p>
+    {title && <p className={styles.title}>{title}</p>}
 
     {items.map((item) => (
       <div className={styles.item} key={item.label}>

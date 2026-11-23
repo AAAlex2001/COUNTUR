@@ -4,12 +4,14 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_session
-from app.landing.services.repo import HeroRepository, PromotionRepository
+from app.landing.services.repo import HeroContentRepository, HeroRepository, PromotionRepository
+from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
 from app.landing.services.usecases.manage_promotion import (
     SetPromotionImageUseCase,
     UpdatePromotionUseCase,
 )
 from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
 
 
 def get_hero_repository(
@@ -18,6 +20,24 @@ def get_hero_repository(
     """Репозиторий первого экрана с сессией текущего запроса."""
 
     return HeroRepository(session)
+
+
+def get_hero_content_repository(
+    session: AsyncSession = Depends(get_session),
+) -> HeroContentRepository:
+    return HeroContentRepository(session)
+
+
+def get_update_hero_content_usecase(
+    hero_content: HeroContentRepository = Depends(get_hero_content_repository),
+) -> UpdateHeroContentUseCase:
+    return UpdateHeroContentUseCase(hero_content)
+
+
+def get_delete_hero_image_usecase(
+    heroes: HeroRepository = Depends(get_hero_repository),
+) -> DeleteHeroImageUseCase:
+    return DeleteHeroImageUseCase(heroes)
 
 
 def get_promotion_repository(

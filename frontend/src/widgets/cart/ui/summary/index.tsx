@@ -1,5 +1,6 @@
 import cn from "classnames";
 import type { Cart } from "@/entities/cart";
+import { TELEGRAM_SUPPORT_URL } from "@/shared/config/telegram";
 import { formatRub } from "@/shared/lib/money";
 import Button from "@/shared/ui/button";
 import { ArrowRightIcon } from "@/shared/ui/icons";
@@ -39,10 +40,12 @@ const Summary = ({ cart, className }: SummaryProps) => (
     </Button>
 
     <ul className={styles.trust}>
-      {TRUST_MESSAGES.map(({ Icon, text }) => (
+      {TRUST_MESSAGES.map(({ Icon, text, linkToSupport }) => (
         <li className={styles.trustItem} key={text}>
           <Icon className={styles.trustIcon} />
-          {text}
+          {linkToSupport ? (
+            <a href={TELEGRAM_SUPPORT_URL} target="_blank" rel="noopener noreferrer">{text}</a>
+          ) : text}
         </li>
       ))}
     </ul>

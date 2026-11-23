@@ -1,8 +1,12 @@
 from fastapi import APIRouter, Depends
 
-from app.landing.dependencies import get_hero_repository, get_promotion_repository
-from app.landing.schemas import HeroSchema, PromotionSchema
-from app.landing.services.repo import HeroRepository, PromotionRepository
+from app.landing.dependencies import (
+    get_hero_content_repository,
+    get_hero_repository,
+    get_promotion_repository,
+)
+from app.landing.schemas import HeroContentSchema, HeroSchema, PromotionSchema
+from app.landing.services.repo import HeroContentRepository, HeroRepository, PromotionRepository
 
 router = APIRouter(prefix="/landing", tags=["landing"])
 
@@ -18,6 +22,14 @@ async def get_hero(
         return HeroSchema()
 
     return HeroSchema.model_validate(hero)
+
+
+@router.get("/hero/content")
+async def get_hero_content(
+    hero_content: HeroContentRepository = Depends(get_hero_content_repository),
+) -> HeroContentSchema:
+    content = await hero_content.get()
+    return HeroContentSchema.model_validate(content)
 
 
 @router.get("/promotion")

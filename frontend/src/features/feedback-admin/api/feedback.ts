@@ -13,6 +13,9 @@ export const fetchFeedback = (filter: StatusFilter, limit: number, offset: numbe
 /** Обращение целиком вместе с ответом. */
 export const fetchMessage = (id: number) => adminRequest<FeedbackMessage>(`/feedback/${id}`);
 
+export const deleteFeedbackMessage = (id: number) =>
+  adminRequest<void>(`/feedback/${id}`, { method: "DELETE" });
+
 /** Ответить на обращение письмом на email отправителя. */
 export const replyToMessage = (id: number, text: string) =>
   adminRequest<FeedbackMessage>(`/feedback/${id}/reply`, jsonBody("POST", { text }));

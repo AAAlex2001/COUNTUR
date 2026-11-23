@@ -49,6 +49,7 @@
 
 .description {
   max-width: 800px;
+  white-space: pre-line;
 
   font-family: "Inter";
   font-style: normal;
@@ -79,6 +80,10 @@
 
 .company {
   gap: 20px;
+}
+
+.columns:empty {
+  display: none;
 }
 
 .address,
@@ -124,6 +129,9 @@
 }
 
 .visitValue {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
@@ -133,8 +141,9 @@
   color: #f2f7f8;
 }
 
-.note,
 .feedbackText {
+  white-space: pre-line;
+
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
@@ -163,60 +172,6 @@
   background-size: 40px 40px;
   border: 1px solid #273138;
   border-radius: 8px;
-}
-
-.mapCard {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-  gap: 14px;
-
-  max-width: 430px;
-
-  background: #101519;
-  border: 1px solid #3a4851;
-  border-radius: 8px;
-}
-
-.mapIcon {
-  width: 30px;
-  height: 30px;
-
-  color: #13d8f4;
-}
-
-.mapTitle {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 13px;
-  line-height: 17px;
-  text-transform: uppercase;
-
-  color: #f2f7f8;
-}
-
-.mapText {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 160%;
-  text-align: center;
-
-  color: #8c9aa2;
-}
-
-.mapField {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 11px;
-  line-height: 15px;
-
-  color: #13d8f4;
 }
 
 .feedbackIntro {
@@ -292,6 +247,11 @@
   .company {
     flex: none;
     width: 384px;
+  }
+
+  .address:only-child,
+  .company:only-child {
+    width: 100%;
   }
 
   .feedback {

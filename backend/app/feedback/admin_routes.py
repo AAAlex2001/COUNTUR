@@ -4,6 +4,7 @@ from app.admin.dependencies import require_admin
 from app.feedback.dependencies import (
     get_feedback_repository,
     get_message_by_id,
+    get_message_for_reply,
     get_reply_usecase,
 )
 from app.feedback.models import FeedbackMessage, FeedbackStatus
@@ -43,10 +44,18 @@ async def get_feedback(message: FeedbackMessage = Depends(get_message_by_id)) ->
     return FeedbackSchema.model_validate(message)
 
 
+@router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_feedback(
+    message_id: int,
+    messages: FeedbackRepository = Depends(get_feedback_repository),
+) -> None:
+    await messages.delete(message_id)
+
+
 @router.post("/{message_id}/reply")
 async def reply_feedback(
     payload: FeedbackReplySchema,
-    message: FeedbackMessage = Depends(get_message_by_id),
+    message: FeedbackMessage = Depends(get_message_for_reply),
     usecase: ReplyFeedbackUseCase = Depends(get_reply_usecase),
 ) -> FeedbackSchema:
     """Ответить на обращение письмом на email отправителя."""

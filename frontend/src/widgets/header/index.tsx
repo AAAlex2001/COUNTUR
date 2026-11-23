@@ -21,7 +21,7 @@ const Header = () => (
 
         <nav className={styles.nav} aria-label="Основная навигация">
           {HEADER_NAV.map((item) => (
-            <NavLink key={item.href} href={item.href}>
+            <NavLink key={item.href} href={item.href} newTab={item.newTab}>
               {item.label}
             </NavLink>
           ))}

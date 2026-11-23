@@ -1,12 +1,12 @@
 import { categoryPath } from "@/entities/product";
 
 import { CONTACTS_PATH, SITE_DOCUMENTS } from "@/shared/config/site";
-
-export { SUPPORT_EMAIL } from "@/shared/config/site";
+import { TELEGRAM_SUPPORT_URL } from "@/shared/config/telegram";
 
 export type FooterLink = {
   label: string;
   href: string;
+  newTab?: boolean;
 };
 
 export type FooterColumn = {
@@ -30,10 +30,10 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Покупателям",
     links: [
-      { label: "Доставка и оплата", href: "/delivery" },
-      { label: "Гарантия", href: "/warranty" },
-      { label: "Возврат", href: "/returns" },
-      { label: "Помощь в сборке", href: "/build-help" },
+      { label: "Доставка и оплата", href: TELEGRAM_SUPPORT_URL, newTab: true },
+      { label: "Гарантия", href: TELEGRAM_SUPPORT_URL, newTab: true },
+      { label: "Возврат", href: TELEGRAM_SUPPORT_URL, newTab: true },
+      { label: "Помощь в сборке", href: TELEGRAM_SUPPORT_URL, newTab: true },
     ],
   },
   {

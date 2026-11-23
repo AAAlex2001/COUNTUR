@@ -1,0 +1,22 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.title {
+  color: #f2f7f8;
+  font: 900 30px/35px "Roboto Condensed";
+  text-transform: uppercase;
+}
+
+.error {
+  color: #ff9d3d;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 42px;
+    line-height: 49px;
+  }
+}

@@ -9,6 +9,27 @@ class HeroSchema(BaseModel):
     image_url: str | None = Field(None, description="Адрес картинки. Пусто, пока её не загрузили")
 
 
+class HeroStatisticSchema(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    value: str = Field(max_length=40)
+    label: str = Field(max_length=60)
+
+
+class HeroContentSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
+
+    is_visible: bool
+    overline: str = Field(max_length=100)
+    title: str = Field(max_length=150)
+    description: str = Field(max_length=500)
+    catalog_button_label: str = Field(max_length=60)
+    support_button_label: str = Field(max_length=60)
+    image_alt: str = Field(max_length=150)
+    image_badge: str = Field(max_length=60)
+    statistics: list[HeroStatisticSchema] = Field(max_length=8)
+
+
 class PromotionUpdateSchema(BaseModel):
     """Содержимое рекламного блока, которое задаёт администратор."""
 

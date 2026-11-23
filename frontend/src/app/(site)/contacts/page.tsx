@@ -1,17 +1,34 @@
 import type { Metadata } from "next";
+import { getContacts } from "@/entities/contacts";
+import { CONTACTS_PATH } from "@/shared/config/site";
+import EmptyState from "@/shared/ui/empty-state";
+import { HeadphonesIcon } from "@/shared/ui/icons";
 import Contacts from "@/widgets/contacts";
 
-export const metadata: Metadata = {
-  title: "Контакты",
-  description: "Телефон, почта, адрес магазина COUNTUR и форма обращения в поддержку",
-  alternates: { canonical: "/contacts" },
+export const generateMetadata = async (): Promise<Metadata> => {
+  const settings = await getContacts();
+  return {
+    title: settings?.title || "Контакты",
+    description: settings?.description || undefined,
+    alternates: { canonical: CONTACTS_PATH },
+  };
 };
 
 /** Контакты и форма обратной связи. */
-export default function ContactsRoute() {
+export default async function ContactsRoute() {
+  const settings = await getContacts();
+
   return (
     <main>
-      <Contacts />
+      {settings ? (
+        <Contacts settings={settings} />
+      ) : (
+        <EmptyState
+          icon={<HeadphonesIcon />}
+          title="Контакты временно недоступны"
+          text="Попробуйте открыть страницу позже."
+        />
+      )}
     </main>
   );
 }

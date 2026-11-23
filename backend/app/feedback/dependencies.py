@@ -25,6 +25,20 @@ async def get_message_by_id(
     """Обращение по номеру из пути для админки. Отсутствующее — 404."""
 
     message = await messages.get_by_id(message_id)
+    return require_feedback_message(message)
+
+
+async def get_message_for_reply(
+    message_id: int,
+    messages: FeedbackRepository = Depends(get_feedback_repository),
+) -> FeedbackMessage:
+    """Удерживает блокировку обращения, пока отправляется и сохраняется ответ."""
+
+    message = await messages.get_by_id(message_id, for_update=True)
+    return require_feedback_message(message)
+
+
+def require_feedback_message(message: FeedbackMessage | None) -> FeedbackMessage:
     if message is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -1,19 +1,21 @@
 import Link from "next/link";
 import Logo from "@/shared/ui/logo";
-import { FOOTER_COLUMNS, FOOTER_DESCRIPTION, SUPPORT_EMAIL } from "./data";
+import { FOOTER_COLUMNS, FOOTER_DESCRIPTION } from "./data";
 import styles from "./style.module.scss";
 
+type FooterProps = {
+  email?: string;
+};
+
 /** Подвал сайта: бренд, колонки ссылок и копирайт. */
-const Footer = () => (
+const Footer = ({ email }: FooterProps) => (
   <footer className={styles.footer}>
     <div className={styles.inner}>
       <div className={styles.content}>
         <div className={styles.brand}>
           <Logo href="/" ariaLabel="COUNTUR — на главную" full />
           <p className={styles.description}>{FOOTER_DESCRIPTION}</p>
-          <a className={styles.email} href={`mailto:${SUPPORT_EMAIL}`}>
-            {SUPPORT_EMAIL}
-          </a>
+          {email && <a className={styles.email} href={`mailto:${email}`}>{email}</a>}
         </div>
 
         <div className={styles.columns}>
@@ -22,7 +24,13 @@ const Footer = () => (
               <p className={styles.columnTitle}>{column.title}</p>
 
               {column.links.map((link) => (
-                <Link className={styles.link} key={link.href} href={link.href}>
+                <Link
+                  className={styles.link}
+                  key={link.label}
+                  href={link.href}
+                  target={link.newTab ? "_blank" : undefined}
+                  rel={link.newTab ? "noopener noreferrer" : undefined}
+                >
                   {link.label}
                 </Link>
               ))}

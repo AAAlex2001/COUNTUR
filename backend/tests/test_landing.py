@@ -11,6 +11,7 @@ from PIL import Image
 from app import uploads
 from app.config import Settings
 from app.landing.schemas import PromotionUpdateSchema
+from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
 from app.landing.services.usecases.manage_promotion import (
     SetPromotionImageUseCase,
     UpdatePromotionUseCase,
@@ -25,7 +26,7 @@ class FakeRepository:
     def __init__(self) -> None:
         self.item = None
 
-    async def get(self):
+    async def get(self, for_update=False):
         return self.item
 
     async def save(self, item):
@@ -79,6 +80,17 @@ def test_hero_rejects_file_that_is_not_an_image(media_dir: Path) -> None:
 
     assert heroes.item is None
     assert list(media_dir.iterdir()) == []
+
+
+def test_delete_hero_image_clears_path_and_file(media_dir: Path) -> None:
+    heroes = FakeRepository()
+    hero = asyncio.run(SetHeroImageUseCase(heroes).execute(make_upload(png_bytes())))
+    image_path = media_dir / hero.image_path
+
+    deleted = asyncio.run(DeleteHeroImageUseCase(heroes).execute())
+
+    assert deleted.image_url is None
+    assert not image_path.exists()
 
 
 def test_promotion_update_keeps_image_and_image_keeps_texts(media_dir: Path) -> None:

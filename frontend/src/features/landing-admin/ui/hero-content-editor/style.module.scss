@@ -1,0 +1,26 @@
+.form,
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fields {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.hint {
+  color: #8c9aa2;
+  font: 400 12px/16px "Inter";
+}
+
+.error {
+  color: #ff9d3d;
+}
+
+.submit {
+  align-self: flex-start;
+}

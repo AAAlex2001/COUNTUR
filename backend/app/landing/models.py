@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Integer, String
+from sqlalchemy import JSON, Boolean, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.config import MEDIA_URL
@@ -22,6 +22,23 @@ class Hero(Base):
             return None
 
         return f"{MEDIA_URL}/{self.image_path}"
+
+
+class HeroContent(Base):
+    """Настройки текста и показа первого экрана."""
+
+    __tablename__ = "landing_hero_content"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    is_visible: Mapped[bool] = mapped_column(Boolean)
+    overline: Mapped[str] = mapped_column(String(100))
+    title: Mapped[str] = mapped_column(String(150))
+    description: Mapped[str] = mapped_column(String(500))
+    catalog_button_label: Mapped[str] = mapped_column(String(60))
+    support_button_label: Mapped[str] = mapped_column(String(60))
+    image_alt: Mapped[str] = mapped_column(String(150))
+    image_badge: Mapped[str] = mapped_column(String(60))
+    statistics: Mapped[list[dict[str, str]]] = mapped_column(JSON)
 
 
 class Promotion(Base):

@@ -8,7 +8,10 @@ export type HeroImageAction =
   | { type: "load/finish"; imageUrl: string | null }
   | { type: "upload/start" }
   | { type: "upload/success"; imageUrl: string | null }
-  | { type: "upload/error" };
+  | { type: "upload/error" }
+  | { type: "delete/start" }
+  | { type: "delete/success" }
+  | { type: "delete/error" };
 
 export type PromotionFields = {
   label: string;

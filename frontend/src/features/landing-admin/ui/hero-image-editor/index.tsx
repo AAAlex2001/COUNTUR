@@ -1,6 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import Button from "@/shared/ui/button";
+import ConfirmModal from "@/shared/ui/confirm-modal";
 import FileButton from "@/shared/ui/file-button";
 import Panel from "@/shared/ui/panel";
 import { useHeroImage } from "../../model/use-hero-image";
@@ -10,15 +13,31 @@ const IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 /** Картинка первого экрана главной: показывает текущую и заменяет её новой. */
 const HeroImageEditor = () => {
-  const { state, upload } = useHeroImage();
+  const { state, upload, remove } = useHeroImage();
+  const [confirming, setConfirming] = useState(false);
+
+  const confirmDelete = async () => {
+    if (await remove()) setConfirming(false);
+  };
+
+  const cancelDelete = () => {
+    if (!state.pending) setConfirming(false);
+  };
 
   return (
     <Panel
       title="Картинка первого экрана"
       action={
-        <FileButton accept={IMAGE_TYPES} loading={state.pending} onSelect={upload}>
-          Загрузить картинку
-        </FileButton>
+        <div className={styles.actions}>
+          <FileButton accept={IMAGE_TYPES} loading={state.pending || !state.loaded} onSelect={upload}>
+            Загрузить картинку
+          </FileButton>
+          {state.imageUrl && (
+            <Button variant="danger" disabled={state.pending} onClick={() => setConfirming(true)}>
+              Удалить картинку
+            </Button>
+          )}
+        </div>
       }
     >
       <p className={styles.hint}>
@@ -42,6 +61,16 @@ const HeroImageEditor = () => {
           <p className={styles.empty}>Картинка ещё не загружена</p>
         )}
       </div>
+
+      <ConfirmModal
+        open={confirming}
+        title="Удалить картинку первого экрана?"
+        text="Изображение будет удалено с главной страницы."
+        confirmLabel="Удалить"
+        pending={state.pending}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </Panel>
   );
 };

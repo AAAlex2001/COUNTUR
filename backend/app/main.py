@@ -11,6 +11,8 @@ from app.catalog import routes as catalog
 from app.collections import admin_routes as admin_collections
 from app.collections import routes as collections
 from app.config import MEDIA_URL, get_settings
+from app.contacts import admin_routes as admin_contacts
+from app.contacts import routes as contacts
 from app.documents import admin_routes as admin_documents
 from app.documents import routes as documents
 from app.favorites import routes as favorites
@@ -52,6 +54,7 @@ app.include_router(cart.router, prefix="/api/v1")
 app.include_router(favorites.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
 app.include_router(landing.router, prefix="/api/v1")
+app.include_router(contacts.router, prefix="/api/v1")
 app.include_router(feedback.router, prefix="/api/v1")
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
@@ -60,6 +63,7 @@ app.include_router(admin_catalog.router, prefix="/api/v1")
 app.include_router(admin_collections.router, prefix="/api/v1")
 app.include_router(admin_orders.router, prefix="/api/v1")
 app.include_router(admin_landing.router, prefix="/api/v1")
+app.include_router(admin_contacts.router, prefix="/api/v1")
 app.include_router(admin_feedback.router, prefix="/api/v1")
 app.include_router(admin_documents.router, prefix="/api/v1")
 app.include_router(admin_users.router, prefix="/api/v1")

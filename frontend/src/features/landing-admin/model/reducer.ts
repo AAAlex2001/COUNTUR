@@ -22,6 +22,15 @@ export const heroImageReducer = (
     case "upload/error":
       return { ...state, pending: false };
 
+    case "delete/start":
+      return { ...state, pending: true };
+
+    case "delete/success":
+      return { ...state, imageUrl: null, pending: false };
+
+    case "delete/error":
+      return { ...state, pending: false };
+
     default:
       return state;
   }

@@ -1,4 +1,5 @@
 import { CartProvider, EMPTY_CART, getCart } from "@/entities/cart";
+import { getContacts } from "@/entities/contacts";
 import { FavoritesProvider, getFavorites } from "@/entities/favorite";
 import { UserProvider } from "@/entities/user";
 import { getSessionUser, sessionHeaders } from "@/entities/user/server";
@@ -10,9 +11,12 @@ import Header from "@/widgets/header";
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const headers = await sessionHeaders();
 
-  const [user, cart, favorites] = headers
-    ? await Promise.all([getSessionUser(headers), getCart(headers), getFavorites(headers)])
-    : [null, EMPTY_CART, []];
+  const [contacts, user, cart, favorites] = await Promise.all([
+    getContacts(),
+    headers ? getSessionUser(headers) : null,
+    headers ? getCart(headers) : EMPTY_CART,
+    headers ? getFavorites(headers) : [],
+  ]);
 
   return (
     <UserProvider initialUser={user}>
@@ -20,7 +24,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <FavoritesProvider initialProducts={favorites}>
           <Header />
           {children}
-          <Footer />
+          <Footer email={contacts?.email} />
           <AuthModal />
         </FavoritesProvider>
       </CartProvider>
