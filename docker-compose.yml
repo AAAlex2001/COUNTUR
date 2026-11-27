@@ -52,7 +52,6 @@ services:
       - media:/app/media
 
   support-bot:
-    profiles: ["support"]
     build: ./support-bot
     depends_on:
       backend:
