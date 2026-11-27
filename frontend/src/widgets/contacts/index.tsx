@@ -10,6 +10,7 @@ type ContactsProps = {
   settings: ContactsSettings;
 };
 
+/** Выводит включённые разделы страницы контактов. */
 const Contacts = ({ settings }: ContactsProps) => (
   <section className={styles.page}>
     <div className={styles.intro}>

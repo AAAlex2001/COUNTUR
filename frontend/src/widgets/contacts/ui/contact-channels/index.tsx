@@ -7,6 +7,7 @@ type ContactChannelsProps = {
   settings: ContactsSettings;
 };
 
+/** Показывает карточки заполненных каналов связи. */
 const ContactChannels = ({ settings }: ContactChannelsProps) => {
   if (!settings.phone && !settings.email) return null;
 

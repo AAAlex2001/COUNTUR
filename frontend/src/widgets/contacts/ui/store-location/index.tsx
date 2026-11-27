@@ -7,6 +7,7 @@ type StoreLocationProps = {
   settings: ContactsSettings;
 };
 
+/** Показывает адрес, часы работы и опубликованную ссылку на карту. */
 const StoreLocation = ({ settings }: StoreLocationProps) => {
   if (!settings.show_location) return null;
 

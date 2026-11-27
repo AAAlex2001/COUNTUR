@@ -10,6 +10,8 @@ class DeleteHeroImageUseCase:
         self.heroes = heroes
 
     async def execute(self) -> Hero | None:
+        """Снимает ссылку в базе перед удалением файла."""
+
         hero = await self.heroes.get(for_update=True)
         if hero is None or hero.image_path is None:
             return hero

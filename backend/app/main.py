@@ -13,6 +13,7 @@ from app.collections import routes as collections
 from app.config import MEDIA_URL, get_settings
 from app.contacts import admin_routes as admin_contacts
 from app.contacts import routes as contacts
+from app.delivery import routes as delivery
 from app.documents import admin_routes as admin_documents
 from app.documents import routes as documents
 from app.favorites import routes as favorites
@@ -50,6 +51,7 @@ async def health() -> dict[str, str]:
 
 app.include_router(catalog.router, prefix="/api/v1")
 app.include_router(collections.router, prefix="/api/v1")
+app.include_router(delivery.router, prefix="/api/v1")
 app.include_router(cart.router, prefix="/api/v1")
 app.include_router(favorites.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")

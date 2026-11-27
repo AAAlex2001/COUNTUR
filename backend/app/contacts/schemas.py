@@ -2,6 +2,8 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, val
 
 
 class ContactsSettingsSchema(BaseModel):
+    """Поля страницы контактов и реквизиты оператора."""
+
     model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
 
     eyebrow: str = Field(max_length=100)
@@ -44,6 +46,8 @@ class ContactsSettingsSchema(BaseModel):
     @field_validator("email", "operator_email")
     @classmethod
     def validate_contact_email(cls, address: str) -> str:
+        """Нормализует заполненный адрес электронной почты."""
+
         if not address:
             return address
 
@@ -53,6 +57,8 @@ class ContactsSettingsSchema(BaseModel):
     @field_validator("map_url")
     @classmethod
     def validate_map_url(cls, address: str) -> str:
+        """Проверяет HTTP-ссылку на карту, если она указана."""
+
         if not address:
             return address
 

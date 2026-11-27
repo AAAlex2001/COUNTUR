@@ -97,8 +97,9 @@
   transition: color 0.15s ease;
 }
 
-.link:hover {
-  color: #f2f7f8;
+.link:hover,
+.link:focus-visible {
+  color: #13d8f4;
 }
 
 .logo:focus-visible,

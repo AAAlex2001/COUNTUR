@@ -28,6 +28,8 @@ async def get_hero(
 async def get_hero_content(
     hero_content: HeroContentRepository = Depends(get_hero_content_repository),
 ) -> HeroContentSchema:
+    """Возвращает опубликованное содержимое первого экрана."""
+
     content = await hero_content.get()
     return HeroContentSchema.model_validate(content)
 

@@ -5,6 +5,7 @@ import type {
   PromotionState,
 } from "./types";
 
+/** Обновляет адрес картинки и состояние запроса. */
 export const heroImageReducer = (
   state: HeroImageState,
   action: HeroImageAction,
@@ -36,6 +37,7 @@ export const heroImageReducer = (
   }
 };
 
+/** Обновляет черновик акции и состояние сохранения. */
 export const promotionReducer = (
   state: PromotionState,
   action: PromotionAction,

@@ -10,13 +10,15 @@ from PIL import Image
 
 from app import uploads
 from app.config import Settings
-from app.landing.schemas import PromotionUpdateSchema
+from app.landing.models import HeroContent
+from app.landing.schemas import HeroContentSchema, HeroStatisticSchema, PromotionUpdateSchema
 from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
 from app.landing.services.usecases.manage_promotion import (
     SetPromotionImageUseCase,
     UpdatePromotionUseCase,
 )
 from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
 from app.uploads import UploadError
 
 
@@ -110,3 +112,29 @@ def test_promotion_update_keeps_image_and_image_keeps_texts(media_dir: Path) -> 
     assert hidden.title == "Новая акция"
     assert hidden.is_visible is False
     assert (media_dir / hidden.image_path).exists()
+
+
+def test_clear_hero_text_and_remove_empty_statistics():
+    repository = FakeRepository()
+    repository.item = HeroContent(title="Предыдущий заголовок")
+    content = HeroContentSchema(
+        is_visible=False,
+        title="",
+        overline="",
+        description="Новый подзаголовок",
+        catalog_button_label="Каталог",
+        support_button_label="",
+        image_alt="",
+        image_badge="",
+        statistics=[
+            HeroStatisticSchema(value="", label=""),
+            HeroStatisticSchema(value="24/7", label="Поддержка"),
+        ],
+    )
+
+    saved = asyncio.run(UpdateHeroContentUseCase(repository).execute(content))
+
+    assert saved.title == ""
+    assert saved.description == "Новый подзаголовок"
+    assert saved.is_visible is False
+    assert saved.statistics == [{"value": "24/7", "label": "Поддержка"}]

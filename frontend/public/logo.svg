@@ -1,15 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <defs>
-    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#13D8F4"/>
-      <stop offset="0.7071" stop-color="#4263F5"/>
-    </linearGradient>
-    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFD166"/>
-      <stop offset="0.7071" stop-color="#FF8A3D"/>
-    </linearGradient>
-  </defs>
-  <path d="M23 4H10a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h13" stroke="url(#shell)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M14 9v3M19 9v3M14 20v3M19 20v3M22 14h3M22 18h3" stroke="#13D8F4" stroke-width="1.6" stroke-linecap="round"/>
-  <rect x="11.5" y="12" width="10" height="8" rx="1.8" fill="url(#core)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480">
+  <g fill="#0b84df" stroke="#080c10" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="3" y="3" width="474" height="356" rx="10" stroke-width="6"/>
+    <path d="M5 309h469M165 364v74h140v-74zM76 439h328q7 0 7 7v23q0 7-7 7H76q-7 0-7-7v-23q0-7 7-7z"/>
+    <path fill="none" d="M169 48h-35l-7 21-19 8-20-11-24 25 11 19-8 20-23 7v34l23 7 8 20-11 20 24 24 20-11 19 8 7 22h35v-67a43 43 0 1 1 0-81z"/>
+    <path d="M205 48h150m-150 68h82m-82 79h188m-188 66h45"/>
+    <path d="M355 29h39v39h-39zM287 97h39v39h-39zM393 175h39v39h-39zM250 241h39v39h-39z"/>
+    <circle cx="33" cy="335" r="6" fill="#080c10" stroke="none"/>
+  </g>
 </svg>

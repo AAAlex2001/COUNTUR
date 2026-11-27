@@ -1,40 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import type { ContactsSettings, ContactTextFields, ContactVisibility } from "@/entities/contacts";
+import type { ContactsSettings } from "@/entities/contacts";
 import { CONTACTS_PATH } from "@/shared/config/site";
 import Button from "@/shared/ui/button";
+import type { ChangeContact } from "../../model/types";
+import { CONTACT_PANELS } from "../../model/panels";
 import ContactsFields from "../contacts-fields";
-import { CONTACT_PANELS } from "../contacts-fields/data";
 import styles from "./style.module.scss";
 
 type ContactsFormProps = {
-  initialSettings: ContactsSettings;
+  settings: ContactsSettings;
   saving: boolean;
-  onSave: (settings: ContactsSettings) => Promise<ContactsSettings | null>;
+  onChange: ChangeContact;
+  onSave: () => Promise<void>;
 };
 
-const ContactsForm = ({ initialSettings, saving, onSave }: ContactsFormProps) => {
-  const [settings, setSettings] = useState(initialSettings);
-
-  const changeText = (name: keyof ContactTextFields, value: string) => {
-    setSettings((current) => ({ ...current, [name]: value }));
-  };
-
-  const changeVisibility = (name: keyof ContactVisibility, checked: boolean) => {
-    setSettings((current) => ({ ...current, [name]: checked }));
-  };
-
-  const save = async () => {
-    const saved = await onSave(settings);
-    if (saved) setSettings(saved);
-  };
-
+/** Отображает секции формы и отправляет изменения контактов. */
+const ContactsForm = ({ settings, saving, onChange, onSave }: ContactsFormProps) => {
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        void save();
+        void onSave();
       }}
     >
       <fieldset className={styles.sections} disabled={saving}>
@@ -43,8 +30,7 @@ const ContactsForm = ({ initialSettings, saving, onSave }: ContactsFormProps) =>
             key={panel.title}
             panel={panel}
             settings={settings}
-            onTextChange={changeText}
-            onVisibilityChange={changeVisibility}
+            onChange={onChange}
           />
         ))}
       </fieldset>

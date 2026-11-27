@@ -7,6 +7,7 @@ import { useToast } from "@/shared/ui/toaster";
 import { fetchHeroContent, saveHeroContent } from "../api/hero-content";
 import { heroContentReducer } from "./hero-content-reducer";
 
+/** Хранит черновик первого экрана и публикует изменения. */
 export const useHeroContent = () => {
   const toast = useToast();
   const [state, dispatch] = useReducer(heroContentReducer, {
@@ -29,8 +30,12 @@ export const useHeroContent = () => {
     return () => controller.abort();
   }, []);
 
-  const change = (fields: HeroContent) => dispatch({ type: "fields/change", fields });
+  /** Применяет изменения полей к загруженному черновику. */
+  const change = (changes: Partial<HeroContent>) => {
+    dispatch({ type: "fields/change", changes });
+  };
 
+  /** Публикует черновик и принимает проверенные сервером значения. */
   const save = async () => {
     if (!state.fields || state.pending) return;
     dispatch({ type: "save/start" });

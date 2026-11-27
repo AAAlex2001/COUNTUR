@@ -16,10 +16,12 @@ const HeroImageEditor = () => {
   const { state, upload, remove } = useHeroImage();
   const [confirming, setConfirming] = useState(false);
 
+  /** Удаляет выбранное изображение после подтверждения. */
   const confirmDelete = async () => {
     if (await remove()) setConfirming(false);
   };
 
+  /** Закрывает подтверждение до начала удаления. */
   const cancelDelete = () => {
     if (!state.pending) setConfirming(false);
   };

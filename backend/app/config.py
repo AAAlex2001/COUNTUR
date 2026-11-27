@@ -1,13 +1,17 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from app.environment import PROJECT_ENV_FILE
 
 MEDIA_URL = "/media"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=PROJECT_ENV_FILE, env_file_encoding="utf-8", extra="ignore", hide_input_in_errors=True
+    )
 
     database_url: str
     db_pool_size: int = Field(20, ge=1, description="Постоянных соединений с БД на процесс")
@@ -24,6 +28,10 @@ class Settings(BaseSettings):
 
     admin_login: str = "admin"
     admin_password: str = Field(min_length=8)
+
+    cdek_account: str = ""
+    cdek_password: SecretStr = SecretStr("")
+    cdek_origin_city_code: int = Field(0, ge=0)
 
     smtp_host: str | None = Field(None, description="Без него ответы на обращения не уходят")
     smtp_port: int = 587

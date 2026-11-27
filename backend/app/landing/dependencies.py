@@ -25,18 +25,24 @@ def get_hero_repository(
 def get_hero_content_repository(
     session: AsyncSession = Depends(get_session),
 ) -> HeroContentRepository:
+    """Связывает тексты первого экрана с сессией запроса."""
+
     return HeroContentRepository(session)
 
 
 def get_update_hero_content_usecase(
     hero_content: HeroContentRepository = Depends(get_hero_content_repository),
 ) -> UpdateHeroContentUseCase:
+    """Подготавливает публикацию содержимого первого экрана."""
+
     return UpdateHeroContentUseCase(hero_content)
 
 
 def get_delete_hero_image_usecase(
     heroes: HeroRepository = Depends(get_hero_repository),
 ) -> DeleteHeroImageUseCase:
+    """Подготавливает удаление картинки первого экрана."""
+
     return DeleteHeroImageUseCase(heroes)
 
 

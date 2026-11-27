@@ -1,3 +1,25 @@
+import type { HeroContent } from "@/entities/landing";
+
+export type HeroContentState = {
+  fields: HeroContent | null;
+  error: string;
+  pending: boolean;
+};
+
+export type HeroContentAction =
+  | { type: "load/finish"; fields: HeroContent }
+  | { type: "load/error"; error: string }
+  | { type: "fields/change"; changes: Partial<HeroContent> }
+  | { type: "save/start" }
+  | { type: "save/success"; fields: HeroContent }
+  | { type: "save/error" };
+
+export type HeroTextField = {
+  name: keyof Omit<HeroContent, "statistics" | "is_visible" | "description">;
+  label: string;
+  maxLength: number;
+};
+
 export type HeroImageState = {
   imageUrl: string | null;
   loaded: boolean;

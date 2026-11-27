@@ -1,19 +1,6 @@
-import type { HeroContent } from "@/entities/landing";
+import type { HeroContentAction, HeroContentState } from "./types";
 
-type HeroContentState = {
-  fields: HeroContent | null;
-  error: string;
-  pending: boolean;
-};
-
-type HeroContentAction =
-  | { type: "load/finish"; fields: HeroContent }
-  | { type: "load/error"; error: string }
-  | { type: "fields/change"; fields: HeroContent }
-  | { type: "save/start" }
-  | { type: "save/success"; fields: HeroContent }
-  | { type: "save/error" };
-
+/** Обновляет черновик и состояние сохранения первого экрана. */
 export const heroContentReducer = (
   state: HeroContentState,
   action: HeroContentAction,
@@ -26,7 +13,7 @@ export const heroContentReducer = (
       return { ...state, error: action.error };
 
     case "fields/change":
-      return { ...state, fields: action.fields };
+      return state.fields ? { ...state, fields: { ...state.fields, ...action.changes } } : state;
 
     case "save/start":
       return { ...state, pending: true };

@@ -9,6 +9,7 @@ type ContactCompanyProps = {
   settings: ContactsSettings;
 };
 
+/** Выводит реквизиты и ссылки на документы магазина. */
 const ContactCompany = ({ settings }: ContactCompanyProps) => {
   const requisites = getOperatorRequisites(settings);
   const showRequisites = settings.show_requisites && (requisites.length > 0 || settings.operator_note);

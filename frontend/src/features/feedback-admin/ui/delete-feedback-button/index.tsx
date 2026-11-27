@@ -10,6 +10,7 @@ type DeleteFeedbackButtonProps = {
   onDelete: () => void;
 };
 
+/** Запрашивает подтверждение перед удалением обращения. */
 const DeleteFeedbackButton = ({
   disabled,
   confirming,

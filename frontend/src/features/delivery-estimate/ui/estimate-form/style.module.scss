@@ -1,0 +1,33 @@
+.form {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  width: 100%;
+  gap: 16px;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #273138;
+  border-radius: 6px;
+  background: #101519;
+  color: #f2f7f8;
+}

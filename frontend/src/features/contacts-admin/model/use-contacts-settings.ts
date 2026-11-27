@@ -5,7 +5,9 @@ import type { ContactsSettings } from "@/entities/contacts";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
 import { fetchContactsSettings, saveContactsSettings } from "../api/contacts";
+import type { ChangeContact } from "./types";
 
+/** Загружает черновик контактов и сохраняет его в админке. */
 export const useContactsSettings = () => {
   const toast = useToast();
   const [settings, setSettings] = useState<ContactsSettings | null>(null);
@@ -26,21 +28,26 @@ export const useContactsSettings = () => {
     return () => controller.abort();
   }, []);
 
-  const save = async (fields: ContactsSettings): Promise<ContactsSettings | null> => {
-    if (saving) return null;
+  /** Меняет одно текстовое поле или переключатель видимости. */
+  const change: ChangeContact = (name, value) => {
+    setSettings((current) => current && { ...current, [name]: value });
+  };
+
+  /** Сохраняет текущую форму и принимает проверенные сервером значения. */
+  const save = async () => {
+    if (!settings || saving) return;
     setSaving(true);
 
     try {
-      const saved = await saveContactsSettings(fields);
+      const saved = await saveContactsSettings(settings);
+      setSettings(saved);
       toast("Контакты сохранены");
-      return saved;
     } catch (failure) {
       toast(errorMessage(failure, "Не удалось сохранить контакты"), "error");
-      return null;
     } finally {
       setSaving(false);
     }
   };
 
-  return { settings, loadError, saving, save };
+  return { settings, loadError, saving, change, save };
 };

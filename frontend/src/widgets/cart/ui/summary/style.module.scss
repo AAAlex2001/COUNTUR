@@ -137,3 +137,14 @@
 
   color: #3ddc97;
 }
+
+.trustLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.trustLink:hover,
+.trustLink:focus-visible {
+  color: #13d8f4;
+}

@@ -49,6 +49,8 @@ async def delete_feedback(
     message_id: int,
     messages: FeedbackRepository = Depends(get_feedback_repository),
 ) -> None:
+    """Удаляет обращение вместе с ответом администратора."""
+
     await messages.delete(message_id)
 
 

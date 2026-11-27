@@ -17,6 +17,8 @@ router = APIRouter(
 async def get_contacts(
     contacts: ContactsSettingsRepository = Depends(get_contacts_repository),
 ) -> ContactsSettingsSchema:
+    """Возвращает настройки контактов со скрытыми разделами."""
+
     settings = await contacts.get()
     return ContactsSettingsSchema.model_validate(settings)
 
@@ -26,5 +28,7 @@ async def update_contacts(
     payload: ContactsSettingsSchema,
     usecase: UpdateContactsUseCase = Depends(get_update_contacts_usecase),
 ) -> ContactsSettingsSchema:
+    """Сохраняет настройки, изменённые администратором."""
+
     settings = await usecase.execute(payload)
     return ContactsSettingsSchema.model_validate(settings)

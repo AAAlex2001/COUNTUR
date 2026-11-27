@@ -1,0 +1,18 @@
+{
+  "name": "COUNTUR",
+  "short_name": "COUNTUR",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon-120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    }
+  ]
+}

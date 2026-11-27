@@ -40,11 +40,15 @@ class HeroContentRepository:
         self.db = db
 
     async def get(self) -> HeroContent:
+        """Возвращает тексты и показатели первого экрана."""
+
         query = select(HeroContent).where(HeroContent.id == HERO_CONTENT_ID)
         result = await self.db.execute(query)
         return result.scalar_one()
 
     async def save(self, content: HeroContent) -> HeroContent:
+        """Фиксирует изменения содержимого первого экрана."""
+
         await self.db.commit()
         return content
 

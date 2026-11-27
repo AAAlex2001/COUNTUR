@@ -48,3 +48,5 @@ export type MessageAction =
   | { type: "send/start" }
   | { type: "send/success"; message: FeedbackMessage }
   | { type: "send/error" };
+
+export type DeleteFeedbackStatus = "idle" | "confirming" | "deleting";

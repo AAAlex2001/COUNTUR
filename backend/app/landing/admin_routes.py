@@ -32,6 +32,8 @@ router = APIRouter(
 async def get_hero_content(
     hero_content: HeroContentRepository = Depends(get_hero_content_repository),
 ) -> HeroContentSchema:
+    """Загружает содержимое первого экрана в редактор."""
+
     content = await hero_content.get()
     return HeroContentSchema.model_validate(content)
 
@@ -41,6 +43,8 @@ async def update_hero_content(
     payload: HeroContentSchema,
     usecase: UpdateHeroContentUseCase = Depends(get_update_hero_content_usecase),
 ) -> HeroContentSchema:
+    """Публикует изменения текстов, кнопок и показателей."""
+
     content = await usecase.execute(payload)
     return HeroContentSchema.model_validate(content)
 
@@ -67,6 +71,8 @@ async def set_hero_image(
 async def delete_hero_image(
     usecase: DeleteHeroImageUseCase = Depends(get_delete_hero_image_usecase),
 ) -> HeroSchema:
+    """Убирает изображение первого экрана."""
+
     hero = await usecase.execute()
     if hero is None:
         return HeroSchema()

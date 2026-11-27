@@ -39,6 +39,8 @@ async def get_message_for_reply(
 
 
 def require_feedback_message(message: FeedbackMessage | None) -> FeedbackMessage:
+    """Возвращает найденное обращение или завершает запрос с ошибкой 404."""
+
     if message is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

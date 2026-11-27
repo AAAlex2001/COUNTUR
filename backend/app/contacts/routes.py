@@ -11,6 +11,8 @@ router = APIRouter(prefix="/contacts", tags=["contacts"])
 async def get_contacts(
     contacts: ContactsSettingsRepository = Depends(get_contacts_repository),
 ) -> ContactsSettingsSchema:
+    """Возвращает покупателю опубликованные контактные данные."""
+
     settings = await contacts.get()
     response = ContactsSettingsSchema.model_validate(settings)
 

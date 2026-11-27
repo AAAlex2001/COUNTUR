@@ -19,5 +19,6 @@ export const uploadHeroImage = (file: File) => {
   return adminRequest<Hero>("/landing/hero/image", { method: "PUT", body });
 };
 
+/** Удаляет опубликованную картинку первого экрана. */
 export const deleteHeroImage = () =>
   adminRequest<Hero>("/landing/hero/image", { method: "DELETE" });

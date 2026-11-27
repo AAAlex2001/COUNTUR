@@ -10,6 +10,8 @@ class HeroSchema(BaseModel):
 
 
 class HeroStatisticSchema(BaseModel):
+    """Значение и подпись одного показателя первого экрана."""
+
     model_config = ConfigDict(str_strip_whitespace=True)
 
     value: str = Field(max_length=40)
@@ -17,6 +19,8 @@ class HeroStatisticSchema(BaseModel):
 
 
 class HeroContentSchema(BaseModel):
+    """Настраиваемое содержимое первого экрана магазина."""
+
     model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
 
     is_visible: bool

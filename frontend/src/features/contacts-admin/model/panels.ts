@@ -1,23 +1,4 @@
-import type { ContactTextFields, ContactVisibility } from "@/entities/contacts";
-
-type ContactField = {
-  name: keyof ContactTextFields;
-  label: string;
-  maxLength: number;
-  type?: "email" | "tel" | "textarea";
-  hint?: string;
-};
-
-type ContactToggle = {
-  name: keyof ContactVisibility;
-  label: string;
-};
-
-export type ContactsPanel = {
-  title: string;
-  fields: ContactField[];
-  toggles?: ContactToggle[];
-};
+import type { ContactsPanel } from "./types";
 
 export const CONTACT_PANELS: ContactsPanel[] = [
   {

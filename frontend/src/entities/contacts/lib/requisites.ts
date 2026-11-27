@@ -1,7 +1,9 @@
 import type { ContactsSettings } from "../model/types";
 
+/** Собирает ссылку для звонка из отформатированного номера. */
 export const phoneHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
+/** Собирает заполненные реквизиты, подставляя контакты магазина по умолчанию. */
 export const getOperatorRequisites = (contacts: ContactsSettings) => {
   const phone = contacts.operator_phone || contacts.phone;
   const email = contacts.operator_email || contacts.email;

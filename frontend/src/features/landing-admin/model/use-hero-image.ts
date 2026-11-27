@@ -39,6 +39,7 @@ export const useHeroImage = () => {
     }
   };
 
+  /** Удаляет изображение и обновляет предпросмотр. */
   const remove = async () => {
     if (state.pending || !state.imageUrl) return false;
     dispatch({ type: "delete/start" });

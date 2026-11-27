@@ -5,6 +5,14 @@ import { ToastProvider } from "@/shared/ui/toaster";
 import "./globals.scss";
 
 export const metadata: Metadata = {
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-120.png", type: "image/png", sizes: "120x120" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE_NAME} — комплектующие для ПК`,

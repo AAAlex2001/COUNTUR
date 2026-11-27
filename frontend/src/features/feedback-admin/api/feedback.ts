@@ -13,6 +13,7 @@ export const fetchFeedback = (filter: StatusFilter, limit: number, offset: numbe
 /** Обращение целиком вместе с ответом. */
 export const fetchMessage = (id: number) => adminRequest<FeedbackMessage>(`/feedback/${id}`);
 
+/** Удаляет обращение вместе с сохранённым ответом. */
 export const deleteFeedbackMessage = (id: number) =>
   adminRequest<void>(`/feedback/${id}`, { method: "DELETE" });
 

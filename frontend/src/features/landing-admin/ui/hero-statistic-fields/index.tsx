@@ -12,17 +12,21 @@ type HeroStatisticFieldsProps = {
   onChange: (statistics: HeroStatistic[]) => void;
 };
 
+/** Редактирует значения и подписи показателей в порядке показа. */
 const HeroStatisticFields = ({ statistics, onChange }: HeroStatisticFieldsProps) => {
+  /** Заменяет показатель на выбранной позиции. */
   const updateStatistic = (index: number, statistic: HeroStatistic) => {
     const updated = statistics.slice();
     updated[index] = statistic;
     onChange(updated);
   };
 
+  /** Удаляет показатель из черновика. */
   const removeStatistic = (index: number) => {
     onChange(statistics.filter((_, position) => position !== index));
   };
 
+  /** Добавляет пустую строку для нового показателя. */
   const addStatistic = () => {
     onChange(statistics.concat({ value: "", label: "" }));
   };

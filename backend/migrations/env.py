@@ -32,9 +32,16 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def include_name(name, object_type, parent_names) -> bool:
+    """Сохраняет таблицу отдельного сервиса при автогенерации миграций сайта."""
+
+    return object_type != "table" or name != "telegram_replies"
+
+
 def do_run_migrations(connection: Connection) -> None:
     context.configure(
         connection=connection,
+        include_name=include_name,
         target_metadata=target_metadata,
         compare_type=True,
     )

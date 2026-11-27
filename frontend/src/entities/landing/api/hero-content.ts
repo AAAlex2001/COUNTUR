@@ -18,4 +18,5 @@ const DEFAULT_HERO_CONTENT: HeroContent = {
   ],
 };
 
+/** Загружает первый экран с резервным текстом на случай ошибки API. */
 export const getHeroContent = () => load("/v1/landing/hero/content", DEFAULT_HERO_CONTENT);

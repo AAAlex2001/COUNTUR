@@ -10,6 +10,8 @@ class UpdateHeroContentUseCase:
         self.hero_content = hero_content
 
     async def execute(self, payload: HeroContentSchema) -> HeroContent:
+        """Сохраняет настройки и отбрасывает пустые строки показателей."""
+
         content = await self.hero_content.get()
 
         content.is_visible = payload.is_visible

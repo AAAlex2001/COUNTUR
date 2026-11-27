@@ -1,0 +1,10 @@
+.page {
+  box-sizing: border-box;
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  line-height: 1.6;
+}

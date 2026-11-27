@@ -9,6 +9,13 @@ export const SITE_NAME = "COUNTUR";
 export const SITE_DESCRIPTION =
   "Интернет-магазин комплектующих для ПК: процессоры, видеокарты, материнские платы, память, накопители и готовые подборки для производительной сборки.";
 
+export const ABOUT_PATH = "/about";
+
+export const DELIVERY_PATH = "/delivery";
+
+export const RETURNS_URL =
+  "https://my.cdek.ru/lkfl/clients-return/9843fc42-fdf7-4298-9390-5a8f15d3a75e";
+
 export const CONTACTS_PATH = "/contacts";
 
 export const PRIVACY_PATH = "/privacy";
