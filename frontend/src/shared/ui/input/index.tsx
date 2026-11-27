@@ -1,76 +1,42 @@
 import cn from "classnames";
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import styles from "./style.module.scss";
 
-type InputProps = {
-  type?: "text" | "search" | "tel" | "email" | "password";
+type InputProps = Omit<ComponentPropsWithoutRef<"input">, "size" | "onChange" | "prefix"> & {
   size?: "lg" | "md" | "sm";
-  name?: string;
-  placeholder?: string;
-  ariaLabel?: string;
-  value?: string;
   onChange?: (value: string) => void;
-  onBlur?: () => void;
-  maxLength?: number;
-  inputMode?: "text" | "numeric" | "decimal" | "tel" | "email" | "search";
-  autoComplete?: string;
-  list?: string;
+  ariaLabel?: string;
   icon?: ReactNode;
   prefix?: string;
   suffix?: ReactNode;
-  className?: string;
 };
 
-/**
- * Поле ввода. Слева — иконка или подпись, справа — suffix, например кнопка показа пароля.
- * list — id datalist с подсказками.
- */
-const Input = ({
-  type = "text",
+/** Поле ввода с подписью. */
+export default function Input({
   size = "md",
-  name,
-  placeholder,
-  ariaLabel,
-  value,
-  onChange,
-  onBlur,
-  maxLength,
-  inputMode,
-  autoComplete,
-  list,
+  type = "text",
   icon,
   prefix,
   suffix,
   className,
-}: InputProps) => (
-  <label
-    className={cn(
-      styles.field,
-      size === "lg" && styles.large,
-      size === "sm" && styles.small,
-      className,
-    )}
-  >
-    {icon && <span className={styles.icon}>{icon}</span>}
-    {prefix && <span className={styles.prefix}>{prefix}</span>}
+  ariaLabel,
+  onChange,
+  ...inputProps
+}: InputProps) {
+  return (
+    <label className={cn(styles.field, size === "lg" && styles.large, size === "sm" && styles.small, className)}>
+      {icon && <span className={styles.icon}>{icon}</span>}
+      {prefix && <span className={styles.prefix}>{prefix}</span>}
 
-    <input
-      className={styles.input}
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      aria-label={ariaLabel}
-      value={value}
-      maxLength={maxLength}
-      inputMode={inputMode}
-      autoComplete={autoComplete}
-      list={list}
-      onChange={onChange && ((event) => onChange(event.target.value))}
-      onBlur={onBlur}
-    />
+      <input
+        {...inputProps}
+        type={type}
+        className={styles.input}
+        aria-label={ariaLabel ?? inputProps["aria-label"]}
+        onChange={onChange && ((event) => onChange(event.target.value))}
+      />
 
-    {suffix}
-  </label>
-);
-
-export default Input;
+      {suffix}
+    </label>
+  );
+}

@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class HeroSchema(BaseModel):
-    """Первый экран главной страницы."""
+    """Первый экран."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -10,7 +10,7 @@ class HeroSchema(BaseModel):
 
 
 class HeroStatisticSchema(BaseModel):
-    """Значение и подпись одного показателя первого экрана."""
+    """Показатель первого экрана."""
 
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -19,7 +19,7 @@ class HeroStatisticSchema(BaseModel):
 
 
 class HeroContentSchema(BaseModel):
-    """Настраиваемое содержимое первого экрана магазина."""
+    """Настройки первого экрана."""
 
     model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
 
@@ -35,7 +35,7 @@ class HeroContentSchema(BaseModel):
 
 
 class PromotionUpdateSchema(BaseModel):
-    """Содержимое рекламного блока, которое задаёт администратор."""
+    """Настройки рекламного блока."""
 
     label: str = Field("", max_length=100, description="Надстрочник, например срок акции")
     title: str = Field("", max_length=150, description="Заголовок")

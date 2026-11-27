@@ -1,19 +1,20 @@
-from sqlalchemy.orm import Session, sessionmaker
 from telebot import TeleBot
 
 from app.handlers import SupportHandlers
-from app.services.repo import ReplyRepository
-from app.services.usecases.forward_request import ForwardRequestUseCase
-from app.services.usecases.reply_to_request import ReplyToRequestUseCase
+from app.repositories.replies import ReplyRepository
+from app.request_dialog import RequestDialog
+from app.usecases.forward_request import ForwardRequestUseCase
+from app.usecases.reply_to_request import ReplyToRequestUseCase
 
 
-def get_handlers(bot: TeleBot, owner: int, sessions: sessionmaker[Session]) -> SupportHandlers:
-    """Связывает Telegram-обработчики с репозиторием и сценариями поддержки."""
+def build_handlers(bot: TeleBot, owner_chat_id: int, replies: ReplyRepository) -> SupportHandlers:
+    """Собрать обработчики поддержки."""
 
-    replies = ReplyRepository(sessions)
+    forward = ForwardRequestUseCase(bot=bot, owner_chat_id=owner_chat_id, replies=replies)
     return SupportHandlers(
-        bot,
-        owner,
-        ForwardRequestUseCase(bot, owner, replies),
-        ReplyToRequestUseCase(bot, replies),
+        bot=bot,
+        owner_chat_id=owner_chat_id,
+        requests=RequestDialog(bot=bot, forward=forward),
+        replies=replies,
+        send_reply=ReplyToRequestUseCase(bot=bot, replies=replies),
     )

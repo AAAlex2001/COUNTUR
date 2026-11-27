@@ -5,7 +5,7 @@ TOPICS = ["Совместимость комплектующих", "Гарант
 
 
 def reply_keyboard(labels: list[str]) -> ReplyKeyboardMarkup:
-    """Располагает каждую кнопку ответа в отдельной строке."""
+    """Показать варианты ответа."""
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     for label in labels:
@@ -14,7 +14,7 @@ def reply_keyboard(labels: list[str]) -> ReplyKeyboardMarkup:
 
 
 def reply_button(request_id: str) -> InlineKeyboardMarkup:
-    """Привязывает кнопку владельца к конкретной заявке."""
+    """Добавить кнопку ответа."""
 
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton("Ответить", callback_data=f"{REPLY_PREFIX}{request_id}"))

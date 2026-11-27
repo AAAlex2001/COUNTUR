@@ -8,6 +8,7 @@ import Collections from "@/widgets/collections";
 import Hero from "@/widgets/hero";
 import Hits from "@/widgets/hits";
 import Promotion from "@/widgets/promotion";
+import ProductCardActions from "@/widgets/product-card-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +32,8 @@ export default async function HomePage() {
       <Hero imageUrl={hero.image_url} content={heroContent} />
       <Categories categories={categories} />
       {promotion && <Promotion promotion={promotion} />}
-      {featured.products.length > 0 && <Hits products={featured.products} />}
-      <Collections collections={collections} />
+      {featured.products.length > 0 && <Hits products={featured.products} actions={ProductCardActions} />}
+      <Collections collections={collections} actions={ProductCardActions} />
       <Benefits />
     </main>
   );

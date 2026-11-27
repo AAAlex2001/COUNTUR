@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Favorites from "@/widgets/favorites";
+import ProductCardActions from "@/widgets/product-card-actions";
 
 export const metadata: Metadata = {
   title: "Избранное",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function FavoritesRoute() {
   return (
     <main>
-      <Favorites />
+      <Favorites actions={ProductCardActions} />
     </main>
   );
 }

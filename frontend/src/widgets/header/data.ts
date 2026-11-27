@@ -9,6 +9,6 @@ export const ANNOUNCEMENT = "БЕСПЛАТНАЯ ДОСТАВКА ОТ 50 000 �
 export const HEADER_NAV: HeaderNavItem[] = [
   { label: "Каталог", href: CATALOG_PATH, Icon: GridIcon },
   { label: "Готовые подборки", href: COLLECTIONS_PATH, Icon: LayersIcon },
-  { label: "Доставка", href: DELIVERY_PATH, Icon: TruckIcon, newTab: true },
+  { label: "Доставка", href: DELIVERY_PATH, Icon: TruckIcon },
   { label: "Контакты", href: CONTACTS_PATH, Icon: HeadphonesIcon },
 ];

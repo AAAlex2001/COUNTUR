@@ -15,6 +15,7 @@ export type Page<T> = {
 export type PageLoader<T> = (userId: number, limit: number, offset: number) => Promise<Page<T>>;
 
 export type OrderChanges = {
+  tracking_number?: string;
   status?: OrderStatus;
   payment_status?: PaymentStatus;
 };
@@ -51,4 +52,4 @@ export type PagedAction<T> =
   | { type: "load/start"; page: number }
   | { type: "load/success"; page: Page<T> }
   | { type: "load/error" }
-  | { type: "items/change"; items: T[] };
+  | { type: "items/update"; update: (items: T[]) => T[] };

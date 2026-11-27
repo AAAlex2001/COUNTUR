@@ -3,11 +3,11 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
-    """Метаданные таблиц сервиса поддержки."""
+    """Модели поддержки."""
 
 
 class TelegramReply(Base):
-    """Связывает кнопку ответа с чатом покупателя, пока заявка открыта."""
+    """Адресат ответа поддержки."""
 
     __tablename__ = "telegram_replies"
 

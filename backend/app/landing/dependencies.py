@@ -1,78 +1,55 @@
-"""Главная страница: репозитории и фабрики сценариев."""
-
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_session
-from app.landing.services.repo import HeroContentRepository, HeroRepository, PromotionRepository
-from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
-from app.landing.services.usecases.manage_promotion import (
-    SetPromotionImageUseCase,
-    UpdatePromotionUseCase,
-)
-from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
-from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.database import DatabaseSession
+from app.landing.repository import LandingRepository
+from app.landing.usecases.delete_hero_image import DeleteHeroImageUseCase
+from app.landing.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.usecases.set_promotion_image import SetPromotionImageUseCase
+from app.landing.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.landing.usecases.update_promotion import UpdatePromotionUseCase
 
 
-def get_hero_repository(
-    session: AsyncSession = Depends(get_session),
-) -> HeroRepository:
-    """Репозиторий первого экрана с сессией текущего запроса."""
+def get_landing_repository(db: DatabaseSession) -> LandingRepository:
+    """Открыть содержимое главной."""
 
-    return HeroRepository(session)
-
-
-def get_hero_content_repository(
-    session: AsyncSession = Depends(get_session),
-) -> HeroContentRepository:
-    """Связывает тексты первого экрана с сессией запроса."""
-
-    return HeroContentRepository(session)
+    return LandingRepository(db=db)
 
 
 def get_update_hero_content_usecase(
-    hero_content: HeroContentRepository = Depends(get_hero_content_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> UpdateHeroContentUseCase:
-    """Подготавливает публикацию содержимого первого экрана."""
+    """Подготовить обновление первого экрана."""
 
-    return UpdateHeroContentUseCase(hero_content)
-
-
-def get_delete_hero_image_usecase(
-    heroes: HeroRepository = Depends(get_hero_repository),
-) -> DeleteHeroImageUseCase:
-    """Подготавливает удаление картинки первого экрана."""
-
-    return DeleteHeroImageUseCase(heroes)
-
-
-def get_promotion_repository(
-    session: AsyncSession = Depends(get_session),
-) -> PromotionRepository:
-    """Репозиторий рекламного блока с сессией текущего запроса."""
-
-    return PromotionRepository(session)
+    return UpdateHeroContentUseCase(landing=landing)
 
 
 def get_set_hero_image_usecase(
-    heroes: HeroRepository = Depends(get_hero_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> SetHeroImageUseCase:
-    """Сценарий замены картинки первого экрана."""
+    """Подготовить замену изображения."""
 
-    return SetHeroImageUseCase(heroes)
+    return SetHeroImageUseCase(landing=landing)
+
+
+def get_delete_hero_image_usecase(
+    landing: LandingRepository = Depends(get_landing_repository),
+) -> DeleteHeroImageUseCase:
+    """Подготовить удаление изображения."""
+
+    return DeleteHeroImageUseCase(landing=landing)
 
 
 def get_update_promotion_usecase(
-    promotions: PromotionRepository = Depends(get_promotion_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> UpdatePromotionUseCase:
-    """Сценарий изменения рекламного блока."""
+    """Подготовить обновление акции."""
 
-    return UpdatePromotionUseCase(promotions)
+    return UpdatePromotionUseCase(landing=landing)
 
 
 def get_set_promotion_image_usecase(
-    promotions: PromotionRepository = Depends(get_promotion_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> SetPromotionImageUseCase:
-    """Сценарий замены картинки рекламного блока."""
+    """Подготовить изображение акции."""
 
-    return SetPromotionImageUseCase(promotions)
+    return SetPromotionImageUseCase(landing=landing)

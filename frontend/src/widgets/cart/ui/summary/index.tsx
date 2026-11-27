@@ -1,4 +1,5 @@
 import cn from "classnames";
+import Link from "next/link";
 import type { Cart } from "@/entities/cart";
 import { formatRub } from "@/shared/lib/money";
 import Button from "@/shared/ui/button";
@@ -11,7 +12,7 @@ type SummaryProps = {
   className?: string;
 };
 
-/** Блок «Итого» в корзине: сумма, кнопка оформления и гарантии магазина. */
+/** Показать итог корзины. */
 const Summary = ({ cart, className }: SummaryProps) => (
   <aside className={cn(styles.summary, className)} aria-label="Итог заказа">
     <h2 className={styles.title}>Итого</h2>
@@ -39,13 +40,18 @@ const Summary = ({ cart, className }: SummaryProps) => (
     </Button>
 
     <ul className={styles.trust}>
-      {TRUST_MESSAGES.map(({ Icon, text, href }) => (
+      {TRUST_MESSAGES.map(({ Icon, text, href, newTab }) => (
         <li className={styles.trustItem} key={text}>
           <Icon className={styles.trustIcon} />
           {href ? (
-            <a className={styles.trustLink} href={href} target="_blank" rel="noopener noreferrer">
+            <Link
+              className={styles.trustLink}
+              href={href}
+              target={newTab ? "_blank" : undefined}
+              rel={newTab ? "noopener noreferrer" : undefined}
+            >
               {text}
-            </a>
+            </Link>
           ) : text}
         </li>
       ))}

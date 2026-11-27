@@ -3,7 +3,7 @@ from sqlalchemy.engine import make_url
 
 
 def create_bot_engine(database_url: str) -> Engine:
-    """Подключает синхронный Telegram-обработчик к PostgreSQL сайта."""
+    """Подключить базу магазина."""
 
     url = make_url(database_url)
     if url.get_backend_name() != "postgresql":

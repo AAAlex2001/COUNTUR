@@ -1,22 +1,14 @@
-import { notFound } from "next/navigation";
-import { getDocument } from "@/entities/document";
-import LegalDocumentPage, { documentMetadata } from "@/widgets/legal-document";
+import { documentMetadata } from "../../seo/documents";
+import { DocumentPage } from "../document-page";
 
 const SLUG = "personal-data";
 
 export const dynamic = "force-dynamic";
 
+/** Собрать метаданные документа. */
 export const generateMetadata = () => documentMetadata(SLUG);
 
-/** Обработка персональных данных и текст согласия. Текст правится в админке. */
-export default async function PersonalDataRoute() {
-  const document = await getDocument(SLUG);
-
-  if (!document) notFound();
-
-  return (
-    <main>
-      <LegalDocumentPage document={document} />
-    </main>
-  );
+/** Показать согласие на обработку данных. */
+export default function PersonalDataPage() {
+  return <DocumentPage slug={SLUG} />;
 }

@@ -7,7 +7,7 @@ from app.database import Base
 
 
 class Document(Base):
-    """Страница-документ магазина: политика, согласие, соглашение. Текст — HTML из редактора."""
+    """Документ магазина."""
 
     __tablename__ = "documents"
 

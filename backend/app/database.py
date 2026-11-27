@@ -1,5 +1,7 @@
 from collections.abc import AsyncGenerator
+from typing import Annotated
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -32,5 +34,10 @@ SessionLocal = async_sessionmaker(
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    """Открыть сессию на запрос."""
+
     async with SessionLocal() as session:
         yield session
+
+
+DatabaseSession = Annotated[AsyncSession, Depends(get_session)]

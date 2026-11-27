@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 
 from app.admin.dependencies import require_admin
 from app.contacts.dependencies import get_contacts_repository, get_update_contacts_usecase
+from app.contacts.repository import ContactsSettingsRepository
 from app.contacts.schemas import ContactsSettingsSchema
-from app.contacts.services.repo import ContactsSettingsRepository
-from app.contacts.services.usecases.update_contacts import UpdateContactsUseCase
+from app.contacts.usecases.update_contacts import UpdateContactsUseCase
 
 router = APIRouter(
     prefix="/admin/contacts",
@@ -17,7 +17,7 @@ router = APIRouter(
 async def get_contacts(
     contacts: ContactsSettingsRepository = Depends(get_contacts_repository),
 ) -> ContactsSettingsSchema:
-    """Возвращает настройки контактов со скрытыми разделами."""
+    """Открыть настройки контактов."""
 
     settings = await contacts.get()
     return ContactsSettingsSchema.model_validate(settings)
@@ -28,7 +28,7 @@ async def update_contacts(
     payload: ContactsSettingsSchema,
     usecase: UpdateContactsUseCase = Depends(get_update_contacts_usecase),
 ) -> ContactsSettingsSchema:
-    """Сохраняет настройки, изменённые администратором."""
+    """Сохранить настройки контактов."""
 
     settings = await usecase.execute(payload)
     return ContactsSettingsSchema.model_validate(settings)

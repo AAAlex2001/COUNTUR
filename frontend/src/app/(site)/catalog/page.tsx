@@ -9,6 +9,7 @@ import {
   type SearchParams,
 } from "@/entities/product";
 import Catalog from "@/widgets/catalog";
+import ProductCardActions from "@/widgets/product-card-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,7 @@ export default async function CatalogRoute({ searchParams }: Props) {
   return (
     <main>
       <Catalog
+        actions={ProductCardActions}
         list={list}
         categories={categories}
         filters={filters}

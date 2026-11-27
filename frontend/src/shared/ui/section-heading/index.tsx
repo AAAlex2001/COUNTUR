@@ -3,18 +3,19 @@ import { ArrowRightIcon } from "@/shared/ui/icons";
 import styles from "./style.module.scss";
 
 type SectionHeadingProps = {
-  eyebrow: string;
+  eyebrow?: string;
+  as?: "h1" | "h2";
   title: string;
   actionLabel?: string;
   actionHref?: string;
 };
 
-/** Шапка блока на главной: надстрочник, заголовок и кнопка «смотреть всё» справа. */
-const SectionHeading = ({ eyebrow, title, actionLabel, actionHref }: SectionHeadingProps) => (
+/** Заголовок раздела. */
+const SectionHeading = ({ as: Heading = "h2", eyebrow, title, actionLabel, actionHref }: SectionHeadingProps) => (
   <div className={styles.heading}>
     <div className={styles.titles}>
-      <p className={styles.eyebrow}>{eyebrow}</p>
-      <h2 className={styles.title}>{title}</h2>
+      {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
+      <Heading className={styles.title}>{title}</Heading>
     </div>
 
     {actionLabel && actionHref && (

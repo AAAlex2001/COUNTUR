@@ -28,6 +28,7 @@ export type Order = {
   customer_email: string | null;
   delivery_method: string;
   delivery_address: string | null;
+  tracking_number: string | null;
   comment: string | null;
   items: OrderItem[];
   total: string;

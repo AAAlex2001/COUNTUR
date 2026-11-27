@@ -1,27 +1,29 @@
 from collections.abc import AsyncIterator
-from functools import lru_cache
+from typing import Annotated
 
+from fastapi import Depends, Request
 from httpx import AsyncClient
 
-from app.config import get_settings
-from app.delivery.auth import CdekAuth
-from app.delivery.calculator import CdekCalculator
+from app.config import Settings, get_settings
+from app.delivery.client import CdekClient
+from app.delivery.usecases.estimate_delivery import EstimateDeliveryUseCase
 
 
-@lru_cache
-def get_calculator() -> CdekCalculator | None:
-    """Создаёт калькулятор, когда заданы оба ключа СДЭК и город отправки."""
+async def get_cdek_client(request: Request) -> AsyncIterator[CdekClient]:
+    """Подключить клиента перевозчика."""
 
-    settings = get_settings()
-    if not settings.cdek_account or not settings.cdek_password.get_secret_value():
-        return None
-    if not settings.cdek_origin_city_code:
-        return None
-
-    auth = CdekAuth(settings.cdek_account, settings.cdek_password)
-    return CdekCalculator(auth, settings.cdek_origin_city_code)
+    async with AsyncClient(base_url="https://api.cdek.ru/v2/", timeout=10) as http:
+        yield CdekClient(http=http, auth=request.app.state.cdek_auth)
 
 
-async def get_cdek_client() -> AsyncIterator[AsyncClient]:
-    async with AsyncClient(base_url="https://api.cdek.ru/v2/", timeout=10) as client:
-        yield client
+def get_estimate_delivery_usecase(
+    settings: Annotated[Settings, Depends(get_settings)],
+    carrier: Annotated[CdekClient, Depends(get_cdek_client)],
+) -> EstimateDeliveryUseCase:
+    """Собрать сценарий расчёта."""
+
+    return EstimateDeliveryUseCase(
+        carrier=carrier,
+        origin_code=settings.cdek_origin_city_code,
+        enabled=settings.delivery_enabled,
+    )

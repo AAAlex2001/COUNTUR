@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { getContacts, getOperatorRequisites } from "@/entities/contacts";
-import { documentPath, getDocument, type LegalDocument } from "@/entities/document";
+import Link from "next/link";
+import { getOperatorRequisites, type ContactsSettings } from "@/entities/contacts";
+import type { LegalDocument } from "@/entities/document";
 import { CONTACTS_PATH } from "@/shared/config/site";
 import { formatShortDate } from "@/shared/lib/date";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
@@ -12,31 +12,19 @@ import { withHeadings } from "./lib/headings";
 import Toc from "./ui/toc";
 import styles from "./style.module.scss";
 
-/** Заголовок, описание и canonical страницы документа из базы. */
-export const documentMetadata = async (slug: string): Promise<Metadata> => {
-  const document = await getDocument(slug);
-
-  if (!document) return { title: "Документ не найден", robots: { index: false } };
-
-  return {
-    title: document.title,
-    description: document.description || undefined,
-    alternates: { canonical: documentPath(slug) },
-  };
-};
-
 type LegalDocumentPageProps = {
   document: LegalDocument;
+  contacts: ContactsSettings | null;
+  appendix?: { label: string; href: string };
 };
 
-/** Страница документа: шапка с датой редакции, оглавление и помощь слева, текст и реквизиты справа. */
-const LegalDocumentPage = async ({ document }: LegalDocumentPageProps) => {
-  const contacts = await getContacts();
+/** Показать документ магазина. */
+const LegalDocumentPage = ({ document, contacts, appendix }: LegalDocumentPageProps) => {
   const { content, headings } = withHeadings(document.content);
   const requisites = contacts ? getOperatorRequisites(contacts) : [];
 
   return (
-    <section className={styles.page}>
+    <main className={styles.page}>
       <div className={styles.intro}>
         <Breadcrumbs
           items={[{ label: "Главная", href: "/" }, { label: "Документы" }, { label: document.title }]}
@@ -59,6 +47,12 @@ const LegalDocumentPage = async ({ document }: LegalDocumentPageProps) => {
       <div className={styles.columns}>
         <aside className={styles.sidebar}>
           {headings.length > 0 && <Toc headings={headings} />}
+
+          {appendix && (
+            <Link className={styles.appendix} href={appendix.href}>
+              {appendix.label}
+            </Link>
+          )}
 
           <div className={styles.help}>
             <p className={styles.helpTitle}>Есть вопрос?</p>
@@ -92,7 +86,7 @@ const LegalDocumentPage = async ({ document }: LegalDocumentPageProps) => {
           </div>
         </article>
       </div>
-    </section>
+    </main>
   );
 };
 

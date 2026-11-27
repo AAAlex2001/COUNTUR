@@ -1,15 +1,13 @@
 "use client";
 
 import cn from "classnames";
-import Image from "next/image";
-import { OrderStatusBadge, orderNumber, type Order } from "@/entities/order";
-import { formatShortDate } from "@/shared/lib/date";
-import { formatRub } from "@/shared/lib/money";
+import type { Order } from "@/entities/order";
 import { plural } from "@/shared/lib/text";
 import Card from "@/shared/ui/card";
 import Loader from "@/shared/ui/loader";
 import { ORDERS_FILTERS, filterOrders } from "../../model/filters";
 import type { OrdersFilter } from "../../model/types";
+import { OrderHistoryRow } from "./order-history-row";
 import styles from "./style.module.scss";
 
 type OrdersHistoryProps = {
@@ -19,7 +17,7 @@ type OrdersHistoryProps = {
   onFilterChange: (filter: OrdersFilter) => void;
 };
 
-/** Карточка «История заказов»: фильтр по статусу и список заказов покупателя. */
+/** Показать историю заказов. */
 const OrdersHistory = ({ orders, loaded, filter, onFilterChange }: OrdersHistoryProps) => {
   const visible = filterOrders(orders, filter);
   const total = orders.length;
@@ -63,44 +61,7 @@ const OrdersHistory = ({ orders, loaded, filter, onFilterChange }: OrdersHistory
           </div>
 
           <ul className={styles.list}>
-            {visible.map((order) => {
-              const [first] = order.items;
-              const count = order.items.reduce((sum, item) => sum + item.quantity, 0);
-
-              return (
-                <li className={styles.order} key={order.id}>
-                  <div className={styles.meta}>
-                    <span className={styles.number}>{orderNumber(order.id)}</span>
-                    <span className={styles.date}>{formatShortDate(order.created_at)}</span>
-                  </div>
-
-                  <span className={styles.image}>
-                    {first?.image_url && (
-                      <Image
-                        src={first.image_url}
-                        alt=""
-                        fill
-                        sizes="56px"
-                        unoptimized
-                        className={styles.photo}
-                      />
-                    )}
-                  </span>
-
-                  <div className={styles.content}>
-                    <span className={styles.name}>{first?.product_name}</span>
-                    <span className={styles.details}>
-                      {count} {plural(count, ["товар", "товара", "товаров"])}
-                      {order.items.length > 1 && ` · ${order.items[1].product_name}`}
-                    </span>
-                  </div>
-
-                  <span className={styles.sum}>{formatRub(order.total)}</span>
-
-                  <OrderStatusBadge className={styles.status} status={order.status} />
-                </li>
-              );
-            })}
+            {visible.map((order) => <OrderHistoryRow key={order.id} order={order} />)}
           </ul>
 
           {visible.length === 0 && <p className={styles.empty}>Таких заказов нет.</p>}

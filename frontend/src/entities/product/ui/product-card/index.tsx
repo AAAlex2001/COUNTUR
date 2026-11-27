@@ -1,7 +1,7 @@
 import cn from "classnames";
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { ComponentType } from "react";
 import { formatRub } from "@/shared/lib/money";
 import Badge from "@/shared/ui/badge";
 import { cardSpecLines } from "../../lib/card";
@@ -13,14 +13,17 @@ import styles from "./style.module.scss";
 
 const IMAGE_SIZES = "(min-width: 1440px) 262px, (min-width: 768px) 330px, 100vw";
 
+export type ProductActionsProps = Pick<ProductCardData, "id" | "name" | "availability">;
+export type ProductActions = ComponentType<ProductActionsProps>;
+
 type ProductCardProps = {
   product: ProductCardData;
-  action?: ReactNode;
+  actions?: ProductActions;
   view?: CatalogView;
 };
 
-/** Карточка товара в списке. action — кнопки рядом с ценой. */
-const ProductCard = ({ product, action, view = "grid" }: ProductCardProps) => {
+/** Показать карточку товара. */
+const ProductCard = ({ product, actions: Actions, view = "grid" }: ProductCardProps) => {
   const href = productPath(product.slug);
 
   return (
@@ -70,7 +73,7 @@ const ProductCard = ({ product, action, view = "grid" }: ProductCardProps) => {
             <span className={styles.price}>{formatRub(product.price)}</span>
           </div>
 
-          {action}
+          {Actions && <Actions id={product.id} name={product.name} availability={product.availability} />}
         </div>
 
         <StockStatus availability={product.availability} size="sm" />

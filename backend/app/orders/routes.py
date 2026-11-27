@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.cart.services.exceptions import NotEnoughStockError, ProductUnavailableError
 from app.orders.dependencies import get_create_order_usecase, get_order_repository
+from app.orders.exceptions import EmptyCartError, InvalidPhoneError
+from app.orders.repositories.orders import OrderFilter, OrderRepository
 from app.orders.schemas import OrderCreateSchema, OrderListSchema, OrderSchema
-from app.orders.services.exceptions import EmptyCartError, InvalidPhoneError
-from app.orders.services.repo import OrderRepository
-from app.orders.services.usecases.create_order import CreateOrderUseCase
+from app.orders.usecases.create_order import CreateOrderUseCase
 from app.users.dependencies import require_user
 from app.users.models import User
 
@@ -50,7 +50,9 @@ async def list_orders(
 ) -> OrderListSchema:
     """Заказы текущего покупателя, свежие первыми."""
 
-    items, total = await orders.list_for_user(user.id, limit, offset)
+    filters = OrderFilter(user_id=user.id)
+    items = await orders.list_orders(filters, limit, offset)
+    total = await orders.count_orders(filters)
 
     return OrderListSchema(orders=[OrderSchema.model_validate(item) for item in items], total=total)
 

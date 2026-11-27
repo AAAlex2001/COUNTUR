@@ -8,7 +8,7 @@ import HeaderMenu from "./ui/menu";
 import NavLink from "./ui/nav-link";
 import styles from "./style.module.scss";
 
-/** Шапка сайта. На ПК — разделы, кабинет и избранное в ряд; на узком экране они в бургер-меню. */
+/** Показать шапку магазина. */
 const Header = () => (
   <>
     <div className={styles.announcement}>
@@ -21,7 +21,7 @@ const Header = () => (
 
         <nav className={styles.nav} aria-label="Основная навигация">
           {HEADER_NAV.map((item) => (
-            <NavLink key={item.href} href={item.href} newTab={item.newTab}>
+            <NavLink key={item.href} href={item.href}>
               {item.label}
             </NavLink>
           ))}

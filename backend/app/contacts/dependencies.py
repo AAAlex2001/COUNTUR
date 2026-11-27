@@ -1,22 +1,22 @@
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.contacts.services.repo import ContactsSettingsRepository
-from app.contacts.services.usecases.update_contacts import UpdateContactsUseCase
-from app.database import get_session
+from app.contacts.repository import ContactsSettingsRepository
+from app.contacts.usecases.get_store_contacts import GetStoreContactsUseCase
+from app.contacts.usecases.update_contacts import UpdateContactsUseCase
+from app.database import DatabaseSession
 
 
-def get_contacts_repository(
-    session: AsyncSession = Depends(get_session),
-) -> ContactsSettingsRepository:
-    """Связывает настройки контактов с сессией запроса."""
+def get_contacts_repository(db: DatabaseSession) -> ContactsSettingsRepository:
+    """Открыть настройки контактов."""
 
-    return ContactsSettingsRepository(session)
+    return ContactsSettingsRepository(db=db)
 
 
-def get_update_contacts_usecase(
-    contacts: ContactsSettingsRepository = Depends(get_contacts_repository),
-) -> UpdateContactsUseCase:
-    """Готовит сохранение страницы контактов."""
+def get_store_contacts_usecase(db: DatabaseSession) -> GetStoreContactsUseCase:
+    """Подготовить контакты витрины."""
 
-    return UpdateContactsUseCase(contacts)
+    return GetStoreContactsUseCase(contacts=ContactsSettingsRepository(db=db))
+
+
+def get_update_contacts_usecase(db: DatabaseSession) -> UpdateContactsUseCase:
+    """Подготовить обновление контактов."""
+
+    return UpdateContactsUseCase(contacts=ContactsSettingsRepository(db=db))

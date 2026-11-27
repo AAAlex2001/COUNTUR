@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -13,6 +14,7 @@ class OrderCreateSchema(BaseModel):
     customer_phone: str = Field(..., min_length=5, max_length=32, description="Телефон")
     customer_email: EmailStr | None = Field(None, description="Email для связи")
     delivery_method: DeliveryMethod = Field(..., description="Способ получения")
+    payment_method: Literal["card", "invoice"] | None = None
     delivery_address: str | None = Field(None, max_length=500, description="Адрес доставки")
     comment: str | None = Field(None, max_length=1000, description="Комментарий к заказу")
 
@@ -38,6 +40,7 @@ class OrderSchema(BaseModel):
 
     id: int = Field(..., description="Номер заказа")
     status: OrderStatus = Field(..., description="Статус заказа")
+    tracking_number: str | None = None
     payment_status: PaymentStatus = Field(..., description="Статус оплаты")
     customer_name: str = Field(..., description="Имя покупателя")
     customer_phone: str = Field(..., description="Телефон")
@@ -73,5 +76,8 @@ class OrderAdminListSchema(BaseModel):
 class OrderStatusUpdateSchema(BaseModel):
     """Изменение статусов заказа. Передаются только поля, которые меняются."""
 
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     status: OrderStatus | None = Field(None, description="Новый статус заказа")
     payment_status: PaymentStatus | None = Field(None, description="Новый статус оплаты")
+    tracking_number: str | None = Field(None, min_length=1, max_length=100)

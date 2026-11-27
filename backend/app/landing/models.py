@@ -16,7 +16,7 @@ class Hero(Base):
 
     @property
     def image_url(self) -> str | None:
-        """Адрес картинки для сайта или None, если её ещё не загрузили."""
+        """Получить адрес изображения."""
 
         if self.image_path is None:
             return None
@@ -58,7 +58,7 @@ class Promotion(Base):
 
     @property
     def image_url(self) -> str | None:
-        """Адрес картинки для сайта или None, если её ещё не загрузили."""
+        """Получить адрес изображения."""
 
         if self.image_path is None:
             return None

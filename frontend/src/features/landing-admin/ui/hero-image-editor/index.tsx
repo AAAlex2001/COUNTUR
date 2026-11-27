@@ -13,7 +13,7 @@ const IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 /** Картинка первого экрана главной: показывает текущую и заменяет её новой. */
 const HeroImageEditor = () => {
-  const { state, upload, remove } = useHeroImage();
+  const { hero, pending, failed, retry, upload, remove } = useHeroImage();
   const [confirming, setConfirming] = useState(false);
 
   /** Удаляет выбранное изображение после подтверждения. */
@@ -23,7 +23,7 @@ const HeroImageEditor = () => {
 
   /** Закрывает подтверждение до начала удаления. */
   const cancelDelete = () => {
-    if (!state.pending) setConfirming(false);
+    if (!pending) setConfirming(false);
   };
 
   return (
@@ -31,11 +31,11 @@ const HeroImageEditor = () => {
       title="Картинка первого экрана"
       action={
         <div className={styles.actions}>
-          <FileButton accept={IMAGE_TYPES} loading={state.pending || !state.loaded} onSelect={upload}>
+          <FileButton accept={IMAGE_TYPES} loading={pending || !hero} onSelect={upload}>
             Загрузить картинку
           </FileButton>
-          {state.imageUrl && (
-            <Button variant="danger" disabled={state.pending} onClick={() => setConfirming(true)}>
+          {hero?.image_url && (
+            <Button variant="danger" disabled={pending} onClick={() => setConfirming(true)}>
               Удалить картинку
             </Button>
           )}
@@ -48,9 +48,9 @@ const HeroImageEditor = () => {
       </p>
 
       <div className={styles.preview}>
-        {state.imageUrl && (
+        {hero?.image_url && (
           <Image
-            src={state.imageUrl}
+            src={hero.image_url}
             alt=""
             fill
             sizes="574px"
@@ -59,9 +59,10 @@ const HeroImageEditor = () => {
           />
         )}
 
-        {state.loaded && !state.imageUrl && (
+        {hero && !hero.image_url && (
           <p className={styles.empty}>Картинка ещё не загружена</p>
         )}
+        {failed && <Button variant="outline" onClick={retry}>Повторить загрузку</Button>}
       </div>
 
       <ConfirmModal
@@ -69,7 +70,7 @@ const HeroImageEditor = () => {
         title="Удалить картинку первого экрана?"
         text="Изображение будет удалено с главной страницы."
         confirmLabel="Удалить"
-        pending={state.pending}
+        pending={pending}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />

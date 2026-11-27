@@ -30,6 +30,6 @@ export { searchProducts } from "./api/search";
 export { AVAILABILITY_LABELS } from "./lib/availability";
 export { CATALOG_PAGE_SIZE, SORT_OPTIONS } from "./lib/catalog";
 export { CATALOG_PATH, categoryPath, productPath } from "./lib/paths";
-export { default as ProductCard } from "./ui/product-card";
+export { default as ProductCard, type ProductActions, type ProductActionsProps } from "./ui/product-card";
 export { default as Rating, Stars } from "./ui/rating";
 export { default as StockStatus } from "./ui/stock-status";

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, status
 
 from app.feedback.dependencies import get_feedback_repository
 from app.feedback.models import FeedbackMessage
+from app.feedback.repository import FeedbackRepository
 from app.feedback.schemas import FeedbackCreatedSchema, FeedbackCreateSchema
-from app.feedback.services.repo import FeedbackRepository
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 

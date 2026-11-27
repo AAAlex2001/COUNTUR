@@ -18,6 +18,15 @@
   gap: 24px;
 }
 
+.appendix {
+  color: #13d8f4;
+  line-height: 1.5;
+}
+
+.page:has(table) {
+  max-width: 1440px;
+}
+
 .heading {
   display: flex;
   flex-direction: column;

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { collectionPath, getCollection } from "@/entities/collection";
 import { absoluteUrl } from "@/shared/config/site";
 import CollectionPage from "@/widgets/collection";
+import ProductCardActions from "@/widgets/product-card-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export default async function CollectionRoute({ params }: { params: Params }) {
 
   return (
     <main>
-      <CollectionPage collection={collection} />
+      <CollectionPage collection={collection} actions={ProductCardActions} />
     </main>
   );
 }

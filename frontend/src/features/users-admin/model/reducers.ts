@@ -50,8 +50,8 @@ export const pagedReducer = <T>(state: PagedState<T>, action: PagedAction<T>): P
     case "load/error":
       return { ...state, loading: false, failed: true };
 
-    case "items/change":
-      return { ...state, items: action.items };
+    case "items/update":
+      return { ...state, items: action.update(state.items) };
 
     default:
       return state;

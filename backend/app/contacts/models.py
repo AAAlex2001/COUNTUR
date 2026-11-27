@@ -5,7 +5,7 @@ from app.database import Base
 
 
 class ContactsSettings(Base):
-    """Единственная строка настроек страницы контактов и оператора."""
+    """Контакты магазина и оператора."""
 
     __tablename__ = "contacts_settings"
 

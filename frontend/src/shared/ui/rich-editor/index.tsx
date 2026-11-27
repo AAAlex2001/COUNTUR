@@ -1,6 +1,7 @@
 "use client";
 
 import { EditorContent, useEditor } from "@tiptap/react";
+import { TableKit } from "@tiptap/extension-table";
 import StarterKit from "@tiptap/starter-kit";
 import cn from "classnames";
 import { RICH_CONTENT_CLASS } from "@/shared/ui/rich-content";
@@ -9,6 +10,7 @@ import styles from "./style.module.scss";
 
 /** Только то, что умеет показать сайт и пропускает очистка на бэкенде. */
 const EXTENSIONS = [
+  TableKit,
   StarterKit.configure({
     heading: { levels: [2, 3] },
     code: false,

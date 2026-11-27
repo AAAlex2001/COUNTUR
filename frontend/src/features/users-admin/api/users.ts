@@ -46,6 +46,6 @@ export const fetchUserFavorites = async (
 export const fetchUserCart = (userId: number, limit: number, offset: number) =>
   adminRequest<Page<CartItem>>(`/users/${userId}/cart?${pageQuery(limit, offset)}`);
 
-/** Изменить статус заказа или статус оплаты. */
-export const updateOrderStatus = (orderId: number, changes: OrderChanges) =>
+/** Сохранить изменения заказа. */
+export const updateOrder = (orderId: number, changes: OrderChanges) =>
   adminRequest<Order>(`/orders/${orderId}`, jsonBody("PATCH", changes));

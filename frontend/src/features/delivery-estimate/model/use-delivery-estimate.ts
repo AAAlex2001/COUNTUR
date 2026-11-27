@@ -1,40 +1,39 @@
-import { useState, type FormEvent } from "react";
-import { estimateDelivery, type Shipment } from "@/entities/delivery";
+import { useState } from "react";
+import { estimateDelivery, type DeliveryTariff, type Shipment } from "@/entities/delivery";
 import { errorMessage } from "@/shared/lib/errors";
-import type { EstimateState } from "./types";
+import { useToast } from "@/shared/ui/toaster";
 
-/** Читает город и размеры из проверенной браузером формы. */
-function readShipment(form: HTMLFormElement): Shipment {
-  const fields = new FormData(form);
-
-  return {
-    city: String(fields.get("city") ?? "").trim(),
-    weight: Number(fields.get("weight")),
-    length: Number(fields.get("length")),
-    width: Number(fields.get("width")),
-    height: Number(fields.get("height")),
-  };
-}
-
-/** Хранит результат последнего расчёта и состояние запроса. */
+/** Рассчитать тарифы доставки. */
 export function useDeliveryEstimate() {
-  const [state, setState] = useState<EstimateState>({ status: "idle" });
+  const [pending, setPending] = useState(false);
+  const [tariffs, setTariffs] = useState<DeliveryTariff[]>([]);
+  const toast = useToast();
 
-  /** Рассчитывает тарифы для указанной посылки. */
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (state.status === "pending") return;
+  /** Запросить тарифы СДЭК. */
+  async function calculate(shipment: Shipment) {
+    if (pending) return;
 
-    const shipment = readShipment(event.currentTarget);
-    setState({ status: "pending" });
-
+    setPending(true);
+    setTariffs([]);
     try {
-      const tariffs = await estimateDelivery(shipment);
-      setState({ status: "success", tariffs });
+      const offers = await estimateDelivery(shipment);
+      setTariffs(offers);
+      if (offers.length === 0) {
+        toast("Для этой посылки тарифов нет", "error");
+        return;
+      }
+      toast("Стоимость и сроки доставки рассчитаны");
     } catch (error) {
-      setState({ status: "error", message: errorMessage(error, "Ошибка расчёта доставки") });
+      toast(errorMessage(error, "Ошибка расчёта доставки"), "error");
+    } finally {
+      setPending(false);
     }
   }
 
-  return { state, submit };
+  /** Сбросить предыдущий расчёт. */
+  function clearTariffs() {
+    if (tariffs.length > 0) setTariffs([]);
+  }
+
+  return { pending, tariffs, calculate, clearTariffs };
 }

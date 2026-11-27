@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { AVAILABILITY_LABELS, type Product } from "@/entities/product";
+import type { Product } from "@/entities/product";
 import { AddToCart } from "@/features/add-to-cart";
+import { StockBell } from "@/features/notify-on-stock";
 import { FavoriteButton } from "@/features/toggle-favorite";
 import { formatRub } from "@/shared/lib/money";
 import styles from "./style.module.scss";
 
 type PurchaseProps = {
-  product: Pick<Product, "id" | "price" | "old_price" | "discount_percent" | "availability">;
+  product: Pick<Product, "id" | "name" | "price" | "old_price" | "discount_percent" | "availability">;
 };
 
-/** Блок покупки: цена за выбранное количество, кнопка «в корзину» и избранное. */
+/** Выбрать товар для покупки. */
 const Purchase = ({ product }: PurchaseProps) => {
   const [quantity, setQuantity] = useState(1);
 
@@ -40,14 +41,16 @@ const Purchase = ({ product }: PurchaseProps) => {
       </div>
 
       <div className={styles.actions}>
-        <AddToCart
-          className={styles.addToCart}
-          productId={product.id}
-          available={product.availability === "in_stock"}
-          unavailableLabel={AVAILABILITY_LABELS[product.availability]}
-          quantity={quantity}
-          onQuantityChange={setQuantity}
-        />
+        {product.availability === "in_stock" ? (
+          <AddToCart
+            className={styles.addToCart}
+            productId={product.id}
+            quantity={quantity}
+            onQuantityChange={setQuantity}
+          />
+        ) : (
+          <StockBell productId={product.id} productName={product.name} />
+        )}
         <FavoriteButton productId={product.id} />
       </div>
     </div>

@@ -34,9 +34,9 @@ export const usePagedList = <T>(load: PageLoader<T>, userId: number) => {
   }, [load, userId, page]);
 
   const openPage = (nextPage: number) => dispatch({ type: "load/start", page: nextPage });
-  const changeItems = (items: T[]) => dispatch({ type: "items/change", items });
+  const updateItems = (update: (items: T[]) => T[]) => dispatch({ type: "items/update", update });
 
   const pages = Math.ceil(state.total / PAGE_SIZE);
 
-  return { state, pages, openPage, changeItems };
+  return { state, pages, openPage, updateItems };
 };

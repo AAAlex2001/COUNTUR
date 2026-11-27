@@ -11,13 +11,12 @@ import styles from "./style.module.scss";
 
 /** Редактирует тексты, показатели и видимость первого экрана. */
 const HeroContentEditor = () => {
-  const { state, change, save } = useHeroContent();
-  const { fields, error, pending } = state;
+  const { fields, saving, failed, retry, change, save } = useHeroContent();
 
   if (!fields) {
     return (
       <Panel title="Тексты первого экрана">
-        {error ? <p className={styles.error} role="alert">{error}</p> : <Loader />}
+        {failed ? <Button onClick={retry}>Повторить загрузку</Button> : <Loader />}
       </Panel>
     );
   }
@@ -31,7 +30,7 @@ const HeroContentEditor = () => {
           void save();
         }}
       >
-        <fieldset className={styles.fields} disabled={pending}>
+        <fieldset className={styles.fields} disabled={saving}>
           <Checkbox
             checked={fields.is_visible}
             onChange={(isVisible) => change({ is_visible: isVisible })}
@@ -48,7 +47,7 @@ const HeroContentEditor = () => {
           />
         </fieldset>
 
-        <Button className={styles.submit} type="submit" loading={pending}>
+        <Button className={styles.submit} type="submit" loading={saving}>
           Сохранить первый экран
         </Button>
       </form>

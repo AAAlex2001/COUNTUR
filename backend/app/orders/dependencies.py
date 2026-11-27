@@ -1,25 +1,23 @@
 """Заказы: репозиторий, фабрики сценариев и загрузка заказа по номеру из пути."""
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.cart.dependencies import get_cart_repository
 from app.cart.services.repo import CartRepository
 from app.catalog.dependencies import get_product_repository
 from app.catalog.services.repo import ProductRepository
-from app.database import get_session
+from app.database import DatabaseSession
 from app.orders.models import Order
-from app.orders.services.repo import OrderRepository
-from app.orders.services.usecases.create_order import CreateOrderUseCase
-from app.orders.services.usecases.update_order_status import UpdateOrderStatusUseCase
+from app.orders.repositories.mail_queue import OrderMailQueue
+from app.orders.repositories.orders import OrderRepository
+from app.orders.usecases.create_order import CreateOrderUseCase
+from app.orders.usecases.update_order_status import UpdateOrderStatusUseCase
 
 
-def get_order_repository(
-    session: AsyncSession = Depends(get_session),
-) -> OrderRepository:
-    """Репозиторий заказов с сессией текущего запроса."""
+def get_order_repository(db: DatabaseSession) -> OrderRepository:
+    """Подключить заказы."""
 
-    return OrderRepository(session)
+    return OrderRepository(db)
 
 
 async def get_order_by_id(
@@ -39,19 +37,21 @@ async def get_order_by_id(
 
 
 def get_create_order_usecase(
+    db: DatabaseSession,
     orders: OrderRepository = Depends(get_order_repository),
     cart: CartRepository = Depends(get_cart_repository),
     products: ProductRepository = Depends(get_product_repository),
 ) -> CreateOrderUseCase:
     """Сценарий оформления заказа."""
 
-    return CreateOrderUseCase(orders, cart, products)
+    return CreateOrderUseCase(orders=orders, cart=cart, products=products, mail=OrderMailQueue(db))
 
 
 def get_update_order_status_usecase(
+    db: DatabaseSession,
     orders: OrderRepository = Depends(get_order_repository),
     products: ProductRepository = Depends(get_product_repository),
 ) -> UpdateOrderStatusUseCase:
     """Сценарий изменения статусов заказа."""
 
-    return UpdateOrderStatusUseCase(orders, products)
+    return UpdateOrderStatusUseCase(orders=orders, products=products, mail=OrderMailQueue(db))

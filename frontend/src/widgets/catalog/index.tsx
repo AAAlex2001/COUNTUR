@@ -4,13 +4,12 @@ import {
   CATALOG_PAGE_SIZE,
   CATALOG_PATH,
   ProductCard,
+  type ProductActions,
   type CatalogFilters,
   type CatalogView,
   type Category,
   type ProductList,
 } from "@/entities/product";
-import { AddToCartButton } from "@/features/add-to-cart";
-import { FavoriteButton } from "@/features/toggle-favorite";
 import {
   CatalogPagination,
   CatalogParamsProvider,
@@ -27,6 +26,7 @@ import CatalogHeading from "./ui/heading";
 import styles from "./style.module.scss";
 
 type CatalogProps = {
+  actions: ProductActions;
   list: ProductList;
   categories: Category[];
   filters: CatalogFilters;
@@ -35,8 +35,8 @@ type CatalogProps = {
   search: string;
 };
 
-/** Страница каталога: заголовок с сортировкой, фильтры, подборки и список товаров. */
-const Catalog = ({ list, categories, filters, collections, view, search }: CatalogProps) => (
+/** Показать каталог товаров. */
+const Catalog = ({ list, categories, filters, collections, view, search, actions }: CatalogProps) => (
   <CatalogParamsProvider>
     <section className={styles.catalog}>
       <CatalogHeading>
@@ -77,16 +77,7 @@ const Catalog = ({ list, categories, filters, collections, view, search }: Catal
                 <ProductCard
                   product={product}
                   view={view}
-                  action={
-                    <div className={styles.actions}>
-                      <FavoriteButton productId={product.id} size="md" />
-                      <AddToCartButton
-                        productId={product.id}
-                        productName={product.name}
-                        available={product.availability === "in_stock"}
-                      />
-                    </div>
-                  }
+                  actions={actions}
                 />
               </li>
             ))}

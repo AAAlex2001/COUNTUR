@@ -9,12 +9,12 @@ from app.orders.dependencies import (
     get_order_repository,
     get_update_order_status_usecase,
 )
+from app.orders.exceptions import OrderStatusError
 from app.orders.models import Order, OrderStatus
+from app.orders.repositories.orders import OrderFilter, OrderRepository
 from app.orders.schemas import OrderAdminListSchema, OrderAdminSchema, OrderStatusUpdateSchema
-from app.orders.services.exceptions import OrderStatusError
-from app.orders.services.repo import OrderRepository
-from app.orders.services.usecases.update_order_status import UpdateOrderStatusUseCase
-from app.orders.services.validators import day_bounds
+from app.orders.usecases.update_order_status import UpdateOrderStatusUseCase
+from app.orders.validators import day_bounds
 
 router = APIRouter(
     prefix="/admin/orders",
@@ -34,14 +34,10 @@ async def list_orders(
 ) -> OrderAdminListSchema:
     """Список заказов, свежие первыми. Поиск по номеру и дате, фильтр по статусу."""
 
-    created_from = None
-    created_to = None
-    if created_on is not None:
-        created_from, created_to = day_bounds(created_on, get_settings().shop_timezone)
-
-    items, total = await orders.list_all(
-        number, created_from, created_to, order_status, limit, offset
-    )
+    period = day_bounds(created_on, get_settings().shop_timezone) if created_on else None
+    filters = OrderFilter(number=number, status=order_status, period=period)
+    items = await orders.list_orders(filters, limit, offset)
+    total = await orders.count_orders(filters)
 
     return OrderAdminListSchema(
         orders=[OrderAdminSchema.model_validate(item) for item in items],

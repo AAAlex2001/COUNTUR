@@ -20,6 +20,11 @@ export const CONTACTS_PATH = "/contacts";
 
 export const PRIVACY_PATH = "/privacy";
 
+export const PRIVACY_APPENDIX = {
+  href: "/privacy-appendix-1",
+  label: "Приложение № 1 к политике конфиденциальности",
+};
+
 export const PERSONAL_DATA_PATH = "/personal-data";
 
 export const TERMS_PATH = "/terms";
@@ -28,6 +33,7 @@ export const OFFER_PATH = "/offer";
 
 export const SITE_DOCUMENTS = [
   { label: "Политика конфиденциальности", href: PRIVACY_PATH },
+  PRIVACY_APPENDIX,
   { label: "Обработка персональных данных", href: PERSONAL_DATA_PATH },
   { label: "Пользовательское соглашение", href: TERMS_PATH },
   { label: "Договор оферты", href: OFFER_PATH },

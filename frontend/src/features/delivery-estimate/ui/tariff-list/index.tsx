@@ -5,10 +5,8 @@ type TariffListProps = {
   tariffs: DeliveryTariff[];
 };
 
-/** Показывает стоимость и сроки каждого доступного тарифа. */
+/** Показать тарифы доставки. */
 export default function TariffList({ tariffs }: TariffListProps) {
-  if (!tariffs.length) return <p>Для этой посылки тарифов нет.</p>;
-
   return (
     <ul>
       {tariffs.map((tariff) => (

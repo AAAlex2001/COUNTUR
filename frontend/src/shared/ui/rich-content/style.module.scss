@@ -15,6 +15,33 @@
   margin-top: 12px;
 }
 
+.content:has(table) {
+  overflow-x: auto;
+}
+
+.content table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+}
+
+.content th,
+.content td {
+  padding: 10px;
+  border: 1px solid #3a4851;
+  text-align: left;
+  vertical-align: top;
+}
+
+.content th {
+  background: #151c21;
+  color: #f2f7f8;
+}
+
+.content td p + p {
+  margin-top: 12px;
+}
+
 .content h2 {
   scroll-margin-top: 100px;
 

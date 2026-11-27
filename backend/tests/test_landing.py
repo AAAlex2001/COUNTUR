@@ -10,15 +10,13 @@ from PIL import Image
 
 from app import uploads
 from app.config import Settings
-from app.landing.models import HeroContent
+from app.landing.models import Hero, HeroContent, Promotion
 from app.landing.schemas import HeroContentSchema, HeroStatisticSchema, PromotionUpdateSchema
-from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
-from app.landing.services.usecases.manage_promotion import (
-    SetPromotionImageUseCase,
-    UpdatePromotionUseCase,
-)
-from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
-from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.landing.usecases.delete_hero_image import DeleteHeroImageUseCase
+from app.landing.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.usecases.set_promotion_image import SetPromotionImageUseCase
+from app.landing.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.landing.usecases.update_promotion import UpdatePromotionUseCase
 from app.uploads import UploadError
 
 
@@ -28,7 +26,18 @@ class FakeRepository:
     def __init__(self) -> None:
         self.item = None
 
-    async def get(self, for_update=False):
+    async def lock_hero(self):
+        return self.item
+
+    async def edit_hero(self):
+        return self.item or Hero(id=1)
+
+    async def get_hero_content(self):
+        return self.item
+
+    async def edit_promotion(self):
+        if self.item is None:
+            self.item = Promotion()
         return self.item
 
     async def save(self, item):
@@ -82,6 +91,23 @@ def test_hero_rejects_file_that_is_not_an_image(media_dir: Path) -> None:
 
     assert heroes.item is None
     assert list(media_dir.iterdir()) == []
+
+
+@pytest.mark.parametrize("usecase", [SetHeroImageUseCase, SetPromotionImageUseCase])
+def test_failed_image_update_keeps_previous_file(usecase, media_dir: Path, monkeypatch) -> None:
+    blocks = FakeRepository()
+    editor = usecase(blocks)
+    saved = asyncio.run(editor.execute(make_upload(png_bytes())))
+    previous = media_dir / saved.image_path
+
+    async def fail_to_save(block):
+        raise RuntimeError("Не удалось сохранить")
+
+    monkeypatch.setattr(blocks, "save", fail_to_save)
+    with pytest.raises(RuntimeError, match="Не удалось сохранить"):
+        asyncio.run(editor.execute(make_upload(png_bytes())))
+
+    assert list(previous.parent.iterdir()) == [previous]
 
 
 def test_delete_hero_image_clears_path_and_file(media_dir: Path) -> None:

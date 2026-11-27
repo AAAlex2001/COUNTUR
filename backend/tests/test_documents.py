@@ -1,6 +1,6 @@
 """Тесты очистки HTML документа."""
 
-from app.documents.services.validators import sanitize_content
+from app.documents.content import sanitize_content
 
 
 def test_keeps_editor_markup() -> None:
@@ -28,4 +28,17 @@ def test_keeps_safe_links_only() -> None:
         sanitize_content('<a href="https://countur.ru" target="_blank">сайт</a>')
         == '<a href="https://countur.ru" rel="noopener noreferrer">сайт</a>'
     )
-    assert sanitize_content('<a href="javascript:alert(1)">x</a>') == '<a rel="noopener noreferrer">x</a>'
+    assert (
+        sanitize_content('<a href="javascript:alert(1)">x</a>')
+        == '<a rel="noopener noreferrer">x</a>'
+    )
+
+
+def test_preserves_editable_table() -> None:
+    """Сохранить заголовки и ячейки."""
+
+    header = "<thead><tr><th><p>№</p></th><th><p>Цель</p></th></tr></thead>"
+    rows = "<tbody><tr><td><p>1</p></td><td><p>Первая строка<br>Вторая строка</p></td></tr></tbody>"
+    table = f"<table>{header}{rows}</table>"
+
+    assert sanitize_content(table) == table

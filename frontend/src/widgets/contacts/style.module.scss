@@ -210,6 +210,16 @@
   color: #f2f7f8;
 }
 
+.documents a {
+  height: auto;
+  min-height: 32px;
+  white-space: normal;
+}
+
+.documents a svg {
+  flex-shrink: 0;
+}
+
 @media (min-width: 768px) {
   .page {
     padding: 32px 24px 56px;

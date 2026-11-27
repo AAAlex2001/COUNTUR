@@ -1,16 +1,15 @@
-import { CATALOG_PATH, ProductCard, type ProductCardData } from "@/entities/product";
-import { AddToCartButton } from "@/features/add-to-cart";
-import { FavoriteButton } from "@/features/toggle-favorite";
+import { CATALOG_PATH, ProductCard, type ProductActions, type ProductCardData } from "@/entities/product";
 import SectionHeading from "@/shared/ui/section-heading";
 import Slider from "@/shared/ui/slider";
 import styles from "./style.module.scss";
 
 type HitsProps = {
+  actions: ProductActions;
   products: ProductCardData[];
 };
 
-/** Блок главной «Хиты продаж»: слайдер из хитов и товаров со скидкой. */
-const Hits = ({ products }: HitsProps) => (
+/** Показать хиты продаж. */
+const Hits = ({ products, actions }: HitsProps) => (
   <section className={styles.hits}>
     <SectionHeading
       eyebrow="Популярное"
@@ -21,20 +20,7 @@ const Hits = ({ products }: HitsProps) => (
 
     <Slider
       slides={products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          action={
-            <div className={styles.actions}>
-              <FavoriteButton productId={product.id} size="md" />
-              <AddToCartButton
-                productId={product.id}
-                productName={product.name}
-                available={product.availability === "in_stock"}
-              />
-            </div>
-          }
-        />
+        <ProductCard key={product.id} product={product} actions={actions} />
       ))}
     />
   </section>

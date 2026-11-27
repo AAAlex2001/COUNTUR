@@ -30,9 +30,7 @@ class CartRepository:
 
         return list(result.scalars().all())
 
-    async def page_items(
-        self, user_id: int, limit: int, offset: int
-    ) -> tuple[list[CartItem], int]:
+    async def page_items(self, user_id: int, limit: int, offset: int) -> tuple[list[CartItem], int]:
         """Страница корзины покупателя для админки и общее число позиций."""
 
         conditions = [CartItem.user_id == user_id, PUBLISHED]
@@ -88,9 +86,14 @@ class CartRepository:
         await self.db.delete(item)
         await self.db.commit()
 
-    async def clear(self, user_id: int) -> None:
-        """Удалить все позиции корзины покупателя."""
+    async def remove_items(self, user_id: int) -> None:
+        """Удалить позиции покупателя."""
 
         stmt = delete(CartItem).where(CartItem.user_id == user_id)
         await self.db.execute(stmt)
+
+    async def clear(self, user_id: int) -> None:
+        """Очистить корзину покупателя."""
+
+        await self.remove_items(user_id)
         await self.db.commit()

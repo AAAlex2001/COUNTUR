@@ -3,17 +3,19 @@
 import asyncio
 from datetime import date, datetime, timezone
 from decimal import Decimal
+from unittest.mock import AsyncMock
 
 import pytest
 
 from app.cart.services.exceptions import NotEnoughStockError, ProductUnavailableError
 from app.catalog.models import Availability, PublicationStatus
-from app.orders.models import DeliveryMethod, OrderStatus, PaymentStatus
+from app.orders.exceptions import EmptyCartError, InvalidPhoneError, OrderStatusError
+from app.orders.models import DeliveryMethod, OrderMailKind, OrderStatus, PaymentStatus
+from app.orders.repositories.mail_queue import OrderMailQueue
 from app.orders.schemas import OrderCreateSchema, OrderStatusUpdateSchema
-from app.orders.services.exceptions import EmptyCartError, InvalidPhoneError, OrderStatusError
-from app.orders.services.usecases.create_order import CreateOrderUseCase
-from app.orders.services.usecases.update_order_status import UpdateOrderStatusUseCase
-from app.orders.services.validators import day_bounds, normalize_phone
+from app.orders.usecases.create_order import CreateOrderUseCase
+from app.orders.usecases.update_order_status import UpdateOrderStatusUseCase
+from app.orders.validators import day_bounds, normalize_phone
 from tests.fakes import (
     FakeCartRepository,
     FakeOrderRepository,
@@ -37,10 +39,11 @@ def make_payload(phone: str = "+7 (999) 000-00-00") -> OrderCreateSchema:
 def make_usecases(*products):
     product_repo = FakeProductRepository(list(products))
     cart = FakeCartRepository(product_repo)
-    orders = FakeOrderRepository(cart)
+    orders = FakeOrderRepository()
+    mail = AsyncMock(spec=OrderMailQueue)
 
-    create = CreateOrderUseCase(orders, cart, product_repo)
-    update = UpdateOrderStatusUseCase(orders, product_repo)
+    create = CreateOrderUseCase(orders=orders, cart=cart, products=product_repo, mail=mail)
+    update = UpdateOrderStatusUseCase(orders=orders, products=product_repo, mail=mail)
 
     return create, update, cart, orders
 
@@ -64,6 +67,7 @@ def test_create_copies_cart_into_order() -> None:
         ("Товар 2", Decimal("9490"), 1),
     ]
     assert orders.items == [order]
+    create.mail.enqueue.assert_awaited_once_with(order, kind=OrderMailKind.CONFIRMATION)
 
     assert [item.user_id for item in cart.items] == [2]
 

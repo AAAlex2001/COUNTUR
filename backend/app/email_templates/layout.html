@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ letter.subject }}</title>
+  <style>
+    @media (max-width: 600px) {
+      .letter-body { padding: 24px 16px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;background:#080b0d;color:#f2f7f8;font:16px/1.6 Arial,sans-serif">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080b0d">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#101519" style="max-width:640px">
+          <tr>
+            <td align="left" class="letter-body" style="padding:32px;color:#f2f7f8;font-family:Arial,sans-serif">
+              <p style="margin:0;color:#13d8f4;font-size:20px;font-weight:bold">COUNTUR</p>
+              <h1 style="margin:24px 0 12px;font-size:26px;line-height:1.25">{{ letter.heading }}</h1>
+              <p>{{ letter.body.splitlines() | join('<br>' | safe) }}</p>
+
+              {% if letter.items %}
+                <h2 style="margin:24px 0 8px;font-size:18px">Состав заказа:</h2>
+                <ol style="padding-left:24px">
+                  {% for item in letter.items %}
+                    <li>{{ item }}</li>
+                  {% endfor %}
+                </ol>
+              {% endif %}
+
+              {% for label, value in letter.details %}
+                <p style="margin:6px 0"><strong>{{ label }}:</strong> {{ value }}</p>
+              {% endfor %}
+
+              {% if letter.link_url %}
+                <p style="margin:24px 0">
+                  <a href="{{ letter.link_url }}"
+                     style="display:inline-block;padding:10px 18px;border-radius:4px;background:#13d8f4;color:#080b0d;text-decoration:none;font-weight:bold">
+                    {{ letter.link_label }}
+                  </a>
+                </p>
+              {% endif %}
+
+              {% if letter.note %}
+                <p>{{ letter.note }}</p>
+              {% endif %}
+
+              <p style="padding-top:16px;border-top:1px solid #3a4851;color:#b7c3ca">
+                {{ letter.signature.splitlines() | join('<br>' | safe) }}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

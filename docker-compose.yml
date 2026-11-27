@@ -29,6 +29,7 @@ services:
       MEDIA_DIR: /app/media
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
       SHOP_TIMEZONE: ${SHOP_TIMEZONE:-Europe/Moscow}
+      SITE_URL: ${SITE_URL:-https://24countur.ru}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_DAYS: ${JWT_EXPIRES_DAYS:-7}
       ADMIN_LOGIN: ${ADMIN_LOGIN}

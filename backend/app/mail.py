@@ -1,42 +1,64 @@
-"""Отправка писем через SMTP из настроек. Без SMTP_HOST письма не уходят."""
-
 import asyncio
 import smtplib
 from email.message import EmailMessage
 
-from app.config import get_settings
-from app.feedback.services.exceptions import MailDeliveryError, MailNotConfiguredError
+from app.config import Settings
+from app.mail_content import MailContent
 
 
-def deliver(to: str, subject: str, body: str) -> None:
-    """Отправить письмо синхронно. Вызывается из потока, чтобы не блокировать сервер."""
-
-    settings = get_settings()
-    if not settings.smtp_host:
-        raise MailNotConfiguredError("Отправка писем не настроена")
-
-    letter = EmailMessage()
-    letter["From"] = settings.smtp_from or settings.smtp_user
-    letter["To"] = to
-    letter["Subject"] = subject
-    letter.set_content(body)
-
-    # 465 — сразу шифрованное соединение (Яндекс, Mail.ru), 587 — обычное с переходом на TLS.
-    ssl = settings.smtp_port == 465
-    connect = smtplib.SMTP_SSL if ssl else smtplib.SMTP
-
-    try:
-        with connect(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
-            if settings.smtp_tls and not ssl:
-                smtp.starttls()
-            if settings.smtp_user:
-                smtp.login(settings.smtp_user, settings.smtp_password)
-            smtp.send_message(letter)
-    except (smtplib.SMTPException, OSError) as error:
-        raise MailDeliveryError("Почтовый сервер не принял письмо") from error
+class MailDeliveryError(RuntimeError):
+    """Ошибка доставки письма."""
 
 
-async def send_mail(to: str, subject: str, body: str) -> None:
-    """Отправить письмо, не блокируя обработку других запросов."""
+class MailNotConfiguredError(RuntimeError):
+    """Отсутствуют настройки почты."""
 
-    await asyncio.to_thread(deliver, to, subject, body)
+
+def build_message(sender: str, recipient: str, content: MailContent) -> EmailMessage:
+    """Подготовить письмо к отправке."""
+
+    message = EmailMessage()
+    message["From"] = sender
+    message["To"] = recipient
+    message["Subject"] = " ".join(content.subject.splitlines())
+    if content.reply_to:
+        message["Reply-To"] = content.reply_to
+
+    message.set_content(content.text())
+    message.add_alternative(content.html(), subtype="html")
+    return message
+
+
+class EmailClient:
+    """Почтовый клиент магазина."""
+
+    def __init__(self, settings: Settings) -> None:
+        """Сохранить настройки почты."""
+
+        self.settings = settings
+
+    async def send(self, recipient: str, content: MailContent) -> None:
+        """Отправить письмо покупателю."""
+
+        await asyncio.to_thread(self.send_smtp, recipient, content)
+
+    def send_smtp(self, recipient: str, content: MailContent) -> None:
+        """Передать письмо SMTP-серверу."""
+
+        settings = self.settings
+        if not settings.smtp_host:
+            raise MailNotConfiguredError("Отправка писем не настроена")
+
+        message = build_message(settings.smtp_from or settings.smtp_user, recipient, content)
+        implicit_tls = settings.smtp_port == 465
+        connect = smtplib.SMTP_SSL if implicit_tls else smtplib.SMTP
+
+        try:
+            with connect(settings.smtp_host, settings.smtp_port, timeout=15) as smtp:
+                if settings.smtp_tls and not implicit_tls:
+                    smtp.starttls()
+                if settings.smtp_user:
+                    smtp.login(settings.smtp_user, settings.smtp_password)
+                smtp.send_message(message)
+        except (smtplib.SMTPException, OSError) as error:
+            raise MailDeliveryError("Почтовый сервер не принял письмо") from error

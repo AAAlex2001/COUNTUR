@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.database import create_bot_engine
 from app.models import TelegramReply
-from app.services.repo import ReplyRepository
+from app.repositories.replies import ReplyRepository
 from scripts.import_telegram_replies import import_replies
 
 
@@ -31,9 +31,9 @@ def test_open_and_close_across_restarts(sessions):
     try:
         ReplyRepository(sessions).add(request_id, 9_876_543_210)
         restarted = ReplyRepository(sessions)
-        assert restarted.recipient(request_id) == 9_876_543_210
+        assert restarted.get_recipient(request_id) == 9_876_543_210
         restarted.close(request_id)
-        assert restarted.recipient(request_id) is None
+        assert restarted.get_recipient(request_id) is None
     finally:
         with sessions.begin() as db:
             db.execute(delete(TelegramReply).where(TelegramReply.request_id == request_id))
@@ -54,11 +54,11 @@ def test_import_preserves_existing_and_closed_requests(sessions, tmp_path):
         with sessions.begin() as db:
             assert import_replies(path, db) == 1
             assert import_replies(path, db) == 0
-        assert replies.recipient(request_id) == 123
+        assert replies.get_recipient(request_id) == 123
         replies.close(request_id)
         with sessions.begin() as db:
             assert import_replies(path, db) == 0
-        assert replies.recipient(request_id) is None
+        assert replies.get_recipient(request_id) is None
     finally:
         with sessions.begin() as db:
             db.execute(delete(TelegramReply).where(TelegramReply.request_id == request_id))

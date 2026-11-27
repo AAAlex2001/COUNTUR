@@ -8,10 +8,10 @@ from app.feedback.dependencies import (
     get_reply_usecase,
 )
 from app.feedback.models import FeedbackMessage, FeedbackStatus
+from app.feedback.repository import FeedbackRepository
 from app.feedback.schemas import FeedbackListSchema, FeedbackReplySchema, FeedbackSchema
-from app.feedback.services.exceptions import MailDeliveryError, MailNotConfiguredError
-from app.feedback.services.repo import FeedbackRepository
-from app.feedback.services.usecases.reply_feedback import ReplyFeedbackUseCase
+from app.feedback.usecases.reply_feedback import ReplyFeedbackUseCase
+from app.mail import MailDeliveryError, MailNotConfiguredError
 
 router = APIRouter(
     prefix="/admin/feedback",
@@ -29,7 +29,8 @@ async def list_feedback(
 ) -> FeedbackListSchema:
     """Обращения, свежие первыми. Фильтр по статусу."""
 
-    items, total = await messages.list_all(message_status, limit, offset)
+    items = await messages.list_messages(message_status, limit, offset)
+    total = await messages.count_messages(message_status)
 
     return FeedbackListSchema(
         messages=[FeedbackSchema.model_validate(item) for item in items],

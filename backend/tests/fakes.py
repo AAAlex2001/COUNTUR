@@ -91,20 +91,19 @@ class FakeCartRepository:
     async def clear(self, user_id: int) -> None:
         self.items = [item for item in self.items if item.user_id != user_id]
 
+    async def remove_items(self, user_id: int) -> None:
+        await self.clear(user_id)
+
 
 class FakeOrderRepository:
-    """Заказы в списке. create очищает корзину, как настоящий репозиторий."""
+    """Заказы в памяти."""
 
-    def __init__(self, cart: FakeCartRepository) -> None:
-        self.cart = cart
+    def __init__(self) -> None:
         self.items: list[Order] = []
 
-    async def create(self, order: Order, user_id: int) -> Order:
+    async def add(self, order: Order) -> None:
         order.id = len(self.items) + 1
         self.items.append(order)
-        await self.cart.clear(user_id)
-
-        return order
 
     async def lock(self, order: Order) -> Order:
         return order

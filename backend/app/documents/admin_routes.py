@@ -7,9 +7,9 @@ from app.documents.dependencies import (
     get_update_document_usecase,
 )
 from app.documents.models import Document
+from app.documents.repository import DocumentRepository
 from app.documents.schemas import DocumentSchema, DocumentUpdateSchema
-from app.documents.services.repo import DocumentRepository
-from app.documents.services.usecases.update_document import UpdateDocumentUseCase
+from app.documents.usecases.update_document import UpdateDocumentUseCase
 
 router = APIRouter(
     prefix="/admin/documents",
@@ -22,7 +22,7 @@ router = APIRouter(
 async def list_documents(
     documents: DocumentRepository = Depends(get_document_repository),
 ) -> list[DocumentSchema]:
-    """Все документы магазина."""
+    """Получить список документов."""
 
     items = await documents.list_all()
 
@@ -31,7 +31,7 @@ async def list_documents(
 
 @router.get("/{slug}")
 async def get_document(document: Document = Depends(get_document_by_slug)) -> DocumentSchema:
-    """Документ для редактирования."""
+    """Открыть редактор документа."""
 
     return DocumentSchema.model_validate(document)
 
@@ -42,7 +42,7 @@ async def update_document(
     document: Document = Depends(get_document_by_slug),
     usecase: UpdateDocumentUseCase = Depends(get_update_document_usecase),
 ) -> DocumentSchema:
-    """Новая редакция документа. HTML очищается от всего, чего нет в редакторе."""
+    """Сохранить редакцию документа."""
 
     updated = await usecase.execute(document, payload)
 

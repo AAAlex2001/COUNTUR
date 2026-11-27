@@ -1,84 +1,48 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
-import type { Promotion } from "@/entities/landing";
+import { useState } from "react";
 import { errorMessage } from "@/shared/lib/errors";
+import { useAdminDraft } from "@/shared/lib/use-admin-draft";
 import { useToast } from "@/shared/ui/toaster";
 import { fetchPromotion, savePromotion, uploadPromotionImage } from "../api/promotion";
-import { promotionReducer } from "./reducer";
-import type { PromotionFields } from "./types";
 
-const EMPTY_FIELDS: PromotionFields = {
-  label: "",
-  title: "",
-  text: "",
-  button_label: "",
-  button_url: "",
-  is_visible: false,
-};
-
-/** Поля формы из рекламного блока: всё, кроме картинки. */
-const toFields = (promotion: Promotion): PromotionFields => ({
-  label: promotion.label,
-  title: promotion.title,
-  text: promotion.text,
-  button_label: promotion.button_label,
-  button_url: promotion.button_url,
-  is_visible: promotion.is_visible,
-});
-
-/** Рекламный блок главной в админке: поля, сохранение и замена картинки. */
-export const usePromotion = () => {
+/** Редактировать акцию магазина. */
+export function usePromotion() {
+  const { draft, setDraft, change, failed, retry } = useAdminDraft(fetchPromotion, "Не удалось загрузить акцию");
+  const [pending, setPending] = useState(false);
   const toast = useToast();
-  const [state, dispatch] = useReducer(promotionReducer, {
-    fields: EMPTY_FIELDS,
-    imageUrl: null,
-    pending: false,
-  });
 
-  useEffect(() => {
-    fetchPromotion()
-      .then((promotion) =>
-        dispatch({
-          type: "load/finish",
-          fields: toFields(promotion),
-          imageUrl: promotion.image_url,
-        }),
-      )
-      .catch(() => undefined);
-  }, []);
-
-  const change = (changes: Partial<PromotionFields>) =>
-    dispatch({ type: "fields/change", changes });
-
-  const save = async () => {
-    dispatch({ type: "request/start" });
+  /** Опубликовать акцию. */
+  async function save() {
+    if (!draft || pending) return;
+    setPending(true);
 
     try {
-      await savePromotion(state.fields);
-      toast(state.fields.is_visible ? "Блок сохранён и показан на главной" : "Блок сохранён");
-    } catch (failure) {
-      toast(errorMessage(failure, "Не удалось сохранить блок"), "error");
+      setDraft(await savePromotion(draft));
+      toast(draft.is_visible ? "Блок сохранён и показан на главной" : "Блок сохранён");
+    } catch (error) {
+      toast(errorMessage(error, "Не удалось сохранить блок"), "error");
     } finally {
-      dispatch({ type: "request/finish" });
+      setPending(false);
     }
-  };
+  }
 
-  /** Загрузить первую из выбранных картинок вместо текущей. */
-  const uploadImage = async (files: File[]) => {
-    dispatch({ type: "request/start" });
+  /** Заменить изображение акции. */
+  async function uploadImage(files: File[]) {
+    const file = files[0];
+    if (!draft || !file || pending) return;
+    setPending(true);
 
     try {
-      const promotion = await uploadPromotionImage(files[0]);
-
-      dispatch({ type: "image/change", imageUrl: promotion.image_url });
+      const promotion = await uploadPromotionImage(file);
+      change({ image_url: promotion.image_url });
       toast("Картинка обновлена");
-    } catch (failure) {
-      toast(errorMessage(failure, "Не удалось загрузить картинку"), "error");
+    } catch (error) {
+      toast(errorMessage(error, "Не удалось загрузить картинку"), "error");
     } finally {
-      dispatch({ type: "request/finish" });
+      setPending(false);
     }
-  };
+  }
 
-  return { state, change, save, uploadImage };
-};
+  return { fields: draft, failed, retry, pending, change, save, uploadImage };
+}

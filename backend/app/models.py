@@ -17,7 +17,8 @@ from app.documents.models import Document
 from app.favorites.models import Favorite
 from app.feedback.models import FeedbackMessage
 from app.landing.models import Hero, HeroContent, Promotion
-from app.orders.models import Order, OrderItem
+from app.orders.models import Order, OrderItem, OrderMail
+from app.stock_notifications.models import StockSubscription
 from app.users.models import User
 
 __all__ = [
@@ -41,5 +42,7 @@ __all__ = [
     "Promotion",
     "Order",
     "OrderItem",
+    "OrderMail",
+    "StockSubscription",
     "User",
 ]

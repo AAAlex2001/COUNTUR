@@ -1,28 +1,16 @@
 from fastapi import APIRouter, Depends
 
-from app.contacts.dependencies import get_contacts_repository
+from app.contacts.dependencies import get_store_contacts_usecase
 from app.contacts.schemas import ContactsSettingsSchema
-from app.contacts.services.repo import ContactsSettingsRepository
+from app.contacts.usecases.get_store_contacts import GetStoreContactsUseCase
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
 
 @router.get("")
 async def get_contacts(
-    contacts: ContactsSettingsRepository = Depends(get_contacts_repository),
+    usecase: GetStoreContactsUseCase = Depends(get_store_contacts_usecase),
 ) -> ContactsSettingsSchema:
-    """Возвращает покупателю опубликованные контактные данные."""
+    """Показать контакты магазина."""
 
-    settings = await contacts.get()
-    response = ContactsSettingsSchema.model_validate(settings)
-
-    if not response.show_location:
-        response.location_title = ""
-        response.store_address = ""
-        response.hours = ""
-        response.directions = ""
-
-    if not response.show_location or not response.show_map:
-        response.map_url = ""
-
-    return response
+    return await usecase.execute()

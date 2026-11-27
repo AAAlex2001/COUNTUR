@@ -5,5 +5,4 @@ export type HeaderNavItem = {
   label: string;
   href: string;
   Icon: ComponentType<IconProps>;
-  newTab?: boolean;
 };

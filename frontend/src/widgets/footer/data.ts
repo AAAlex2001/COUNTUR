@@ -19,7 +19,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Покупателям",
     links: [
-      { label: "Доставка и оплата", href: DELIVERY_PATH, newTab: true },
+      { label: "Доставка и оплата", href: DELIVERY_PATH },
       { label: "Гарантия", href: TELEGRAM_SUPPORT_URL, newTab: true },
       { label: "Возврат", href: RETURNS_URL, newTab: true },
       { label: "Помощь в сборке", href: ASSEMBLY_HELP_URL, newTab: true },
@@ -31,7 +31,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "О Countur", href: ABOUT_PATH },
       { label: "Контакты", href: CONTACTS_PATH },
       ...SITE_DOCUMENTS,
-      { label: "Панель управления", href: "/admin" },
     ],
   },
 ];

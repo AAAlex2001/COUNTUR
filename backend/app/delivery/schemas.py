@@ -12,6 +12,16 @@ class EstimateRequest(BaseModel):
     width: int = Field(gt=0, le=500)
     height: int = Field(gt=0, le=500)
 
+    def package(self) -> dict[str, int]:
+        """Подготовить габариты посылки."""
+
+        return {
+            "weight": self.weight,
+            "length": self.length,
+            "width": self.width,
+            "height": self.height,
+        }
+
 
 class DeliveryTariff(BaseModel):
     """Стоимость тарифа в рублях и диапазон сроков доставки в днях."""

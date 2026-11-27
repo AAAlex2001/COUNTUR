@@ -1,22 +1,15 @@
-import { notFound } from "next/navigation";
-import { getDocument } from "@/entities/document";
-import LegalDocumentPage, { documentMetadata } from "@/widgets/legal-document";
+import { PRIVACY_APPENDIX } from "@/shared/config/site";
+import { documentMetadata } from "../../seo/documents";
+import { DocumentPage } from "../document-page";
 
 const SLUG = "privacy";
 
 export const dynamic = "force-dynamic";
 
+/** Собрать метаданные документа. */
 export const generateMetadata = () => documentMetadata(SLUG);
 
-/** Политика конфиденциальности. Текст правится в админке. */
-export default async function PrivacyRoute() {
-  const document = await getDocument(SLUG);
-
-  if (!document) notFound();
-
-  return (
-    <main>
-      <LegalDocumentPage document={document} />
-    </main>
-  );
+/** Показать политику конфиденциальности. */
+export default function PrivacyPage() {
+  return <DocumentPage slug={SLUG} appendix={PRIVACY_APPENDIX} />;
 }

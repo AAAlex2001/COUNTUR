@@ -1,28 +1,24 @@
-"""Обращения: репозиторий, сценарий ответа и загрузка обращения по номеру из пути."""
-
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_session
+from app.config import Settings, get_settings
+from app.database import DatabaseSession
 from app.feedback.models import FeedbackMessage
-from app.feedback.services.repo import FeedbackRepository
-from app.feedback.services.usecases.reply_feedback import ReplyFeedbackUseCase
-from app.mail import send_mail
+from app.feedback.repository import FeedbackRepository
+from app.feedback.usecases.reply_feedback import ReplyFeedbackUseCase
+from app.mail import EmailClient
 
 
-def get_feedback_repository(
-    session: AsyncSession = Depends(get_session),
-) -> FeedbackRepository:
-    """Репозиторий обращений с сессией текущего запроса."""
+def get_feedback_repository(db: DatabaseSession) -> FeedbackRepository:
+    """Подключить обращения."""
 
-    return FeedbackRepository(session)
+    return FeedbackRepository(db)
 
 
 async def get_message_by_id(
     message_id: int,
     messages: FeedbackRepository = Depends(get_feedback_repository),
 ) -> FeedbackMessage:
-    """Обращение по номеру из пути для админки. Отсутствующее — 404."""
+    """Найти обращение администратора."""
 
     message = await messages.get_by_id(message_id)
     return require_feedback_message(message)
@@ -32,14 +28,14 @@ async def get_message_for_reply(
     message_id: int,
     messages: FeedbackRepository = Depends(get_feedback_repository),
 ) -> FeedbackMessage:
-    """Удерживает блокировку обращения, пока отправляется и сохраняется ответ."""
+    """Заблокировать обращение для ответа."""
 
-    message = await messages.get_by_id(message_id, for_update=True)
+    message = await messages.lock_for_reply(message_id)
     return require_feedback_message(message)
 
 
 def require_feedback_message(message: FeedbackMessage | None) -> FeedbackMessage:
-    """Возвращает найденное обращение или завершает запрос с ошибкой 404."""
+    """Проверить наличие обращения."""
 
     if message is None:
         raise HTTPException(
@@ -52,7 +48,8 @@ def require_feedback_message(message: FeedbackMessage | None) -> FeedbackMessage
 
 def get_reply_usecase(
     messages: FeedbackRepository = Depends(get_feedback_repository),
+    settings: Settings = Depends(get_settings),
 ) -> ReplyFeedbackUseCase:
     """Сценарий ответа на обращение."""
 
-    return ReplyFeedbackUseCase(messages, send_mail)
+    return ReplyFeedbackUseCase(messages=messages, mail=EmailClient(settings))

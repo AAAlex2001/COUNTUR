@@ -1,0 +1,26 @@
+{{ letter.heading }}
+
+{{ letter.body }}
+
+{% if letter.items %}
+Состав заказа:
+{% for item in letter.items %}
+{{ loop.index }}. {{ item }}
+{% endfor %}
+
+{% endif %}
+{% if letter.details %}
+{% for label, value in letter.details %}
+{{ label }}: {{ value }}
+{% endfor %}
+
+{% endif %}
+{% if letter.link_url %}
+{{ letter.link_label }}: {{ letter.link_url }}
+
+{% endif %}
+{% if letter.note %}
+{{ letter.note }}
+
+{% endif %}
+{{ letter.signature }}

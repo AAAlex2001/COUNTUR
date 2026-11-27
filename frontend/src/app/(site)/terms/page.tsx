@@ -1,22 +1,14 @@
-import { notFound } from "next/navigation";
-import { getDocument } from "@/entities/document";
-import LegalDocumentPage, { documentMetadata } from "@/widgets/legal-document";
+import { documentMetadata } from "../../seo/documents";
+import { DocumentPage } from "../document-page";
 
 const SLUG = "terms";
 
 export const dynamic = "force-dynamic";
 
+/** Собрать метаданные документа. */
 export const generateMetadata = () => documentMetadata(SLUG);
 
-/** Пользовательское соглашение. Текст правится в админке. */
-export default async function TermsRoute() {
-  const document = await getDocument(SLUG);
-
-  if (!document) notFound();
-
-  return (
-    <main>
-      <LegalDocumentPage document={document} />
-    </main>
-  );
+/** Показать пользовательское соглашение. */
+export default function TermsPage() {
+  return <DocumentPage slug={SLUG} />;
 }

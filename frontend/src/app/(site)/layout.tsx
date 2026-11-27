@@ -1,13 +1,14 @@
-import { CartProvider, EMPTY_CART, getCart } from "@/entities/cart";
+import { EMPTY_CART, getCart } from "@/entities/cart";
 import { getContacts } from "@/entities/contacts";
-import { FavoritesProvider, getFavorites } from "@/entities/favorite";
+import { getFavorites } from "@/entities/favorite";
 import { UserProvider } from "@/entities/user";
 import { getSessionUser, sessionHeaders } from "@/entities/user/server";
 import { AuthModal } from "@/features/auth";
 import Footer from "@/widgets/footer";
 import Header from "@/widgets/header";
+import { CustomerProviders } from "./customer-providers";
 
-/** Общая оболочка страниц сайта. Покупатель, корзина и избранное читаются по cookie ещё на сервере. */
+/** Открыть витрину магазина. */
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const headers = await sessionHeaders();
 
@@ -20,14 +21,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <UserProvider initialUser={user}>
-      <CartProvider initialCart={cart}>
-        <FavoritesProvider initialProducts={favorites}>
-          <Header />
-          {children}
-          <Footer email={contacts?.email} />
-          <AuthModal />
-        </FavoritesProvider>
-      </CartProvider>
+      <CustomerProviders cart={cart} favorites={favorites}>
+        <Header />
+        {children}
+        <Footer email={contacts?.email} />
+        <AuthModal />
+      </CustomerProviders>
     </UserProvider>
   );
 }

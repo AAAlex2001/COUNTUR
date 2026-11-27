@@ -1,11 +1,9 @@
 "use client";
 
 import { useFavorites } from "@/entities/favorite";
-import { CATALOG_PATH, ProductCard } from "@/entities/product";
+import { CATALOG_PATH, ProductCard, type ProductActions } from "@/entities/product";
 import { ACCOUNT_PATH, useUser } from "@/entities/user";
-import { AddToCartButton } from "@/features/add-to-cart";
 import { LoginPrompt } from "@/features/auth";
-import { FavoriteButton } from "@/features/toggle-favorite";
 import { plural } from "@/shared/lib/text";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import Button from "@/shared/ui/button";
@@ -14,8 +12,8 @@ import { HeartIcon } from "@/shared/ui/icons";
 import Loader from "@/shared/ui/loader";
 import styles from "./style.module.scss";
 
-/** Страница избранного. Товар исчезает из списка сразу, как только его убрали сердечком. */
-const Favorites = () => {
+/** Показать избранные товары. */
+const Favorites = ({ actions }: { actions: ProductActions }) => {
   const { user } = useUser();
   const { products: favorites, loaded } = useFavorites();
   const isEmpty = favorites.length === 0;
@@ -69,19 +67,7 @@ const Favorites = () => {
         <ul className={styles.grid}>
           {favorites.map((product) => (
             <li key={product.id}>
-              <ProductCard
-                product={product}
-                action={
-                  <div className={styles.actions}>
-                    <FavoriteButton productId={product.id} size="md" />
-                    <AddToCartButton
-                      productId={product.id}
-                      productName={product.name}
-                      available={product.availability === "in_stock"}
-                    />
-                  </div>
-                }
-              />
+              <ProductCard product={product} actions={actions} />
             </li>
           ))}
         </ul>

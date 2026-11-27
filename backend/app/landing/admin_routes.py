@@ -3,22 +3,24 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from app.admin.dependencies import require_admin
 from app.landing.dependencies import (
     get_delete_hero_image_usecase,
-    get_hero_content_repository,
-    get_promotion_repository,
+    get_landing_repository,
     get_set_hero_image_usecase,
     get_set_promotion_image_usecase,
     get_update_hero_content_usecase,
     get_update_promotion_usecase,
 )
-from app.landing.schemas import HeroContentSchema, HeroSchema, PromotionSchema, PromotionUpdateSchema
-from app.landing.services.repo import HeroContentRepository, PromotionRepository
-from app.landing.services.usecases.delete_hero_image import DeleteHeroImageUseCase
-from app.landing.services.usecases.manage_promotion import (
-    SetPromotionImageUseCase,
-    UpdatePromotionUseCase,
+from app.landing.repository import LandingRepository
+from app.landing.schemas import (
+    HeroContentSchema,
+    HeroSchema,
+    PromotionSchema,
+    PromotionUpdateSchema,
 )
-from app.landing.services.usecases.set_hero_image import SetHeroImageUseCase
-from app.landing.services.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.landing.usecases.delete_hero_image import DeleteHeroImageUseCase
+from app.landing.usecases.set_hero_image import SetHeroImageUseCase
+from app.landing.usecases.set_promotion_image import SetPromotionImageUseCase
+from app.landing.usecases.update_hero_content import UpdateHeroContentUseCase
+from app.landing.usecases.update_promotion import UpdatePromotionUseCase
 from app.uploads import UploadError
 
 router = APIRouter(
@@ -30,11 +32,11 @@ router = APIRouter(
 
 @router.get("/hero/content")
 async def get_hero_content(
-    hero_content: HeroContentRepository = Depends(get_hero_content_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> HeroContentSchema:
-    """Загружает содержимое первого экрана в редактор."""
+    """Открыть редактор первого экрана."""
 
-    content = await hero_content.get()
+    content = await landing.get_hero_content()
     return HeroContentSchema.model_validate(content)
 
 
@@ -43,7 +45,7 @@ async def update_hero_content(
     payload: HeroContentSchema,
     usecase: UpdateHeroContentUseCase = Depends(get_update_hero_content_usecase),
 ) -> HeroContentSchema:
-    """Публикует изменения текстов, кнопок и показателей."""
+    """Обновить первый экран."""
 
     content = await usecase.execute(payload)
     return HeroContentSchema.model_validate(content)
@@ -54,7 +56,7 @@ async def set_hero_image(
     file: UploadFile,
     usecase: SetHeroImageUseCase = Depends(get_set_hero_image_usecase),
 ) -> HeroSchema:
-    """Замена картинки первого экрана. Прежняя картинка удаляется."""
+    """Заменить изображение первого экрана."""
 
     try:
         hero = await usecase.execute(file)
@@ -71,7 +73,7 @@ async def set_hero_image(
 async def delete_hero_image(
     usecase: DeleteHeroImageUseCase = Depends(get_delete_hero_image_usecase),
 ) -> HeroSchema:
-    """Убирает изображение первого экрана."""
+    """Удалить изображение первого экрана."""
 
     hero = await usecase.execute()
     if hero is None:
@@ -82,11 +84,11 @@ async def delete_hero_image(
 
 @router.get("/promotion")
 async def get_promotion(
-    promotions: PromotionRepository = Depends(get_promotion_repository),
+    landing: LandingRepository = Depends(get_landing_repository),
 ) -> PromotionSchema:
-    """Рекламный блок для редактирования, даже если он скрыт или ещё не заполнен."""
+    """Открыть редактор акции."""
 
-    promotion = await promotions.get()
+    promotion = await landing.get_promotion()
     if promotion is None:
         return PromotionSchema()
 
@@ -98,7 +100,7 @@ async def update_promotion(
     payload: PromotionUpdateSchema,
     usecase: UpdatePromotionUseCase = Depends(get_update_promotion_usecase),
 ) -> PromotionSchema:
-    """Сохранение текстов, кнопки и видимости рекламного блока."""
+    """Сохранить настройки акции."""
 
     promotion = await usecase.execute(payload)
 
@@ -110,7 +112,7 @@ async def set_promotion_image(
     file: UploadFile,
     usecase: SetPromotionImageUseCase = Depends(get_set_promotion_image_usecase),
 ) -> PromotionSchema:
-    """Замена картинки рекламного блока. Прежняя картинка удаляется."""
+    """Заменить изображение акции."""
 
     try:
         promotion = await usecase.execute(file)

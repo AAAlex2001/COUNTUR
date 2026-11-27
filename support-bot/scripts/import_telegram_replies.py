@@ -8,13 +8,13 @@ from pathlib import Path
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from app.config import get_bot_settings
+from app.config import BotSettings
 from app.database import create_bot_engine
 from app.models import TelegramReply
 
 
 def import_replies(path: Path, session: Session) -> int:
-    """Читает старый файл без записи и добавляет только неизвестные номера заявок."""
+    """Перенести открытые обращения."""
 
     uri = path.resolve().as_uri() + "?mode=ro"
     inserted = 0
@@ -22,24 +22,30 @@ def import_replies(path: Path, session: Session) -> int:
         for request_id, chat_id in source.execute(
             "SELECT request_id, user_chat_id FROM pending_replies"
         ):
-            statement = (
-                insert(TelegramReply)
-                .values(request_id=request_id, chat_id=chat_id)
-                .on_conflict_do_nothing(index_elements=[TelegramReply.request_id])
-                .returning(TelegramReply.request_id)
-            )
-            if session.scalar(statement) is not None:
+            if import_recipient(session, request_id, chat_id):
                 inserted += 1
     return inserted
 
 
+def import_recipient(session: Session, request_id: str, chat_id: int) -> bool:
+    """Добавить нового адресата."""
+
+    statement = (
+        insert(TelegramReply)
+        .values(request_id=request_id, chat_id=chat_id)
+        .on_conflict_do_nothing(index_elements=[TelegramReply.request_id])
+        .returning(TelegramReply.request_id)
+    )
+    return session.scalar(statement) is not None
+
+
 def main() -> None:
-    """Переносит адресатов в одной транзакции и печатает число добавленных записей."""
+    """Импортировать адресатов поддержки."""
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path, help="Путь к прежнему файлу support_requests.sqlite3")
     source = parser.parse_args().source
-    engine = create_bot_engine(get_bot_settings().database_url)
+    engine = create_bot_engine(BotSettings().database_url)
     try:
         with Session(engine) as session, session.begin():
             count = import_replies(source, session)

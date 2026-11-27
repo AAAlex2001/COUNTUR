@@ -17,6 +17,3 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   failed: "Ошибка оплаты",
   refunded: "Возврат",
 };
-
-/** Номер заказа вида CT-000012. */
-export const orderNumber = (id: number) => `CT-${String(id).padStart(6, "0")}`;

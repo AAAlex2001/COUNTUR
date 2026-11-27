@@ -66,14 +66,6 @@
   list-style: none;
 }
 
-.actions {
-  display: flex;
-  flex: none;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
 @media (min-width: 768px) {
   .favorites {
     padding: 32px 24px 56px;

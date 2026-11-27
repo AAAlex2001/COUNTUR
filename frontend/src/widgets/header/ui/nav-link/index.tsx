@@ -11,19 +11,16 @@ type NavLinkProps = {
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
-  newTab?: boolean;
 };
 
-/** Ссылка в шапке: при наведении и на текущем разделе подсвечивается голубым с рамкой. */
-const NavLink = ({ href, children, className, ariaLabel, newTab }: NavLinkProps) => {
+/** Выделить текущий раздел. */
+const NavLink = ({ href, children, className, ariaLabel }: NavLinkProps) => {
   const pathname = usePathname();
 
   return (
     <Link
       className={cn(styles.link, pathname.startsWith(href) && styles.active, className)}
       href={href}
-      target={newTab ? "_blank" : undefined}
-      rel={newTab ? "noopener noreferrer" : undefined}
       aria-label={ariaLabel}
     >
       {children}

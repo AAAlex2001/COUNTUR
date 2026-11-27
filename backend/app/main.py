@@ -1,3 +1,6 @@
+import asyncio
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -14,6 +17,7 @@ from app.config import MEDIA_URL, get_settings
 from app.contacts import admin_routes as admin_contacts
 from app.contacts import routes as contacts
 from app.delivery import routes as delivery
+from app.delivery.auth import CdekAuth
 from app.documents import admin_routes as admin_documents
 from app.documents import routes as documents
 from app.favorites import routes as favorites
@@ -21,19 +25,39 @@ from app.feedback import admin_routes as admin_feedback
 from app.feedback import routes as feedback
 from app.landing import admin_routes as admin_landing
 from app.landing import routes as landing
+from app.mail_worker import run_mail_queues
 from app.orders import admin_routes as admin_orders
 from app.orders import routes as orders
+from app.stock_notifications import routes as stock_notifications
 from app.users import admin_routes as admin_users
 from app.users import routes as users
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+    """Запустить почтовые очереди и завершить текущие отправки при остановке API."""
+
+    stop = asyncio.Event()
+    worker = asyncio.create_task(run_mail_queues(stop))
+
+    try:
+        yield
+    finally:
+        stop.set()
+        await worker
+
+
 app = FastAPI(
+    lifespan=lifespan if settings.smtp_host else None,
     title="COUNTUR API",
     version="0.1.0",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
 )
+
+app.state.cdek_auth = CdekAuth(settings.cdek_account, settings.cdek_password)
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +70,8 @@ app.add_middleware(
 
 @app.get("/api/health", tags=["service"])
 async def health() -> dict[str, str]:
+    """Подтвердить доступность API."""
+
     return {"status": "ok"}
 
 
@@ -54,6 +80,7 @@ app.include_router(collections.router, prefix="/api/v1")
 app.include_router(delivery.router, prefix="/api/v1")
 app.include_router(cart.router, prefix="/api/v1")
 app.include_router(favorites.router, prefix="/api/v1")
+app.include_router(stock_notifications.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
 app.include_router(landing.router, prefix="/api/v1")
 app.include_router(contacts.router, prefix="/api/v1")

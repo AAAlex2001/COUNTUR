@@ -8,8 +8,8 @@ from app.catalog.schemas import ProductCardSchema, ProductListSchema
 from app.favorites.dependencies import get_favorite_repository
 from app.favorites.services.repo import FavoriteRepository
 from app.orders.dependencies import get_order_repository
+from app.orders.repositories.orders import OrderFilter, OrderRepository
 from app.orders.schemas import OrderAdminListSchema, OrderAdminSchema
-from app.orders.services.repo import OrderRepository
 from app.users.dependencies import get_user_by_id, get_user_repository
 from app.users.models import User
 from app.users.schemas import UserAdminListSchema, UserSchema
@@ -33,7 +33,9 @@ async def list_users(
 
     items, total = await users.list_all(q.strip() if q else None, limit, offset)
 
-    return UserAdminListSchema(users=[UserSchema.model_validate(item) for item in items], total=total)
+    return UserAdminListSchema(
+        users=[UserSchema.model_validate(item) for item in items], total=total
+    )
 
 
 @router.get("/{user_id}")
@@ -52,7 +54,9 @@ async def list_user_orders(
 ) -> OrderAdminListSchema:
     """Заказы покупателя, свежие первыми. Статусы меняются через /admin/orders."""
 
-    items, total = await orders.list_for_user(user.id, limit, offset)
+    filters = OrderFilter(user_id=user.id)
+    items = await orders.list_orders(filters, limit, offset)
+    total = await orders.count_orders(filters)
 
     return OrderAdminListSchema(
         orders=[OrderAdminSchema.model_validate(item) for item in items],

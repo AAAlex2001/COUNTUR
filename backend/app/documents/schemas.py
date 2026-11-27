@@ -16,7 +16,7 @@ class DocumentSchema(BaseModel):
 
 
 class DocumentUpdateSchema(BaseModel):
-    """Новая редакция документа. HTML перед сохранением очищается от лишнего."""
+    """Новая редакция документа."""
 
     title: str = Field(..., min_length=2, max_length=200)
     description: str = Field("", max_length=500)

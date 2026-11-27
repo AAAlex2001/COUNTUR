@@ -9,32 +9,21 @@ import styles from "./style.module.scss";
 
 type AddToCartProps = {
   productId: number;
-  available: boolean;
-  unavailableLabel: string;
   quantity: number;
   onQuantityChange: (quantity: number) => void;
   className?: string;
 };
 
-/** Выбор количества и кнопка «Добавить в корзину» для страницы товара. */
+/** Добавить выбранное количество. */
 const AddToCart = ({
   productId,
-  available,
-  unavailableLabel,
   quantity,
   onQuantityChange,
   className,
 }: AddToCartProps) => {
   const { state, add } = useAddToCart(productId);
 
-  if (!available) {
-    return (
-      <Button className={className} disabled>
-        {unavailableLabel}
-      </Button>
-    );
-  }
-
+  /** Сохранить количество в корзине. */
   const submit = async () => {
     const added = await add(quantity);
 

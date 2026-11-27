@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.contacts.models import ContactsSettings
-from app.contacts.routes import get_contacts
 from app.contacts.schemas import ContactsSettingsSchema
-from app.contacts.services.usecases.update_contacts import UpdateContactsUseCase
+from app.contacts.usecases.get_store_contacts import GetStoreContactsUseCase
+from app.contacts.usecases.update_contacts import UpdateContactsUseCase
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def test_visibility_only_affects_public_copy(
 
     repository = AsyncMock()
     repository.get.return_value = settings
-    public = asyncio.run(get_contacts(repository))
+    public = asyncio.run(GetStoreContactsUseCase(repository).execute())
 
     assert public.store_address == expected_address
     assert public.map_url == expected_map

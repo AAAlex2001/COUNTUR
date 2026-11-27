@@ -1,53 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { ContactsSettings } from "@/entities/contacts";
+import { useState } from "react";
 import { errorMessage } from "@/shared/lib/errors";
+import { useAdminDraft } from "@/shared/lib/use-admin-draft";
 import { useToast } from "@/shared/ui/toaster";
 import { fetchContactsSettings, saveContactsSettings } from "../api/contacts";
 import type { ChangeContact } from "./types";
 
-/** Загружает черновик контактов и сохраняет его в админке. */
-export const useContactsSettings = () => {
-  const toast = useToast();
-  const [settings, setSettings] = useState<ContactsSettings | null>(null);
-  const [loadError, setLoadError] = useState("");
+/** Редактировать контакты магазина. */
+export function useContactsSettings() {
+  const { draft, setDraft, change, failed, retry } = useAdminDraft(
+    fetchContactsSettings,
+    "Не удалось загрузить контакты",
+  );
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
-  useEffect(() => {
-    const controller = new AbortController();
+  /** Изменить контактное поле. */
+  const changeField: ChangeContact = (name, value) => change({ [name]: value });
 
-    fetchContactsSettings(controller.signal)
-      .then(setSettings)
-      .catch((failure) => {
-        if (!controller.signal.aborted) {
-          setLoadError(errorMessage(failure, "Не удалось загрузить контакты"));
-        }
-      });
-
-    return () => controller.abort();
-  }, []);
-
-  /** Меняет одно текстовое поле или переключатель видимости. */
-  const change: ChangeContact = (name, value) => {
-    setSettings((current) => current && { ...current, [name]: value });
-  };
-
-  /** Сохраняет текущую форму и принимает проверенные сервером значения. */
-  const save = async () => {
-    if (!settings || saving) return;
+  /** Сохранить контакты. */
+  async function save() {
+    if (!draft || saving) return;
     setSaving(true);
 
     try {
-      const saved = await saveContactsSettings(settings);
-      setSettings(saved);
+      setDraft(await saveContactsSettings(draft));
       toast("Контакты сохранены");
-    } catch (failure) {
-      toast(errorMessage(failure, "Не удалось сохранить контакты"), "error");
+    } catch (error) {
+      toast(errorMessage(error, "Не удалось сохранить контакты"), "error");
     } finally {
       setSaving(false);
     }
-  };
+  }
 
-  return { settings, loadError, saving, change, save };
-};
+  return { settings: draft, failed, retry, saving, change: changeField, save };
+}

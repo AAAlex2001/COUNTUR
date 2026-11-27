@@ -1,17 +1,16 @@
 import { COLLECTIONS_PATH, type Collection } from "@/entities/collection";
-import { ProductCard } from "@/entities/product";
-import { AddToCartButton } from "@/features/add-to-cart";
-import { FavoriteButton } from "@/features/toggle-favorite";
+import { ProductCard, type ProductActions } from "@/entities/product";
 import { plural } from "@/shared/lib/text";
 import Breadcrumbs from "@/shared/ui/breadcrumbs";
 import styles from "./style.module.scss";
 
 type CollectionPageProps = {
+  actions: ProductActions;
   collection: Collection;
 };
 
-/** Страница подборки: заголовок, описание и все её товары сеткой. */
-const CollectionPage = ({ collection }: CollectionPageProps) => {
+/** Показать товары подборки. */
+const CollectionPage = ({ collection, actions }: CollectionPageProps) => {
   const count = collection.products.length;
 
   return (
@@ -43,19 +42,7 @@ const CollectionPage = ({ collection }: CollectionPageProps) => {
       <ul className={styles.grid}>
         {collection.products.map((product) => (
           <li key={product.id}>
-            <ProductCard
-              product={product}
-              action={
-                <div className={styles.actions}>
-                  <FavoriteButton productId={product.id} size="md" />
-                  <AddToCartButton
-                    productId={product.id}
-                    productName={product.name}
-                    available={product.availability === "in_stock"}
-                  />
-                </div>
-              }
-            />
+            <ProductCard product={product} actions={actions} />
           </li>
         ))}
       </ul>

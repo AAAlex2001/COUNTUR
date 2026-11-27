@@ -1,34 +1,41 @@
-from fastapi import APIRouter, Depends, HTTPException
-from httpx import AsyncClient, HTTPError
+from typing import Annotated
 
-from app.delivery.calculator import CdekCalculator
-from app.delivery.dependencies import get_calculator, get_cdek_client
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.config import Settings, get_settings
+from app.delivery.dependencies import get_estimate_delivery_usecase
+from app.delivery.exceptions import (
+    CarrierUnavailableError,
+    DeliveryNotConfiguredError,
+    InvalidShipmentError,
+)
 from app.delivery.schemas import DeliveryAvailability, DeliveryTariff, EstimateRequest
+from app.delivery.usecases.estimate_delivery import EstimateDeliveryUseCase
 
 router = APIRouter(prefix="/delivery", tags=["delivery"])
 
 
 @router.get("/availability")
 async def delivery_availability(
-    calculator: CdekCalculator | None = Depends(get_calculator),
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> DeliveryAvailability:
-    """Сообщает витрине, можно ли показывать форму расчёта."""
+    """Проверить доступность расчёта."""
 
-    return DeliveryAvailability(available=calculator is not None)
+    return DeliveryAvailability(available=settings.delivery_enabled)
 
 
 @router.post("/estimate")
 async def estimate_delivery(
     shipment: EstimateRequest,
-    client: AsyncClient = Depends(get_cdek_client),
-    calculator: CdekCalculator | None = Depends(get_calculator),
+    usecase: Annotated[EstimateDeliveryUseCase, Depends(get_estimate_delivery_usecase)],
 ) -> list[DeliveryTariff]:
-    """Рассчитывает предварительную стоимость и сроки доставки."""
-
-    if calculator is None:
-        raise HTTPException(503, "Расчёт доставки пока недоступен")
+    """Рассчитать доставку заказа."""
 
     try:
-        return await calculator.estimate(client, shipment)
-    except (HTTPError, ValueError) as error:
-        raise HTTPException(502, "Не удалось получить тарифы СДЭК") from error
+        return await usecase.execute(shipment)
+    except InvalidShipmentError as error:
+        raise HTTPException(422, str(error)) from error
+    except DeliveryNotConfiguredError as error:
+        raise HTTPException(503, str(error)) from error
+    except CarrierUnavailableError as error:
+        raise HTTPException(502, str(error)) from error

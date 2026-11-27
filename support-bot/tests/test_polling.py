@@ -1,13 +1,17 @@
 from types import SimpleNamespace
+from unittest.mock import Mock
 
+from requests import ConnectionError
+from telebot import TeleBot
 from telebot.types import Update
 
-from app.main import PollingBot
+from app.polling import TelegramPolling
 from tests.fakes import FakeReplies, make_handlers
 
 
 def test_polling_delivers_reply_after_button_in_same_batch(monkeypatch):
-    bot = PollingBot("12345:test", threaded=False)
+    bot = TeleBot("12345:test", threaded=False)
+    polling = TelegramPolling(bot)
     replies = FakeReplies()
     replies.add("open-request", 123)
     make_handlers(bot, replies).register()
@@ -33,7 +37,7 @@ def test_polling_delivers_reply_after_button_in_same_batch(monkeypatch):
         offsets.append(offset)
         if len(offsets) == 1:
             return updates
-        bot.stop_polling()
+        polling.stop(15, None)
         return []
 
     monkeypatch.setattr(bot, "get_me", lambda: SimpleNamespace(username="test_bot"))
@@ -41,8 +45,46 @@ def test_polling_delivers_reply_after_button_in_same_batch(monkeypatch):
     monkeypatch.setattr(bot, "send_message", lambda chat, text: sent.append((chat, text)))
     monkeypatch.setattr(bot, "answer_callback_query", lambda callback_id: None)
 
-    bot.polling(allowed_updates=["message", "callback_query"])
+    monkeypatch.setattr(bot, "delete_webhook", lambda drop_pending_updates: True)
+    polling.run()
 
-    assert offsets == [1, 12]
+    assert offsets == [0, 12]
     assert (123, "Ответ поддержки по заявке #open-request:\n\nОтвет владельца") in sent
-    assert replies.recipient("open-request") is None
+    assert replies.get_recipient("open-request") is None
+
+
+def test_startup_recovers_without_logging_bot_token(monkeypatch, caplog):
+    bot = Mock()
+    bot.delete_webhook.side_effect = [ConnectionError("private-token"), True]
+    polling = TelegramPolling(bot)
+    monkeypatch.setattr(polling.stopped, "wait", lambda timeout: None)
+
+    def finish_polling(offset, allowed_updates, timeout, long_polling_timeout):
+        polling.stopped.set()
+        return []
+
+    bot.get_updates.side_effect = finish_polling
+
+    polling.run()
+
+    assert bot.delete_webhook.call_count == 2
+    assert bot.get_updates.call_count == 1
+    assert "ConnectionError" in caplog.text
+    assert "private-token" not in caplog.text
+
+
+def test_failed_handler_does_not_interrupt_other_chats(caplog):
+    bot = Mock()
+    first = SimpleNamespace(update_id=50)
+    second = SimpleNamespace(update_id=51)
+    bot.get_updates.return_value = [first, second]
+    bot.process_new_updates.side_effect = [RuntimeError("private-token"), None]
+    polling = TelegramPolling(bot)
+
+    polling.receive()
+
+    assert bot.process_new_updates.call_count == 2
+    bot.process_new_updates.assert_called_with([second])
+    assert polling.offset == 52
+    assert "событие 50" in caplog.text
+    assert "private-token" not in caplog.text

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getCollections } from "@/entities/collection";
 import Collections, { CollectionsHeading } from "@/widgets/collections";
+import ProductCardActions from "@/widgets/product-card-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export default async function CollectionsRoute() {
   return (
     <main>
       <CollectionsHeading empty={collections.length === 0} />
-      <Collections collections={collections} />
+      <Collections collections={collections} actions={ProductCardActions} />
     </main>
   );
 }
