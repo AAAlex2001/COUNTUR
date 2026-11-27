@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.collections.dependencies import get_collection_repository
+from app.collections.repository import CollectionRepository
 from app.collections.schemas import CollectionSchema, Placement
-from app.collections.services.repo import CollectionRepository
 
 router = APIRouter(prefix="/collections", tags=["collections"])
 

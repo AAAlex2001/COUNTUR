@@ -1,6 +1,15 @@
 """Тесты очистки HTML документа."""
 
+import pytest
+from pydantic import ValidationError
+
 from app.documents.content import sanitize_content
+from app.documents.schemas import DocumentUpdateSchema
+
+
+def test_document_title_cannot_be_whitespace() -> None:
+    with pytest.raises(ValidationError):
+        DocumentUpdateSchema(title="   ", content="<p>Текст</p>")
 
 
 def test_keeps_editor_markup() -> None:

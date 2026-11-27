@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.cart.services.exceptions import NotEnoughStockError, ProductUnavailableError
+from app.cart.exceptions import NotEnoughStockError, ProductUnavailableError
 from app.orders.dependencies import get_create_order_usecase, get_order_repository
 from app.orders.exceptions import EmptyCartError, InvalidPhoneError
 from app.orders.repositories.orders import OrderFilter, OrderRepository

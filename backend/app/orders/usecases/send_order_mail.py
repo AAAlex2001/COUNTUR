@@ -22,7 +22,10 @@ def should_send(job: OrderMail) -> bool:
     if job.kind == OrderMailKind.CONFIRMATION:
         return True
 
-    return order.status != OrderStatus.CANCELED and order.tracking_number == job.reference
+    return (
+        order.status in (OrderStatus.SHIPPED, OrderStatus.COMPLETED)
+        and order.tracking_number == job.reference
+    )
 
 
 class SendOrderMailUseCase:

@@ -3,7 +3,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.cart.models import CartItem
-from app.cart.services.validators import MAX_QUANTITY
+from app.cart.validators import MAX_QUANTITY
 from app.catalog.models import Availability
 from app.catalog.schemas import BrandSchema
 

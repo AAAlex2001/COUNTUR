@@ -15,8 +15,8 @@ class UpdateDocumentUseCase:
     async def execute(self, document: Document, payload: DocumentUpdateSchema) -> Document:
         """Сохранить документ магазина."""
 
-        document.title = payload.title.strip()
-        document.description = payload.description.strip()
+        document.title = payload.title
+        document.description = payload.description
         document.content = sanitize_content(payload.content)
 
         return await self.documents.save(document)

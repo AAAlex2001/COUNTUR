@@ -1,8 +1,7 @@
-from fastapi import UploadFile
-
 from app.landing.images import replace_landing_image
 from app.landing.models import Hero
 from app.landing.repository import LandingRepository
+from app.uploads import ImageUpload
 
 
 class SetHeroImageUseCase:
@@ -13,7 +12,7 @@ class SetHeroImageUseCase:
 
         self.landing = landing
 
-    async def execute(self, file: UploadFile) -> Hero:
+    async def execute(self, file: ImageUpload) -> Hero:
         """Заменить изображение первого экрана."""
 
         hero = await self.landing.edit_hero()

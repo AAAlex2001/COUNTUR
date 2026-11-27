@@ -18,6 +18,8 @@ class DocumentSchema(BaseModel):
 class DocumentUpdateSchema(BaseModel):
     """Новая редакция документа."""
 
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     title: str = Field(..., min_length=2, max_length=200)
     description: str = Field("", max_length=500)
     content: str = Field(..., max_length=200_000)

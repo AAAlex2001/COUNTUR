@@ -3,6 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import ColumnElement, func, select, true
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.orders.models import Order, OrderStatus
 
@@ -75,20 +76,22 @@ class OrderRepository:
         query = select(func.count()).select_from(Order).where(filters.matches())
         return await self.db.scalar(query) or 0
 
-    async def lock(self, order: Order) -> Order:
+    async def lock_by_id(self, order_id: int) -> Order | None:
         """Заблокировать заказ для изменения."""
 
         query = (
             select(Order)
-            .where(Order.id == order.id)
+            .where(Order.id == order_id)
+            .options(joinedload(Order.buyer))
             .with_for_update(of=Order)
             .execution_options(populate_existing=True)
         )
-        return (await self.db.execute(query)).scalar_one()
+        return await self.db.scalar(query)
 
     async def save(self, order: Order) -> Order:
         """Сохранить заказ."""
 
-        await self.db.commit()
         query = select(Order).where(Order.id == order.id).execution_options(populate_existing=True)
-        return (await self.db.execute(query)).scalar_one()
+        saved_order = (await self.db.scalars(query)).one()
+        await self.db.commit()
+        return saved_order

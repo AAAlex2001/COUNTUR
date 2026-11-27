@@ -3,8 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload
 
-from app.orders.models import Order, OrderMail, OrderMailKind
-from app.users.models import User
+from app.orders.models import Order, OrderItem, OrderMail, OrderMailKind
 
 
 class OrderMailQueue:
@@ -17,10 +16,6 @@ class OrderMailQueue:
 
     async def enqueue(self, order: Order, kind: OrderMailKind, reference: str = "") -> None:
         """Поставить письмо в очередь."""
-
-        enabled = await self.db.scalar(select(User.notify_orders).where(User.id == order.user_id))
-        if not enabled:
-            return
 
         await self.db.execute(
             insert(OrderMail)
@@ -42,9 +37,13 @@ class OrderMailQueue:
             .exists()
         )
 
+        order = joinedload(OrderMail.order)
         statement = (
             select(OrderMail)
-            .options(joinedload(OrderMail.order).joinedload(Order.buyer))
+            .options(
+                order.joinedload(Order.buyer),
+                order.selectinload(Order.items).raiseload(OrderItem.product),
+            )
             .where(OrderMail.sent_at.is_(None), OrderMail.next_attempt_at <= func.now())
             .where(or_(OrderMail.kind == OrderMailKind.CONFIRMATION, ~awaits_confirmation))
             .order_by(OrderMail.next_attempt_at, OrderMail.order_id, OrderMail.kind)

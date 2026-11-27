@@ -9,7 +9,12 @@ from app.catalog.dependencies import (
     get_published_product,
     get_review_repository,
 )
+from app.catalog.exceptions import CategoryNotFoundError, InvalidFilterError
+from app.catalog.filters import ProductFilters
 from app.catalog.models import Product
+from app.catalog.repositories.categories import CategoryRepository
+from app.catalog.repositories.products import ProductRepository
+from app.catalog.repositories.reviews import ReviewFilter, ReviewRepository
 from app.catalog.schemas import (
     CatalogFiltersSchema,
     CategorySchema,
@@ -21,15 +26,8 @@ from app.catalog.schemas import (
     ReviewSchema,
     SitemapEntrySchema,
 )
-from app.catalog.services.exceptions import CategoryNotFoundError, InvalidFilterError
-from app.catalog.services.repo import (
-    CategoryRepository,
-    ProductFilters,
-    ProductRepository,
-    ReviewRepository,
-)
-from app.catalog.services.usecases.get_catalog_filters import GetCatalogFiltersUseCase
-from app.catalog.services.validators import parse_spec_filters, validate_price_range
+from app.catalog.usecases.get_catalog_filters import GetCatalogFiltersUseCase
+from app.catalog.validators import parse_spec_filters, validate_price_range
 
 router = APIRouter(tags=["catalog"])
 
@@ -105,7 +103,8 @@ async def get_products(
         specs=spec_filters,
     )
 
-    items, total = await products.list_published(filters, sort, limit, offset)
+    items = await products.list_published(filters, sort, limit, offset)
+    total = await products.count_published(filters)
 
     return ProductListSchema(
         products=[ProductCardSchema.model_validate(item) for item in items],
@@ -142,7 +141,9 @@ async def get_product_reviews(
 ) -> ReviewListSchema:
     """Опубликованные отзывы товара, свежие первыми."""
 
-    items, total = await reviews.list_for_product(product.id, limit, offset, published_only=True)
+    filters = ReviewFilter(product.id, published_only=True)
+    items = await reviews.list_for_product(filters, limit, offset)
+    total = await reviews.count_for_product(filters)
 
     return ReviewListSchema(
         reviews=[ReviewSchema.model_validate(item) for item in items],

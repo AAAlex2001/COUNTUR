@@ -19,8 +19,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.base import Base
 from app.config import MEDIA_URL
-from app.database import Base
 
 
 class Availability(StrEnum):
@@ -86,9 +86,7 @@ class Attribute(Base):
 
     category: Mapped["Category"] = relationship(back_populates="attributes")
 
-    __table_args__ = (
-        UniqueConstraint("category_id", "name", name="uq_attributes_category_name"),
-    )
+    __table_args__ = (UniqueConstraint("category_id", "name", name="uq_attributes_category_name"),)
 
 
 class Product(Base):
@@ -120,18 +118,14 @@ class Product(Base):
     stock_quantity: Mapped[int | None] = mapped_column(Integer)
     availability: Mapped[str] = mapped_column(String(16), default=Availability.IN_STOCK)
 
-    status: Mapped[str] = mapped_column(
-        String(16), default=PublicationStatus.DRAFT, index=True
-    )
+    status: Mapped[str] = mapped_column(String(16), default=PublicationStatus.DRAFT, index=True)
     is_hit: Mapped[bool] = mapped_column(Boolean, default=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
     rating: Mapped[Decimal | None] = mapped_column(Numeric(2, 1))
     reviews_count: Mapped[int] = mapped_column(Integer, default=0)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -255,10 +249,6 @@ class Review(Base):
     text: Mapped[str] = mapped_column(Text)
     is_published: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    __table_args__ = (
-        CheckConstraint("rating BETWEEN 1 AND 5", name="ck_reviews_rating"),
-    )
+    __table_args__ = (CheckConstraint("rating BETWEEN 1 AND 5", name="ck_reviews_rating"),)

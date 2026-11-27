@@ -1,4 +1,4 @@
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.database import DatabaseSession
 from app.stock_notifications.repository import StockSubscriptionRepository
 from app.stock_notifications.usecases.list_subscriptions import ListStockSubscriptionsUseCase

@@ -1,11 +1,11 @@
 from decimal import Decimal
 
+from app.cart.exceptions import ProductUnavailableError
 from app.cart.models import CartItem
-from app.cart.services.exceptions import ProductUnavailableError
-from app.cart.services.repo import CartRepository
-from app.cart.services.validators import validate_purchase
+from app.cart.repository import CartRepository
+from app.cart.validators import validate_purchase
 from app.catalog.models import Product
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.orders.exceptions import EmptyCartError
 from app.orders.models import Order, OrderItem, OrderMailKind, OrderStatus, PaymentStatus
 from app.orders.repositories.mail_queue import OrderMailQueue
@@ -52,10 +52,11 @@ class CreateOrderUseCase:
         """Оформить заказ покупателя."""
 
         phone = normalize_phone(payload.customer_phone)
+        buyer = await self.cart.lock_owner(user_id)
         items = await self.reserve_cart(user_id)
         order = Order(
-            user_id=user_id,
-            customer_name=payload.customer_name.strip(),
+            buyer=buyer,
+            customer_name=payload.customer_name,
             customer_phone=phone,
             customer_email=payload.customer_email,
             delivery_method=payload.delivery_method,
@@ -69,14 +70,15 @@ class CreateOrderUseCase:
         )
 
         await self.orders.add(order)
-        await self.mail.enqueue(order, kind=OrderMailKind.CONFIRMATION)
+        if buyer.notify_orders:
+            await self.mail.enqueue(order, kind=OrderMailKind.CONFIRMATION)
         await self.cart.remove_items(user_id)
         return await self.orders.save(order)
 
     async def reserve_cart(self, user_id: int) -> list[OrderItem]:
         """Зарезервировать товары корзины."""
 
-        cart_items = await self.cart.list_items(user_id, lock=True)
+        cart_items = await self.cart.list_items(user_id)
         if not cart_items:
             raise EmptyCartError("Корзина пуста")
 

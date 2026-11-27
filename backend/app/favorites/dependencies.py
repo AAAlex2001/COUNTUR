@@ -4,11 +4,11 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.dependencies import get_product_repository
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.database import get_session
-from app.favorites.services.repo import FavoriteRepository
-from app.favorites.services.usecases.add_favorite import AddFavoriteUseCase
-from app.favorites.services.usecases.remove_favorite import RemoveFavoriteUseCase
+from app.favorites.repository import FavoriteRepository
+from app.favorites.usecases.add_favorite import AddFavoriteUseCase
+from app.favorites.usecases.remove_favorite import RemoveFavoriteUseCase
 
 
 def get_favorite_repository(

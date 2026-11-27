@@ -2,18 +2,18 @@ from fastapi import APIRouter, Depends, Query
 
 from app.admin.dependencies import require_admin
 from app.cart.dependencies import get_cart_repository
+from app.cart.repository import CartRepository
 from app.cart.schemas import CartPageSchema, build_cart_rows
-from app.cart.services.repo import CartRepository
 from app.catalog.schemas import ProductCardSchema, ProductListSchema
 from app.favorites.dependencies import get_favorite_repository
-from app.favorites.services.repo import FavoriteRepository
+from app.favorites.repository import FavoriteRepository
 from app.orders.dependencies import get_order_repository
 from app.orders.repositories.orders import OrderFilter, OrderRepository
 from app.orders.schemas import OrderAdminListSchema, OrderAdminSchema
 from app.users.dependencies import get_user_by_id, get_user_repository
 from app.users.models import User
+from app.users.repository import UserRepository
 from app.users.schemas import UserAdminListSchema, UserSchema
-from app.users.services.repo import UserRepository
 
 router = APIRouter(
     prefix="/admin/users",
@@ -31,7 +31,9 @@ async def list_users(
 ) -> UserAdminListSchema:
     """Покупатели, новые первыми."""
 
-    items, total = await users.list_all(q.strip() if q else None, limit, offset)
+    search = q.strip() if q else None
+    items = await users.list_users(search, limit, offset)
+    total = await users.count_users(search)
 
     return UserAdminListSchema(
         users=[UserSchema.model_validate(item) for item in items], total=total
@@ -73,7 +75,8 @@ async def list_user_favorites(
 ) -> ProductListSchema:
     """Избранное покупателя."""
 
-    products, total = await favorites.list_products(user.id, limit, offset)
+    products = await favorites.list_products(user.id, limit, offset)
+    total = await favorites.count_products(user.id)
 
     return ProductListSchema(
         products=[ProductCardSchema.model_validate(product) for product in products],
@@ -90,6 +93,7 @@ async def list_user_cart(
 ) -> CartPageSchema:
     """Корзина покупателя."""
 
-    items, total = await cart.page_items(user.id, limit, offset)
+    items = await cart.page_items(user.id, limit, offset)
+    total = await cart.count_items(user.id)
 
     return CartPageSchema(items=build_cart_rows(items), total=total)

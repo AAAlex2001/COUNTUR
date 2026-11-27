@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
+from app.base import Base
 
 
 class User(Base):
@@ -23,6 +23,4 @@ class User(Base):
     notify_orders: Mapped[bool] = mapped_column(Boolean, default=True)
     notify_promo: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

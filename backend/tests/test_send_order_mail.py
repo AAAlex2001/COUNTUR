@@ -87,6 +87,7 @@ def test_send_tracking_number_to_account_email(sender, order, buyer):
     [
         ("confirmation", False, OrderStatus.NEW, ""),
         ("shipment", True, OrderStatus.CANCELED, "12345"),
+        ("shipment", True, OrderStatus.NEW, "12345"),
         ("shipment", True, OrderStatus.SHIPPED, "old-track"),
     ],
 )

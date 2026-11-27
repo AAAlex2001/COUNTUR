@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from app.catalog.exceptions import ProductNotFoundError
 from app.catalog.models import Availability, Product
-from app.catalog.services.exceptions import ProductNotFoundError
 from app.mail import EmailClient, MailDeliveryError
 from app.stock_notifications.models import StockSubscription
 from app.stock_notifications.repository import StockNotice, StockSubscriptionRepository

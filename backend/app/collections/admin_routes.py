@@ -3,19 +3,20 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.admin.dependencies import require_admin
 from app.collections.dependencies import (
     get_collection_by_id,
+    get_collection_for_edit,
     get_collection_repository,
     get_create_collection_usecase,
     get_update_collection_usecase,
 )
+from app.collections.exceptions import UnknownProductError
 from app.collections.models import Collection
+from app.collections.repository import CollectionRepository
 from app.collections.schemas import (
     CollectionAdminSchema,
     CollectionCreateSchema,
     CollectionUpdateSchema,
 )
-from app.collections.services.exceptions import UnknownProductError
-from app.collections.services.repo import CollectionRepository
-from app.collections.services.usecases.manage_collections import (
+from app.collections.usecases.manage_collections import (
     CreateCollectionUseCase,
     UpdateCollectionUseCase,
 )
@@ -39,7 +40,9 @@ async def list_collections(
 
 
 @router.get("/{collection_id}")
-async def get_collection(collection: Collection = Depends(get_collection_by_id)) -> CollectionAdminSchema:
+async def get_collection(
+    collection: Collection = Depends(get_collection_by_id),
+) -> CollectionAdminSchema:
     """Подборка для редактирования."""
 
     return CollectionAdminSchema.model_validate(collection)
@@ -66,7 +69,7 @@ async def create_collection(
 @router.patch("/{collection_id}")
 async def update_collection(
     payload: CollectionUpdateSchema,
-    collection: Collection = Depends(get_collection_by_id),
+    collection: Collection = Depends(get_collection_for_edit),
     usecase: UpdateCollectionUseCase = Depends(get_update_collection_usecase),
 ) -> CollectionAdminSchema:
     """Частичное обновление подборки и её состава."""
@@ -84,7 +87,7 @@ async def update_collection(
 
 @router.delete("/{collection_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_collection(
-    collection: Collection = Depends(get_collection_by_id),
+    collection: Collection = Depends(get_collection_for_edit),
     collections: CollectionRepository = Depends(get_collection_repository),
 ) -> None:
     """Удаление подборки. Товары остаются в каталоге."""

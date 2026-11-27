@@ -4,9 +4,9 @@ from app.admin.dependencies import require_admin
 from app.feedback.dependencies import (
     get_feedback_repository,
     get_message_by_id,
-    get_message_for_reply,
     get_reply_usecase,
 )
+from app.feedback.exceptions import FeedbackNotFoundError
 from app.feedback.models import FeedbackMessage, FeedbackStatus
 from app.feedback.repository import FeedbackRepository
 from app.feedback.schemas import FeedbackListSchema, FeedbackReplySchema, FeedbackSchema
@@ -57,14 +57,16 @@ async def delete_feedback(
 
 @router.post("/{message_id}/reply")
 async def reply_feedback(
+    message_id: int,
     payload: FeedbackReplySchema,
-    message: FeedbackMessage = Depends(get_message_for_reply),
     usecase: ReplyFeedbackUseCase = Depends(get_reply_usecase),
 ) -> FeedbackSchema:
     """Ответить на обращение письмом на email отправителя."""
 
     try:
-        updated = await usecase.execute(message, payload)
+        updated = await usecase.execute(message_id, payload)
+    except FeedbackNotFoundError as error:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Обращение не найдено") from error
     except MailNotConfiguredError as error:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

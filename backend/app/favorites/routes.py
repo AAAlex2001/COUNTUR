@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
+from app.catalog.exceptions import ProductNotFoundError
 from app.catalog.schemas import ProductCardSchema, ProductListSchema
-from app.catalog.services.exceptions import ProductNotFoundError
 from app.favorites.dependencies import (
     get_add_favorite_usecase,
     get_favorite_repository,
     get_remove_favorite_usecase,
 )
-from app.favorites.services.repo import FavoriteRepository
-from app.favorites.services.usecases.add_favorite import AddFavoriteUseCase
-from app.favorites.services.usecases.remove_favorite import RemoveFavoriteUseCase
+from app.favorites.repository import FavoriteRepository
+from app.favorites.usecases.add_favorite import AddFavoriteUseCase
+from app.favorites.usecases.remove_favorite import RemoveFavoriteUseCase
 from app.users.dependencies import require_user
 from app.users.models import User
 
@@ -25,7 +25,8 @@ async def get_favorites(
 ) -> ProductListSchema:
     """Товары из избранного покупателя, недавно добавленные первыми."""
 
-    products, total = await favorites.list_products(user.id, limit, offset)
+    products = await favorites.list_products(user.id, limit, offset)
+    total = await favorites.count_products(user.id)
 
     return ProductListSchema(
         products=[ProductCardSchema.model_validate(product) for product in products],

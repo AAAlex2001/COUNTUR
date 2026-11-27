@@ -4,17 +4,17 @@ import asyncio
 
 import pytest
 
-from app.cart.services.exceptions import (
+from app.cart.exceptions import (
     CartItemNotFoundError,
     NotEnoughStockError,
     ProductUnavailableError,
 )
-from app.cart.services.usecases.add_item import AddCartItemUseCase
-from app.cart.services.usecases.remove_item import RemoveCartItemUseCase
-from app.cart.services.usecases.set_quantity import SetCartItemQuantityUseCase
-from app.cart.services.validators import MAX_QUANTITY
+from app.cart.usecases.add_item import AddCartItemUseCase
+from app.cart.usecases.remove_item import RemoveCartItemUseCase
+from app.cart.usecases.set_quantity import SetCartItemQuantityUseCase
+from app.cart.validators import MAX_QUANTITY
+from app.catalog.exceptions import ProductNotFoundError
 from app.catalog.models import Availability, PublicationStatus
-from app.catalog.services.exceptions import ProductNotFoundError
 from tests.fakes import FakeCartRepository, FakeProductRepository, make_product
 
 USER = 1

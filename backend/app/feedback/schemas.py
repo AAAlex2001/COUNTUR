@@ -9,6 +9,8 @@ from app.feedback.models import FeedbackStatus
 class FeedbackCreateSchema(BaseModel):
     """Обращение с формы контактов. Без согласия на обработку данных не принимается."""
 
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     name: str = Field(..., min_length=2, max_length=150, description="Как обращаться")
     email: EmailStr = Field(..., max_length=254, description="Куда ответить")
     subject: str = Field(..., min_length=2, max_length=200, description="Тема")
@@ -47,5 +49,7 @@ class FeedbackListSchema(BaseModel):
 
 class FeedbackReplySchema(BaseModel):
     """Ответ администратора: уходит письмом на email отправителя."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     text: str = Field(..., min_length=2, max_length=5000, description="Текст ответа")

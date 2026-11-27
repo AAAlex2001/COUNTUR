@@ -3,9 +3,9 @@
 from fastapi import Depends, HTTPException, status
 
 from app.cart.dependencies import get_cart_repository
-from app.cart.services.repo import CartRepository
+from app.cart.repository import CartRepository
 from app.catalog.dependencies import get_product_repository
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.database import DatabaseSession
 from app.orders.models import Order
 from app.orders.repositories.mail_queue import OrderMailQueue

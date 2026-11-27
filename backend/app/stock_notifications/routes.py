@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.catalog.services.exceptions import ProductNotFoundError
+from app.catalog.exceptions import ProductNotFoundError
 from app.stock_notifications.dependencies import (
     get_list_subscriptions_usecase,
     get_subscribe_usecase,

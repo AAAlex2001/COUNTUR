@@ -1,6 +1,6 @@
+from app.catalog.exceptions import ProductNotFoundError
 from app.catalog.models import Availability
-from app.catalog.services.exceptions import ProductNotFoundError
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.stock_notifications.repository import StockSubscriptionRepository
 
 

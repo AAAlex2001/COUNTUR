@@ -14,7 +14,7 @@ export default function ProductCardActions({ id, name, availability }: ProductAc
       {availability === "in_stock" ? (
         <AddToCartButton productId={id} productName={name} />
       ) : (
-        <StockBell productId={id} productName={name} />
+        <StockBell productId={id} productName={name} size="md" />
       )}
     </div>
   );

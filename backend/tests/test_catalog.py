@@ -1,13 +1,16 @@
 """Тесты правил каталога без БД."""
 
+import asyncio
 from decimal import Decimal
+from unittest.mock import AsyncMock
 
 import pytest
 
+from app.catalog.exceptions import InvalidFilterError, InvalidProductError
 from app.catalog.models import Attribute, Category, Product, ProductImage, ProductSpec
-from app.catalog.schemas import SpecInSchema
-from app.catalog.services.exceptions import InvalidFilterError, InvalidProductError
-from app.catalog.services.validators import (
+from app.catalog.schemas import ProductUpdateSchema, SpecInSchema
+from app.catalog.usecases.update_product import UpdateProductUseCase
+from app.catalog.validators import (
     apply_specs,
     natural_key,
     parse_spec_filters,
@@ -134,3 +137,40 @@ def test_product_discount_and_main_image() -> None:
 
     assert plain.discount_percent is None
     assert plain.image_url is None
+
+
+def test_product_patch_preserves_omitted_fields_and_applies_empty_values() -> None:
+    product = make_product(1, stock_quantity=2, status="draft")
+    product.highlights = ["DDR5"]
+    product.old_price = Decimal("1200")
+    products = AsyncMock()
+    products.save.return_value = product
+    update = UpdateProductUseCase(products, AsyncMock(), AsyncMock())
+
+    result = asyncio.run(
+        update.execute(
+            product,
+            ProductUpdateSchema(
+                old_price=None,
+                price=0,
+                stock_quantity=0,
+                highlights=[],
+                is_hit=False,
+            ),
+        )
+    )
+
+    assert result.sku == "SKU-1"
+    assert result.old_price is None
+    assert result.price == 0
+    assert result.stock_quantity == 0
+    assert result.highlights == []
+    assert result.is_hit is False
+
+
+def test_product_patch_rejects_clearing_required_price() -> None:
+    products = AsyncMock()
+    update = UpdateProductUseCase(products, AsyncMock(), AsyncMock())
+    with pytest.raises(InvalidProductError, match="price"):
+        asyncio.run(update.execute(make_product(1), ProductUpdateSchema(price=None)))
+    products.save.assert_not_awaited()

@@ -6,6 +6,8 @@ from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.locks import lock_unique_value
+
 
 def make_slug(text: str) -> str:
     """Составить slug из названия: «Блоки питания» → «bloki-pitaniia»."""
@@ -18,7 +20,10 @@ async def unique_slug(
 ) -> str:
     """Вернуть wanted, если такого slug нет, иначе добавить суффикс -2, -3, ..."""
 
-    slug = wanted
+    await lock_unique_value(db, "slug", model.__tablename__)
+    max_length = model.__table__.c.slug.type.length
+    base = wanted[:max_length]
+    slug = base
     suffix = 2
 
     while True:
@@ -30,5 +35,6 @@ async def unique_slug(
         if taken is None:
             return slug
 
-        slug = f"{wanted}-{suffix}"
+        ending = f"-{suffix}"
+        slug = base[: max_length - len(ending)] + ending
         suffix += 1

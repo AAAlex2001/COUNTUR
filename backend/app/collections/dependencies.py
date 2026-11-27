@@ -4,10 +4,10 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.dependencies import get_product_repository
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.collections.models import Collection
-from app.collections.services.repo import CollectionRepository
-from app.collections.services.usecases.manage_collections import (
+from app.collections.repository import CollectionRepository
+from app.collections.usecases.manage_collections import (
     CreateCollectionUseCase,
     UpdateCollectionUseCase,
 )
@@ -29,6 +29,22 @@ async def get_collection_by_id(
     """Подборка по id из пути для админки. Отсутствующая — 404."""
 
     collection = await collections.get_by_id(collection_id)
+    if collection is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Подборка не найдена",
+        )
+
+    return collection
+
+
+async def get_collection_for_edit(
+    collection_id: int,
+    collections: CollectionRepository = Depends(get_collection_repository),
+) -> Collection:
+    """Открыть подборку для изменения."""
+
+    collection = await collections.lock_by_id(collection_id)
     if collection is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

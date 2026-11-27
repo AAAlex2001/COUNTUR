@@ -5,6 +5,7 @@ from decimal import Decimal
 from app.cart.models import CartItem
 from app.catalog.models import Availability, Product, PublicationStatus
 from app.orders.models import Order
+from app.users.models import User
 
 
 def make_product(
@@ -57,6 +58,9 @@ class FakeCartRepository:
         self.products = products
         self.items: list[CartItem] = []
 
+    async def lock_owner(self, user_id: int) -> User:
+        return User(id=user_id, notify_orders=True)
+
     def put(self, user_id: int, product_id: int, quantity: int) -> None:
         """Положить позицию напрямую, минуя сценарии."""
 
@@ -64,7 +68,7 @@ class FakeCartRepository:
         item.product = self.products.items[product_id]
         self.items.append(item)
 
-    async def list_items(self, user_id: int, lock: bool = False) -> list[CartItem]:
+    async def list_items(self, user_id: int) -> list[CartItem]:
         return [
             item
             for item in self.items
@@ -105,8 +109,8 @@ class FakeOrderRepository:
         order.id = len(self.items) + 1
         self.items.append(order)
 
-    async def lock(self, order: Order) -> Order:
-        return order
+    async def lock_by_id(self, order_id: int) -> Order | None:
+        return next((order for order in self.items if order.id == order_id), None)
 
     async def save(self, order: Order) -> Order:
         return order

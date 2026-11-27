@@ -15,8 +15,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.base import Base
 from app.catalog.models import Product
-from app.database import Base
 from app.users.models import User
 
 

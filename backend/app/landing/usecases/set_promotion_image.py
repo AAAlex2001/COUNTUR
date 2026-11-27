@@ -1,8 +1,7 @@
-from fastapi import UploadFile
-
 from app.landing.images import replace_landing_image
 from app.landing.models import Promotion
 from app.landing.repository import LandingRepository
+from app.uploads import ImageUpload
 
 
 class SetPromotionImageUseCase:
@@ -13,7 +12,7 @@ class SetPromotionImageUseCase:
 
         self.landing = landing
 
-    async def execute(self, file: UploadFile) -> Promotion:
+    async def execute(self, file: ImageUpload) -> Promotion:
         """Заменить изображение акции."""
 
         promotion = await self.landing.edit_promotion()

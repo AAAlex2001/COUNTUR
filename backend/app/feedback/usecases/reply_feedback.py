@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from app.feedback.exceptions import FeedbackNotFoundError
 from app.feedback.models import FeedbackMessage, FeedbackStatus
 from app.feedback.repository import FeedbackRepository
 from app.feedback.schemas import FeedbackReplySchema
@@ -16,10 +17,12 @@ class ReplyFeedbackUseCase:
         self.messages = messages
         self.mail = mail
 
-    async def execute(
-        self, message: FeedbackMessage, payload: FeedbackReplySchema
-    ) -> FeedbackMessage:
+    async def execute(self, message_id: int, payload: FeedbackReplySchema) -> FeedbackMessage:
         """Ответить покупателю."""
+
+        message = await self.messages.lock_for_reply(message_id)
+        if message is None:
+            raise FeedbackNotFoundError(message_id)
 
         letter = MailContent(
             subject=f"Re: {message.subject}",

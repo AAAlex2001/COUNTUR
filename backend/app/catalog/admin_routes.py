@@ -14,7 +14,9 @@ from app.catalog.dependencies import (
     get_create_product_usecase,
     get_delete_category_usecase,
     get_delete_product_usecase,
+    get_delete_review_usecase,
     get_product_by_id,
+    get_product_for_edit,
     get_product_repository,
     get_remove_image_usecase,
     get_reorder_images_usecase,
@@ -26,7 +28,20 @@ from app.catalog.dependencies import (
     get_update_product_usecase,
     get_update_review_usecase,
 )
+from app.catalog.exceptions import (
+    AttributeAlreadyExistsError,
+    CategoryInUseError,
+    CategoryNotFoundError,
+    ImageNotFoundError,
+    InvalidProductError,
+    SkuAlreadyTakenError,
+)
+from app.catalog.filters import AdminProductFilters
 from app.catalog.models import Attribute, Brand, Category, Product, PublicationStatus, Review
+from app.catalog.repositories.brands import BrandRepository
+from app.catalog.repositories.categories import CategoryRepository
+from app.catalog.repositories.products import ProductRepository
+from app.catalog.repositories.reviews import ReviewFilter, ReviewRepository
 from app.catalog.schemas import (
     AttributeCreateSchema,
     AttributeUpdateSchema,
@@ -45,37 +60,23 @@ from app.catalog.schemas import (
     ReviewAdminSchema,
     ReviewUpdateSchema,
 )
-from app.catalog.services.exceptions import (
-    AttributeAlreadyExistsError,
-    CategoryInUseError,
-    CategoryNotFoundError,
-    ImageNotFoundError,
-    InvalidProductError,
-    SkuAlreadyTakenError,
-)
-from app.catalog.services.repo import (
-    BrandRepository,
-    CategoryRepository,
-    ProductRepository,
-    ReviewRepository,
-)
-from app.catalog.services.usecases.create_product import CreateProductUseCase
-from app.catalog.services.usecases.delete_product import DeleteProductUseCase
-from app.catalog.services.usecases.manage_brands import CreateBrandUseCase, UpdateBrandUseCase
-from app.catalog.services.usecases.manage_categories import (
+from app.catalog.usecases.create_product import CreateProductUseCase
+from app.catalog.usecases.delete_product import DeleteProductUseCase
+from app.catalog.usecases.manage_brands import CreateBrandUseCase, UpdateBrandUseCase
+from app.catalog.usecases.manage_categories import (
     CreateAttributeUseCase,
     CreateCategoryUseCase,
     DeleteCategoryUseCase,
     UpdateAttributeUseCase,
     UpdateCategoryUseCase,
 )
-from app.catalog.services.usecases.manage_images import (
+from app.catalog.usecases.manage_images import (
     AddProductImageUseCase,
     RemoveProductImageUseCase,
     ReorderProductImagesUseCase,
 )
-from app.catalog.services.usecases.manage_reviews import UpdateReviewUseCase
-from app.catalog.services.usecases.update_product import UpdateProductUseCase
+from app.catalog.usecases.manage_reviews import DeleteReviewUseCase, UpdateReviewUseCase
+from app.catalog.usecases.update_product import UpdateProductUseCase
 from app.uploads import UploadError
 
 router = APIRouter(
@@ -245,7 +246,9 @@ async def list_products(
     """Все товары, включая черновики, в порядке показа в каталоге."""
 
     search = q.strip() if q else None
-    items, total = await products.list_all(search, category_id, product_status, limit, offset)
+    filters = AdminProductFilters(search, category_id, product_status)
+    items = await products.list_all(filters, limit, offset)
+    total = await products.count_all(filters)
 
     return ProductAdminListSchema(
         products=[ProductAdminSchema.model_validate(item) for item in items],
@@ -293,7 +296,7 @@ async def get_product(
 @router.patch("/products/{product_id}")
 async def update_product(
     payload: ProductUpdateSchema,
-    product: Product = Depends(get_product_by_id),
+    product: Product = Depends(get_product_for_edit),
     usecase: UpdateProductUseCase = Depends(get_update_product_usecase),
 ) -> ProductAdminSchema:
     """Частичное обновление товара. Публикация и снятие с публикации — через status."""
@@ -321,7 +324,7 @@ async def update_product(
 
 @router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
-    product: Product = Depends(get_product_by_id),
+    product: Product = Depends(get_product_for_edit),
     usecase: DeleteProductUseCase = Depends(get_delete_product_usecase),
 ) -> None:
     """Удаление товара вместе с фото."""
@@ -332,7 +335,7 @@ async def delete_product(
 @router.post("/products/{product_id}/images", status_code=status.HTTP_201_CREATED)
 async def upload_product_image(
     file: UploadFile,
-    product: Product = Depends(get_product_by_id),
+    product: Product = Depends(get_product_for_edit),
     usecase: AddProductImageUseCase = Depends(get_add_image_usecase),
 ) -> ProductAdminSchema:
     """Загрузка фото товара. Новое фото становится последним в галерее."""
@@ -351,7 +354,7 @@ async def upload_product_image(
 @router.put("/products/{product_id}/images/order")
 async def reorder_product_images(
     payload: ImageOrderSchema,
-    product: Product = Depends(get_product_by_id),
+    product: Product = Depends(get_product_for_edit),
     usecase: ReorderProductImagesUseCase = Depends(get_reorder_images_usecase),
 ) -> ProductAdminSchema:
     """Новый порядок фото. Первое в списке становится главным."""
@@ -370,7 +373,7 @@ async def reorder_product_images(
 @router.delete("/products/{product_id}/images/{image_id}")
 async def delete_product_image(
     image_id: int,
-    product: Product = Depends(get_product_by_id),
+    product: Product = Depends(get_product_for_edit),
     usecase: RemoveProductImageUseCase = Depends(get_remove_image_usecase),
 ) -> ProductAdminSchema:
     """Удаление фото товара."""
@@ -400,7 +403,9 @@ async def list_product_reviews(
 ) -> ReviewAdminListSchema:
     """Отзывы товара, включая скрытые, свежие первыми."""
 
-    items, total = await reviews.list_for_product(product.id, limit, offset, published_only=False)
+    filters = ReviewFilter(product.id, published_only=False)
+    items = await reviews.list_for_product(filters, limit, offset)
+    total = await reviews.count_for_product(filters)
 
     return ReviewAdminListSchema(
         reviews=[ReviewAdminSchema.model_validate(item) for item in items],
@@ -424,8 +429,8 @@ async def update_review(
 @router.delete("/reviews/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_review(
     review: Review = Depends(get_review_by_id),
-    reviews: ReviewRepository = Depends(get_review_repository),
+    usecase: DeleteReviewUseCase = Depends(get_delete_review_usecase),
 ) -> None:
     """Удаление отзыва."""
 
-    await reviews.delete(review)
+    await usecase.execute(review)

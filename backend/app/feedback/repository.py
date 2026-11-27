@@ -60,5 +60,4 @@ class FeedbackRepository:
         """Сохранить обращение."""
 
         await self.db.commit()
-        await self.db.refresh(message)
         return message

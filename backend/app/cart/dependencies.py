@@ -3,12 +3,12 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.cart.services.repo import CartRepository
-from app.cart.services.usecases.add_item import AddCartItemUseCase
-from app.cart.services.usecases.remove_item import RemoveCartItemUseCase
-from app.cart.services.usecases.set_quantity import SetCartItemQuantityUseCase
+from app.cart.repository import CartRepository
+from app.cart.usecases.add_item import AddCartItemUseCase
+from app.cart.usecases.remove_item import RemoveCartItemUseCase
+from app.cart.usecases.set_quantity import SetCartItemQuantityUseCase
 from app.catalog.dependencies import get_product_repository
-from app.catalog.services.repo import ProductRepository
+from app.catalog.repositories.products import ProductRepository
 from app.database import get_session
 
 

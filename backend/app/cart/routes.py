@@ -6,17 +6,17 @@ from app.cart.dependencies import (
     get_remove_item_usecase,
     get_set_quantity_usecase,
 )
-from app.cart.schemas import CartItemAddSchema, CartItemUpdateSchema, CartSchema, build_cart_schema
-from app.cart.services.exceptions import (
+from app.cart.exceptions import (
     CartItemNotFoundError,
     NotEnoughStockError,
     ProductUnavailableError,
 )
-from app.cart.services.repo import CartRepository
-from app.cart.services.usecases.add_item import AddCartItemUseCase
-from app.cart.services.usecases.remove_item import RemoveCartItemUseCase
-from app.cart.services.usecases.set_quantity import SetCartItemQuantityUseCase
-from app.catalog.services.exceptions import ProductNotFoundError
+from app.cart.repository import CartRepository
+from app.cart.schemas import CartItemAddSchema, CartItemUpdateSchema, CartSchema, build_cart_schema
+from app.cart.usecases.add_item import AddCartItemUseCase
+from app.cart.usecases.remove_item import RemoveCartItemUseCase
+from app.cart.usecases.set_quantity import SetCartItemQuantityUseCase
+from app.catalog.exceptions import ProductNotFoundError
 from app.users.dependencies import require_user
 from app.users.models import User
 

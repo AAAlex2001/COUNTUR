@@ -1,8 +1,8 @@
 from sqlalchemy import JSON, Boolean, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.base import Base
 from app.config import MEDIA_URL
-from app.database import Base
 
 
 class Hero(Base):

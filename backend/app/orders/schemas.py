@@ -10,6 +10,8 @@ from app.orders.models import DeliveryMethod, OrderStatus, PaymentStatus
 class OrderCreateSchema(BaseModel):
     """Данные покупателя для оформления заказа. Состав берётся из корзины."""
 
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     customer_name: str = Field(..., min_length=2, max_length=150, description="Имя покупателя")
     customer_phone: str = Field(..., min_length=5, max_length=32, description="Телефон")
     customer_email: EmailStr | None = Field(None, description="Email для связи")

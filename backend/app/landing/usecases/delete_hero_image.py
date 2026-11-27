@@ -1,6 +1,6 @@
-from app.landing.images import remove_landing_image
 from app.landing.models import Hero
 from app.landing.repository import LandingRepository
+from app.uploads import remove_image
 
 
 class DeleteHeroImageUseCase:
@@ -21,5 +21,5 @@ class DeleteHeroImageUseCase:
         previous_path = hero.image_path
         hero.image_path = None
         await self.landing.save(hero)
-        remove_landing_image(previous_path)
+        remove_image(previous_path)
         return hero

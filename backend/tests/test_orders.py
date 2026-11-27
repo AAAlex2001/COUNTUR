@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.cart.services.exceptions import NotEnoughStockError, ProductUnavailableError
+from app.cart.exceptions import NotEnoughStockError, ProductUnavailableError
 from app.catalog.models import Availability, PublicationStatus
 from app.orders.exceptions import EmptyCartError, InvalidPhoneError, OrderStatusError
 from app.orders.models import DeliveryMethod, OrderMailKind, OrderStatus, PaymentStatus
@@ -16,6 +16,7 @@ from app.orders.schemas import OrderCreateSchema, OrderStatusUpdateSchema
 from app.orders.usecases.create_order import CreateOrderUseCase
 from app.orders.usecases.update_order_status import UpdateOrderStatusUseCase
 from app.orders.validators import day_bounds, normalize_phone
+from app.users.models import User
 from tests.fakes import (
     FakeCartRepository,
     FakeOrderRepository,
@@ -87,6 +88,18 @@ def test_create_writes_off_tracked_stock_only() -> None:
     assert untracked.availability == Availability.IN_STOCK
 
 
+def test_order_and_shipment_respect_disabled_mail() -> None:
+    create, update, cart, _ = make_usecases(make_product(1))
+    cart.put(USER, 1, 1)
+    cart.lock_owner = AsyncMock(return_value=User(id=USER, notify_orders=False))
+
+    order = asyncio.run(create.execute(USER, make_payload()))
+    shipment = OrderStatusUpdateSchema(status=OrderStatus.SHIPPED, tracking_number="ABC")
+    asyncio.run(update.execute(order.id, shipment))
+
+    create.mail.enqueue.assert_not_awaited()
+
+
 def test_create_rejects_empty_cart() -> None:
     create, _, _, orders = make_usecases(make_product(1))
 
@@ -153,16 +166,16 @@ def test_cancel_returns_stock_and_is_final() -> None:
     order = asyncio.run(create.execute(USER, make_payload()))
     assert product.availability == Availability.OUT_OF_STOCK
 
-    asyncio.run(update.execute(order, OrderStatusUpdateSchema(status=OrderStatus.CANCELED)))
+    asyncio.run(update.execute(order.id, OrderStatusUpdateSchema(status=OrderStatus.CANCELED)))
 
     assert order.status == OrderStatus.CANCELED
     assert product.stock_quantity == 2
     assert product.availability == Availability.IN_STOCK
 
     with pytest.raises(OrderStatusError):
-        asyncio.run(update.execute(order, OrderStatusUpdateSchema(status=OrderStatus.NEW)))
+        asyncio.run(update.execute(order.id, OrderStatusUpdateSchema(status=OrderStatus.NEW)))
 
-    asyncio.run(update.execute(order, OrderStatusUpdateSchema(status=OrderStatus.CANCELED)))
+    asyncio.run(update.execute(order.id, OrderStatusUpdateSchema(status=OrderStatus.CANCELED)))
     assert product.stock_quantity == 2
 
 
@@ -172,7 +185,9 @@ def test_update_changes_statuses_independently() -> None:
     cart.put(USER, 1, 1)
     order = asyncio.run(create.execute(USER, make_payload()))
 
-    asyncio.run(update.execute(order, OrderStatusUpdateSchema(payment_status=PaymentStatus.PAID)))
+    asyncio.run(
+        update.execute(order.id, OrderStatusUpdateSchema(payment_status=PaymentStatus.PAID))
+    )
 
     assert order.status == OrderStatus.NEW
     assert order.payment_status == PaymentStatus.PAID
@@ -192,3 +207,10 @@ def test_day_bounds_follow_shop_timezone() -> None:
 
     assert start == datetime(2026, 10, 1, 21, 0, tzinfo=timezone.utc)
     assert end == datetime(2026, 10, 2, 21, 0, tzinfo=timezone.utc)
+
+
+@pytest.mark.parametrize(("day", "hours"), [(date(2026, 3, 8), 23), (date(2026, 11, 1), 25)])
+def test_day_bounds_follow_local_midnight_on_clock_change(day, hours) -> None:
+    start, end = day_bounds(day, "America/New_York")
+
+    assert (end - start).total_seconds() == hours * 3600

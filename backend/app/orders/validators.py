@@ -1,6 +1,6 @@
 """Проверка и нормализация данных заказа."""
 
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from app.orders.exceptions import InvalidPhoneError, OrderStatusError
@@ -36,6 +36,5 @@ def day_bounds(day: date, timezone_name: str) -> tuple[datetime, datetime]:
     """Начало и конец календарного дня в часовом поясе магазина, переведённые в UTC."""
 
     start_local = datetime.combine(day, time.min, tzinfo=ZoneInfo(timezone_name))
-    start = start_local.astimezone(timezone.utc)
-
-    return start, start + timedelta(days=1)
+    end_local = start_local + timedelta(days=1)
+    return start_local.astimezone(UTC), end_local.astimezone(UTC)

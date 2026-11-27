@@ -1,8 +1,8 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.base import Base
 from app.catalog.models import Product, PublicationStatus
-from app.database import Base
 
 collection_products = Table(
     "collection_products",

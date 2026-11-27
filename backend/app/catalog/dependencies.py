@@ -4,30 +4,28 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.models import Attribute, Brand, Category, Product, Review
-from app.catalog.services.repo import (
-    BrandRepository,
-    CategoryRepository,
-    ProductRepository,
-    ReviewRepository,
-)
-from app.catalog.services.usecases.create_product import CreateProductUseCase
-from app.catalog.services.usecases.delete_product import DeleteProductUseCase
-from app.catalog.services.usecases.get_catalog_filters import GetCatalogFiltersUseCase
-from app.catalog.services.usecases.manage_brands import CreateBrandUseCase, UpdateBrandUseCase
-from app.catalog.services.usecases.manage_categories import (
+from app.catalog.repositories.brands import BrandRepository
+from app.catalog.repositories.categories import CategoryRepository
+from app.catalog.repositories.products import ProductRepository
+from app.catalog.repositories.reviews import ReviewRepository
+from app.catalog.usecases.create_product import CreateProductUseCase
+from app.catalog.usecases.delete_product import DeleteProductUseCase
+from app.catalog.usecases.get_catalog_filters import GetCatalogFiltersUseCase
+from app.catalog.usecases.manage_brands import CreateBrandUseCase, UpdateBrandUseCase
+from app.catalog.usecases.manage_categories import (
     CreateAttributeUseCase,
     CreateCategoryUseCase,
     DeleteCategoryUseCase,
     UpdateAttributeUseCase,
     UpdateCategoryUseCase,
 )
-from app.catalog.services.usecases.manage_images import (
+from app.catalog.usecases.manage_images import (
     AddProductImageUseCase,
     RemoveProductImageUseCase,
     ReorderProductImagesUseCase,
 )
-from app.catalog.services.usecases.manage_reviews import UpdateReviewUseCase
-from app.catalog.services.usecases.update_product import UpdateProductUseCase
+from app.catalog.usecases.manage_reviews import DeleteReviewUseCase, UpdateReviewUseCase
+from app.catalog.usecases.update_product import UpdateProductUseCase
 from app.database import get_session
 
 
@@ -95,6 +93,22 @@ async def get_product_by_id(
     return product
 
 
+async def get_product_for_edit(
+    product_id: int,
+    products: ProductRepository = Depends(get_product_repository),
+) -> Product:
+    """Открыть товар для изменения."""
+
+    product = await products.lock_by_id(product_id)
+    if product is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Товар не найден",
+        )
+
+    return product
+
+
 async def get_category_by_id(
     category_id: int,
     categories: CategoryRepository = Depends(get_category_repository),
@@ -149,7 +163,7 @@ async def get_review_by_id(
 ) -> Review:
     """Отзыв по id из пути. Отсутствующий — 404."""
 
-    review = await reviews.get_by_id(review_id)
+    review = await reviews.lock_for_edit(review_id)
     if review is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -282,3 +296,11 @@ def get_update_review_usecase(
     """Сценарий изменения отзыва."""
 
     return UpdateReviewUseCase(reviews)
+
+
+def get_delete_review_usecase(
+    reviews: ReviewRepository = Depends(get_review_repository),
+) -> DeleteReviewUseCase:
+    """Собрать удаление отзыва."""
+
+    return DeleteReviewUseCase(reviews)

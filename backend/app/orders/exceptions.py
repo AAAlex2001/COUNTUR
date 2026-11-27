@@ -5,6 +5,10 @@ class EmptyCartError(ValueError):
     """Заказ нельзя оформить: корзина пуста."""
 
 
+class OrderNotFoundError(LookupError):
+    """Заказ не найден."""
+
+
 class InvalidPhoneError(ValueError):
     """Телефон покупателя не похож на номер."""
 

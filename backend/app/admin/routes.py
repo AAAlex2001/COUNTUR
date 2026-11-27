@@ -6,10 +6,10 @@ from app.admin.dependencies import (
     require_admin,
     set_admin_cookie,
 )
+from app.admin.exceptions import InvalidCredentialsError
 from app.admin.schemas import AdminLoginSchema, AdminOutSchema
-from app.admin.services.exceptions import InvalidCredentialsError
-from app.admin.services.usecases.login import LoginAdminUseCase
-from app.tokens import create_token
+from app.admin.usecases.login import LoginAdminUseCase
+from app.tokens import TokenRole, create_token
 
 router = APIRouter(prefix="/admin/auth", tags=["admin: auth"])
 
@@ -30,7 +30,7 @@ async def login(
             detail="Неверный логин или пароль",
         ) from error
 
-    token = create_token(admin_login)
+    token = create_token(admin_login, TokenRole.ADMIN)
     set_admin_cookie(response, token)
 
     return AdminOutSchema(login=admin_login)

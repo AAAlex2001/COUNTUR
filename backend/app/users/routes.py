@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from app.tokens import create_token
+from app.tokens import TokenRole, create_token
 from app.users.dependencies import (
     clear_user_cookie,
     get_change_password_usecase,
@@ -10,6 +10,11 @@ from app.users.dependencies import (
     require_user,
     set_user_cookie,
 )
+from app.users.exceptions import (
+    EmailAlreadyTakenError,
+    InvalidCredentialsError,
+    WeakPasswordError,
+)
 from app.users.models import User
 from app.users.schemas import (
     PasswordChangeSchema,
@@ -18,15 +23,10 @@ from app.users.schemas import (
     UserSchema,
     UserUpdateSchema,
 )
-from app.users.services.exceptions import (
-    EmailAlreadyTakenError,
-    InvalidCredentialsError,
-    WeakPasswordError,
-)
-from app.users.services.usecases.change_password import ChangePasswordUseCase
-from app.users.services.usecases.login import LoginUserUseCase
-from app.users.services.usecases.register import RegisterUserUseCase
-from app.users.services.usecases.update_profile import UpdateProfileUseCase
+from app.users.usecases.change_password import ChangePasswordUseCase
+from app.users.usecases.login import LoginUserUseCase
+from app.users.usecases.register import RegisterUserUseCase
+from app.users.usecases.update_profile import UpdateProfileUseCase
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -52,7 +52,7 @@ async def register(
             detail="На этот email уже есть аккаунт",
         ) from error
 
-    set_user_cookie(response, create_token(str(user.id)))
+    set_user_cookie(response, create_token(str(user.id), TokenRole.CUSTOMER))
 
     return UserSchema.model_validate(user)
 
@@ -73,7 +73,7 @@ async def login(
             detail="Неверный email или пароль",
         ) from error
 
-    set_user_cookie(response, create_token(str(user.id)))
+    set_user_cookie(response, create_token(str(user.id), TokenRole.CUSTOMER))
 
     return UserSchema.model_validate(user)
 

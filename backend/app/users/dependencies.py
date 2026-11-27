@@ -5,13 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.database import get_session
-from app.tokens import read_subject
+from app.tokens import TokenRole, read_subject
 from app.users.models import User
-from app.users.services.repo import UserRepository
-from app.users.services.usecases.change_password import ChangePasswordUseCase
-from app.users.services.usecases.login import LoginUserUseCase
-from app.users.services.usecases.register import RegisterUserUseCase
-from app.users.services.usecases.update_profile import UpdateProfileUseCase
+from app.users.repository import UserRepository
+from app.users.usecases.change_password import ChangePasswordUseCase
+from app.users.usecases.login import LoginUserUseCase
+from app.users.usecases.register import RegisterUserUseCase
+from app.users.usecases.update_profile import UpdateProfileUseCase
 
 USER_COOKIE = "user_token"
 SECONDS_IN_DAY = 60 * 60 * 24
@@ -102,7 +102,7 @@ async def require_user(
     """Покупатель по токену из cookie. Без валидного токена — 401."""
 
     token = request.cookies.get(USER_COOKIE)
-    subject = read_subject(token) if token else None
+    subject = read_subject(token, TokenRole.CUSTOMER)
     user = await users.get_by_id(int(subject)) if subject and subject.isdigit() else None
 
     if user is None:

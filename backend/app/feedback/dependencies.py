@@ -4,6 +4,7 @@ from app.config import Settings, get_settings
 from app.database import DatabaseSession
 from app.feedback.models import FeedbackMessage
 from app.feedback.repository import FeedbackRepository
+from app.feedback.usecases.create_feedback import CreateFeedbackUseCase
 from app.feedback.usecases.reply_feedback import ReplyFeedbackUseCase
 from app.mail import EmailClient
 
@@ -14,6 +15,14 @@ def get_feedback_repository(db: DatabaseSession) -> FeedbackRepository:
     return FeedbackRepository(db)
 
 
+def get_create_feedback_usecase(
+    messages: FeedbackRepository = Depends(get_feedback_repository),
+) -> CreateFeedbackUseCase:
+    """Подготовить приём обращения."""
+
+    return CreateFeedbackUseCase(messages)
+
+
 async def get_message_by_id(
     message_id: int,
     messages: FeedbackRepository = Depends(get_feedback_repository),
@@ -21,22 +30,6 @@ async def get_message_by_id(
     """Найти обращение администратора."""
 
     message = await messages.get_by_id(message_id)
-    return require_feedback_message(message)
-
-
-async def get_message_for_reply(
-    message_id: int,
-    messages: FeedbackRepository = Depends(get_feedback_repository),
-) -> FeedbackMessage:
-    """Заблокировать обращение для ответа."""
-
-    message = await messages.lock_for_reply(message_id)
-    return require_feedback_message(message)
-
-
-def require_feedback_message(message: FeedbackMessage | None) -> FeedbackMessage:
-    """Проверить наличие обращения."""
-
     if message is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

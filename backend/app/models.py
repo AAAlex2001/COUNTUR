@@ -1,5 +1,6 @@
 """Все модели приложения в одном месте, чтобы их видели Alembic и SQLAlchemy."""
 
+from app.base import Base
 from app.cart.models import CartItem
 from app.catalog.models import (
     Attribute,
@@ -12,7 +13,6 @@ from app.catalog.models import (
 )
 from app.collections.models import Collection, collection_products
 from app.contacts.models import ContactsSettings
-from app.database import Base
 from app.documents.models import Document
 from app.favorites.models import Favorite
 from app.feedback.models import FeedbackMessage
