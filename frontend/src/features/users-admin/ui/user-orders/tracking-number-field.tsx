@@ -12,13 +12,13 @@ type TrackingNumberFieldProps = {
 /** Редактировать трек-номер заказа. */
 export default function TrackingNumberField({ value, pending, onSave }: TrackingNumberFieldProps) {
   const [draft, setDraft] = useState(value);
-  const number = draft.trim();
-  const canSave = !pending && number !== "" && number !== value;
+  const trackingNumber = draft.trim();
+  const canSave = !pending && trackingNumber !== "" && trackingNumber !== value;
 
   /** Сохранить трек-номер. */
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (canSave) onSave(number);
+    if (canSave) onSave(trackingNumber);
   }
 
   return (

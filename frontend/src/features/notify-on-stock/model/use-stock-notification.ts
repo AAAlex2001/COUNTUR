@@ -15,7 +15,16 @@ export function useStockNotification(productId: number) {
   const subscribed = productIds.includes(productId);
 
   /** Сохранить выбор покупателя. */
-  async function toggleSubscription() {
+  async function toggle() {
+    if (!user) {
+      openAuth();
+      return;
+    }
+    if (status === "error") {
+      toast("Не удалось загрузить подписки. Обновляем список.", "error");
+      reload();
+      return;
+    }
     if (saving || status === "loading") return;
 
     setSaving(true);
@@ -29,17 +38,6 @@ export function useStockNotification(productId: number) {
     } finally {
       setSaving(false);
     }
-  }
-
-  /** Обработать нажатие колокольчика. */
-  function toggle() {
-    if (!user) return openAuth();
-    if (status === "error") {
-      toast("Не удалось загрузить подписки. Обновляем список.", "error");
-      return reload();
-    }
-
-    void toggleSubscription();
   }
 
   return { subscribed, toggle, pending: saving || status === "loading" };

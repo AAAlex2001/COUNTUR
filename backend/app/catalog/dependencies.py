@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.catalog.models import Attribute, Brand, Category, Product, Review
 from app.catalog.repositories.brands import BrandRepository
 from app.catalog.repositories.categories import CategoryRepository
+from app.catalog.repositories.filter_options import CatalogFilterRepository
 from app.catalog.repositories.products import ProductRepository
 from app.catalog.repositories.reviews import ReviewRepository
 from app.catalog.usecases.create_product import CreateProductUseCase
@@ -175,11 +176,11 @@ async def get_review_by_id(
 
 def get_catalog_filters_usecase(
     categories: CategoryRepository = Depends(get_category_repository),
-    products: ProductRepository = Depends(get_product_repository),
+    session: AsyncSession = Depends(get_session),
 ) -> GetCatalogFiltersUseCase:
     """Сценарий сборки панели фильтров."""
 
-    return GetCatalogFiltersUseCase(categories, products)
+    return GetCatalogFiltersUseCase(categories, CatalogFilterRepository(session))
 
 
 def get_create_product_usecase(

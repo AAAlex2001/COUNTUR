@@ -30,7 +30,7 @@ def parse_spec_filters(raw_filters: list[str]) -> dict[int, list[str]]:
     for raw in raw_filters:
         attribute_id, separator, value = raw.partition(SPEC_FILTER_SEPARATOR)
 
-        if not separator or not attribute_id.isdigit() or not value:
+        if not separator or not attribute_id.isdecimal() or not value:
             raise InvalidFilterError("Фильтр по характеристике задаётся как ID:значение")
 
         filters.setdefault(int(attribute_id), []).append(value)

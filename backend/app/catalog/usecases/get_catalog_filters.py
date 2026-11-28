@@ -6,7 +6,7 @@ from decimal import Decimal
 from app.catalog.exceptions import CategoryNotFoundError
 from app.catalog.models import Brand
 from app.catalog.repositories.categories import CategoryRepository
-from app.catalog.repositories.products import ProductRepository
+from app.catalog.repositories.filter_options import CatalogFilterRepository
 from app.catalog.validators import natural_key
 
 
@@ -33,12 +33,12 @@ class CatalogFilters:
 class GetCatalogFiltersUseCase:
     """Собрать фильтры каталога: цены, бренды и характеристики выбранной категории."""
 
-    def __init__(self, categories: CategoryRepository, products: ProductRepository) -> None:
+    def __init__(self, categories: CategoryRepository, options: CatalogFilterRepository) -> None:
         self.categories = categories
-        self.products = products
+        self.options = options
 
     async def execute(self, category_slug: str | None) -> CatalogFilters:
-        """Вернуть фильтры для категории или для всего каталога. Бросает CategoryNotFoundError."""
+        """Получить фильтры категории или всего каталога."""
 
         category = None
         if category_slug:
@@ -48,14 +48,14 @@ class GetCatalogFiltersUseCase:
 
         category_id = category.id if category else None
 
-        price_min, price_max = await self.products.price_bounds(category_id)
-        brands = await self.products.list_brands(category_id)
+        price_min, price_max = await self.options.price_bounds(category_id)
+        brands = await self.options.list_brands(category_id)
 
         attributes: list[AttributeFilter] = []
 
         if category is not None:
             values_by_attribute: dict[int, list[str]] = {}
-            for attribute_id, value in await self.products.list_spec_values(category.id):
+            for attribute_id, value in await self.options.list_spec_values(category.id):
                 values_by_attribute.setdefault(attribute_id, []).append(value)
 
             for attribute in category.attributes:

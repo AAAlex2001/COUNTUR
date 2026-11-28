@@ -1,17 +1,16 @@
 from datetime import datetime
-from decimal import Decimal
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.filters import PRODUCT_SORTS, AdminProductFilters, ProductFilters, build_conditions
-from app.catalog.models import Attribute, Brand, Product, ProductSpec, PublicationStatus
+from app.catalog.models import Product, PublicationStatus
 from app.locks import lock_unique_value
 from app.slugs import unique_slug
 
 
 class ProductRepository:
-    """Доступ к таблице products. Сессию получает снаружи, коммитит сам."""
+    """Товары каталога."""
 
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
@@ -38,51 +37,51 @@ class ProductRepository:
         return await self.db.scalar(query) or 0
 
     async def list_published_slugs(self) -> list[tuple[str, datetime]]:
-        """Адреса всех опубликованных товаров с датой изменения. Для карты сайта."""
+        """Получить адреса и даты изменения опубликованных товаров."""
 
-        stmt = (
+        query = (
             select(Product.slug, Product.updated_at)
             .where(Product.status == PublicationStatus.PUBLISHED)
             .order_by(Product.id)
         )
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return [(slug, updated_at) for slug, updated_at in result.all()]
 
     async def get_published(self, slug: str) -> Product | None:
-        """Опубликованный товар по slug. Черновик считается ненайденным."""
+        """Найти опубликованный товар по адресу."""
 
-        stmt = select(Product).where(
+        query = select(Product).where(
             Product.slug == slug, Product.status == PublicationStatus.PUBLISHED
         )
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return result.scalar_one_or_none()
 
     async def get_published_by_id(self, product_id: int, lock: bool = False) -> Product | None:
-        """Опубликованный товар по идентификатору, черновик — ненайденный. С lock — под блокировкой."""
+        """Найти опубликованный товар по идентификатору."""
 
-        stmt = select(Product).where(
+        query = select(Product).where(
             Product.id == product_id, Product.status == PublicationStatus.PUBLISHED
         )
         if lock:
-            stmt = stmt.with_for_update()
+            query = query.with_for_update()
 
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return result.scalar_one_or_none()
 
     async def lock_published(self, product_ids: list[int]) -> list[Product]:
-        """Опубликованные товары с блокировкой строк до конца транзакции. Для оформления заказа."""
+        """Заблокировать опубликованные товары заказа."""
 
-        stmt = (
+        query = (
             select(Product)
             .where(Product.id.in_(product_ids), Product.status == PublicationStatus.PUBLISHED)
             .order_by(Product.id)
             .with_for_update()
             .execution_options(populate_existing=True)
         )
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return list(result.scalars().all())
 
@@ -107,20 +106,20 @@ class ProductRepository:
         return await self.db.scalar(query) or 0
 
     async def list_by_ids(self, product_ids: list[int], lock: bool = False) -> list[Product]:
-        """Товары по списку идентификаторов, включая черновики. С lock — под блокировкой строк."""
+        """Получить товары по идентификаторам, включая черновики."""
 
         if not product_ids:
             return []
 
-        stmt = select(Product).where(Product.id.in_(product_ids))
+        query = select(Product).where(Product.id.in_(product_ids))
         if lock:
-            stmt = (
-                stmt.order_by(Product.id)
+            query = (
+                query.order_by(Product.id)
                 .with_for_update()
                 .execution_options(populate_existing=True)
             )
 
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return list(result.scalars().all())
 
@@ -138,62 +137,16 @@ class ProductRepository:
         """Зарезервировать свободный артикул."""
 
         await lock_unique_value(self.db, "products.sku", sku)
-        stmt = select(Product.id).where(Product.sku == sku)
+        query = select(Product.id).where(Product.sku == sku)
         if exclude_id is not None:
-            stmt = stmt.where(Product.id != exclude_id)
+            query = query.where(Product.id != exclude_id)
 
-        return await self.db.scalar(stmt) is None
+        return await self.db.scalar(query) is None
 
     async def unique_slug(self, wanted: str, exclude_id: int | None = None) -> str:
         """Свободный slug товара на основе wanted."""
 
         return await unique_slug(self.db, Product, wanted, exclude_id)
-
-    async def price_bounds(self, category_id: int | None) -> tuple[Decimal | None, Decimal | None]:
-        """Самая низкая и самая высокая цена среди опубликованных товаров."""
-
-        stmt = select(func.min(Product.price), func.max(Product.price)).where(
-            Product.status == PublicationStatus.PUBLISHED
-        )
-        if category_id is not None:
-            stmt = stmt.where(Product.category_id == category_id)
-
-        result = await self.db.execute(stmt)
-        price_min, price_max = result.one()
-
-        return price_min, price_max
-
-    async def list_brands(self, category_id: int | None) -> list[Brand]:
-        """Бренды, у которых есть опубликованные товары, по алфавиту."""
-
-        brand_ids = select(Product.brand_id).where(
-            Product.status == PublicationStatus.PUBLISHED, Product.brand_id.is_not(None)
-        )
-        if category_id is not None:
-            brand_ids = brand_ids.where(Product.category_id == category_id)
-
-        stmt = select(Brand).where(Brand.id.in_(brand_ids)).order_by(Brand.name)
-        result = await self.db.execute(stmt)
-
-        return list(result.scalars().all())
-
-    async def list_spec_values(self, category_id: int) -> list[tuple[int, str]]:
-        """Пары (id параметра, значение) опубликованных товаров категории для фильтров."""
-
-        stmt = (
-            select(ProductSpec.attribute_id, ProductSpec.value)
-            .join(Product, Product.id == ProductSpec.product_id)
-            .join(Attribute, Attribute.id == ProductSpec.attribute_id)
-            .where(
-                Product.status == PublicationStatus.PUBLISHED,
-                Product.category_id == category_id,
-                Attribute.is_filterable.is_(True),
-            )
-            .distinct()
-        )
-        result = await self.db.execute(stmt)
-
-        return [(attribute_id, value) for attribute_id, value in result.all()]
 
     async def add(self, product: Product) -> Product:
         """Сохранить новый товар и вернуть его перечитанным из базы."""
@@ -210,7 +163,7 @@ class ProductRepository:
         return updated
 
     async def delete(self, product: Product) -> None:
-        """Удалить товар. Фото, характеристики, отзывы и позиции корзин удаляются каскадом."""
+        """Удалить товар и связанные записи."""
 
         await self.db.delete(product)
         await self.db.commit()
@@ -218,11 +171,11 @@ class ProductRepository:
     async def reload(self, product_id: int) -> Product:
         """Перечитать товар из базы после записи вместе со связями."""
 
-        stmt = (
+        query = (
             select(Product)
             .where(Product.id == product_id)
             .execution_options(populate_existing=True)
         )
-        result = await self.db.execute(stmt)
+        result = await self.db.execute(query)
 
         return result.scalar_one()

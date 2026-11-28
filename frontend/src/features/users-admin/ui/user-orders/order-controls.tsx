@@ -54,7 +54,7 @@ export default function OrderControls({ order, pending, onSave }: OrderControlsP
           key={order.tracking_number}
           value={order.tracking_number ?? ""}
           pending={pending}
-          onSave={(number) => onSave({ tracking_number: number })}
+          onSave={(trackingNumber) => onSave({ tracking_number: trackingNumber })}
         />
       )}
     </>

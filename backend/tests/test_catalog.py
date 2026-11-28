@@ -9,6 +9,7 @@ import pytest
 from app.catalog.exceptions import InvalidFilterError, InvalidProductError
 from app.catalog.models import Attribute, Category, Product, ProductImage, ProductSpec
 from app.catalog.schemas import ProductUpdateSchema, SpecInSchema
+from app.catalog.usecases.get_catalog_filters import GetCatalogFiltersUseCase
 from app.catalog.usecases.update_product import UpdateProductUseCase
 from app.catalog.validators import (
     apply_specs,
@@ -40,7 +41,7 @@ def test_parse_spec_filters_groups_values_by_attribute() -> None:
     assert filters == {10: ["LGA 1700", "AM5"], 11: ["24"], 12: ["16:9"]}
 
 
-@pytest.mark.parametrize("raw", ["LGA 1700", "socket:AM5", "10:", ":AM5", "-1:AM5"])
+@pytest.mark.parametrize("raw", ["LGA 1700", "socket:AM5", "10:", ":AM5", "-1:AM5", "²:AM5"])
 def test_parse_spec_filters_rejects_malformed_filter(raw: str) -> None:
     with pytest.raises(InvalidFilterError):
         parse_spec_filters([raw])
@@ -174,3 +175,20 @@ def test_product_patch_rejects_clearing_required_price() -> None:
     with pytest.raises(InvalidProductError, match="price"):
         asyncio.run(update.execute(make_product(1), ProductUpdateSchema(price=None)))
     products.save.assert_not_awaited()
+
+
+def test_category_filter_options_keep_only_available_values() -> None:
+    categories = AsyncMock()
+    categories.get_by_slug.return_value = make_category()
+    options = AsyncMock()
+    options.price_bounds.return_value = (Decimal("100"), Decimal("200"))
+    options.list_brands.return_value = []
+    options.list_spec_values.return_value = [(11, "16"), (11, "8")]
+
+    filters = asyncio.run(GetCatalogFiltersUseCase(categories, options).execute("processors"))
+
+    options.list_spec_values.assert_awaited_once_with(1)
+    assert (filters.price_min, filters.price_max) == (Decimal("100"), Decimal("200"))
+    assert [(attribute.name, attribute.values) for attribute in filters.attributes] == [
+        ("Количество ядер", ["8", "16"])
+    ]
