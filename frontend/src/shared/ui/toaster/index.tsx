@@ -1,15 +1,7 @@
 "use client";
 
 import cn from "classnames";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import styles from "./style.module.scss";
 
 const HEADER_GAP = 15;
@@ -36,11 +28,11 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     if (box.current && !box.current.matches(":popover-open")) box.current.showPopover();
   }, [toast]);
 
-  const show: ShowToast = useCallback((text, tone = "success") => {
+  const show: ShowToast = (text, tone = "success") => {
     const header = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
 
     setToast({ id: Date.now(), text, tone, top: header + HEADER_GAP });
-  }, []);
+  };
 
   return (
     <ToastContext.Provider value={show}>
