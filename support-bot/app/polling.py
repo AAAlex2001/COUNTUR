@@ -1,6 +1,7 @@
 import logging
 from threading import Event
 from types import FrameType
+from traceback import format_tb
 
 from requests import RequestException
 from telebot import TeleBot
@@ -59,18 +60,25 @@ class TelegramPolling:
             if self.stopped.is_set():
                 return
 
-            self.process_update(update)
+            try:
+                self.process_update(update)
+            except Exception as error:
+                stack_trace = "".join(format_tb(error.__traceback__))
+                logger.error(
+                    "Не удалось обработать событие %s (%s)\n%s",
+                    update.update_id,
+                    type(error).__name__,
+                    stack_trace,
+                )
+                self.stopped.wait(RETRY_SECONDS)
+                return
+
             self.offset = update.update_id + 1
 
     def process_update(self, update: Update) -> None:
         """Обработать одно событие Telegram."""
 
-        try:
-            self.bot.process_new_updates([update])
-        except Exception as error:
-            logger.error(
-                "Не удалось обработать событие %s (%s)", update.update_id, type(error).__name__
-            )
+        self.bot.process_new_updates([update])
 
     def wait_for_connection(self, error: Exception) -> None:
         """Подождать восстановления Telegram."""

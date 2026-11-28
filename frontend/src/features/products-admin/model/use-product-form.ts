@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { adminProductPath } from "@/shared/lib/admin-paths";
 import { swap } from "@/shared/lib/array";
 import { errorMessage, INVALID_FORM_MESSAGE } from "@/shared/lib/errors";
@@ -63,6 +63,7 @@ export const useProductForm = (
 ) => {
   const router = useRouter();
   const toast = useToast();
+  const draftUrls = useRef(new Set<string>());
   const [state, dispatch] = useReducer(formReducer, {
     fields: toFields(product, categories),
     drafts: [],
@@ -70,6 +71,15 @@ export const useProductForm = (
     showErrors: false,
   });
   const { fields, drafts } = state;
+
+  useEffect(
+    () => () => {
+      for (const url of draftUrls.current) {
+        URL.revokeObjectURL(url);
+      }
+    },
+    [],
+  );
 
   const category = categories.find((item) => String(item.id) === fields.categoryId);
   const errors = state.showErrors ? validateProduct(fields, category) : {};
@@ -79,6 +89,7 @@ export const useProductForm = (
   const addDrafts = (files: File[]) => {
     const added = files.map((file) => {
       const url = URL.createObjectURL(file);
+      draftUrls.current.add(url);
 
       return { id: url, url, file };
     });
@@ -89,8 +100,14 @@ export const useProductForm = (
   const moveDraft = (index: number, shift: number) =>
     dispatch({ type: "drafts/change", drafts: swap(drafts, index, shift) });
 
-  const removeDraft = (index: number) =>
-    dispatch({ type: "drafts/change", drafts: drafts.filter((draft) => draft !== drafts[index]) });
+  const removeDraft = (index: number) => {
+    const draft = drafts[index];
+    if (!draft) return;
+
+    URL.revokeObjectURL(draft.url);
+    draftUrls.current.delete(draft.url);
+    dispatch({ type: "drafts/change", drafts: drafts.filter((item) => item !== draft) });
+  };
 
   /** Сохранить товар. Новый товар создаётся, получает выбранные фото и открывается. */
   const save = async () => {

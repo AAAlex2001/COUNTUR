@@ -4,7 +4,7 @@ import re
 from decimal import Decimal
 
 from app.catalog.exceptions import InvalidFilterError, InvalidProductError
-from app.catalog.models import Category, Product, ProductSpec
+from app.catalog.models import Availability, Category, Product, ProductSpec
 from app.catalog.schemas import ProductUpdateSchema, SpecInSchema
 
 SPEC_FILTER_SEPARATOR = ":"
@@ -58,6 +58,17 @@ def validate_prices(price: Decimal, old_price: Decimal | None) -> None:
 
     if old_price is not None and old_price <= price:
         raise InvalidProductError("Цена до скидки должна быть больше текущей цены")
+
+
+def availability_for_stock(
+    stock_quantity: int | None, availability: Availability
+) -> Availability:
+    """Не показывать товар в наличии, если его учтённый остаток равен нулю."""
+
+    if stock_quantity == 0 and availability == Availability.IN_STOCK:
+        return Availability.OUT_OF_STOCK
+
+    return availability
 
 
 def validate_specs(category: Category, specs: list[SpecInSchema]) -> dict[int, str]:

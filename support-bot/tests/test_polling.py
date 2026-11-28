@@ -73,18 +73,33 @@ def test_startup_recovers_without_logging_bot_token(monkeypatch, caplog):
     assert "private-token" not in caplog.text
 
 
-def test_failed_handler_does_not_interrupt_other_chats(caplog):
+def test_failed_handler_keeps_update_pending_until_retry(monkeypatch, caplog):
     bot = Mock()
     first = SimpleNamespace(update_id=50)
     second = SimpleNamespace(update_id=51)
     bot.get_updates.return_value = [first, second]
-    bot.process_new_updates.side_effect = [RuntimeError("private-token"), None]
+    bot.process_new_updates.side_effect = [RuntimeError("private-token"), None, None]
     polling = TelegramPolling(bot)
+    waits = []
+    monkeypatch.setattr(polling.stopped, "wait", lambda seconds: waits.append(seconds))
 
     polling.receive()
 
-    assert bot.process_new_updates.call_count == 2
+    assert bot.get_updates.call_count == 1
+    assert bot.process_new_updates.call_count == 1
+    assert polling.offset == 0
+    assert waits == [5]
+    assert "событие 50" in caplog.text
+    assert "RuntimeError" in caplog.text
+    assert "private-token" not in caplog.text
+    assert "Traceback" not in caplog.text
+    assert "receive" in caplog.text
+
+    polling.receive()
+
+    assert bot.get_updates.call_count == 2
+    assert bot.get_updates.call_args_list[0].kwargs["offset"] == 0
+    assert bot.get_updates.call_args_list[1].kwargs["offset"] == 0
+    assert bot.process_new_updates.call_count == 3
     bot.process_new_updates.assert_called_with([second])
     assert polling.offset == 52
-    assert "событие 50" in caplog.text
-    assert "private-token" not in caplog.text

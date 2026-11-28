@@ -1,7 +1,9 @@
 """JWT-токены для cookie входа: администратора и покупателя."""
 
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
+from uuid import uuid4
 
 import jwt
 
@@ -17,14 +19,46 @@ class TokenRole(StrEnum):
     CUSTOMER = "customer"
 
 
-def create_token(subject: str, role: TokenRole) -> str:
+@dataclass(frozen=True)
+class AuthToken:
+    """Токен и данные, которые нужны для его хранения в БД."""
+
+    value: str
+    session_id: str
+    subject: str
+    role: TokenRole
+    expires_at: datetime
+
+
+@dataclass(frozen=True)
+class TokenClaims:
+    """Проверенные данные из JWT."""
+
+    session_id: str
+    subject: str
+    role: TokenRole
+
+
+def create_token(subject: str, role: TokenRole) -> AuthToken:
     """Выпустить токен входа."""
 
     settings = get_settings()
     expires_at = datetime.now(UTC) + timedelta(days=settings.jwt_expires_days)
-    payload = {"sub": subject, "exp": expires_at, "role": role}
+    session_id = str(uuid4())
+    payload = {
+        "sub": subject,
+        "exp": expires_at,
+        "jti": session_id,
+        "role": role.value,
+    }
 
-    return jwt.encode(payload, settings.jwt_secret, algorithm=ALGORITHM)
+    return AuthToken(
+        value=jwt.encode(payload, settings.jwt_secret, algorithm=ALGORITHM),
+        session_id=session_id,
+        subject=subject,
+        role=role,
+        expires_at=expires_at,
+    )
 
 
 def legacy_role(subject: str, admin_login: str) -> TokenRole | None:
@@ -38,8 +72,8 @@ def legacy_role(subject: str, admin_login: str) -> TokenRole | None:
     return None
 
 
-def read_subject(token: str | None, role: TokenRole) -> str | None:
-    """Проверить сессию для роли."""
+def read_token(token: str | None, role: TokenRole) -> TokenClaims | None:
+    """Проверить подпись, срок действия и назначение токена."""
 
     if not token:
         return None
@@ -51,15 +85,20 @@ def read_subject(token: str | None, role: TokenRole) -> str | None:
             token,
             settings.jwt_secret,
             algorithms=[ALGORITHM],
-            options={"require": ["exp", "sub"]},
+            options={"require": ["exp", "sub", "jti"]},
         )
     except jwt.InvalidTokenError:
         return None
 
     subject = payload["sub"]
-    if not isinstance(subject, str):
+    session_id = payload["jti"]
+    if not isinstance(subject, str) or not isinstance(session_id, str):
         return None
+
     token_role = payload.get("role")
     if "role" not in payload:
         token_role = legacy_role(subject, settings.admin_login)
-    return subject if token_role == role else None
+    if token_role != role:
+        return None
+
+    return TokenClaims(session_id=session_id, subject=subject, role=role)

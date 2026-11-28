@@ -3,9 +3,10 @@
 from fastapi import Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.repository import AuthSessionRepository
 from app.config import get_settings
 from app.database import get_session
-from app.tokens import TokenRole, read_subject
+from app.tokens import TokenRole, read_token
 from app.users.models import User
 from app.users.repository import UserRepository
 from app.users.usecases.change_password import ChangePasswordUseCase
@@ -23,6 +24,14 @@ def get_user_repository(
     """Репозиторий покупателей с сессией текущего запроса."""
 
     return UserRepository(session)
+
+
+def get_auth_session_repository(
+    session: AsyncSession = Depends(get_session),
+) -> AuthSessionRepository:
+    """Репозиторий активных входов."""
+
+    return AuthSessionRepository(session)
 
 
 def get_register_usecase(
@@ -90,7 +99,7 @@ def set_user_cookie(response: Response, token: str) -> None:
 
 
 def clear_user_cookie(response: Response) -> None:
-    """Удалить cookie с токеном — это и есть выход из аккаунта."""
+    """Удалить cookie с токеном."""
 
     response.delete_cookie(USER_COOKIE, path="/")
 
@@ -98,13 +107,20 @@ def clear_user_cookie(response: Response) -> None:
 async def require_user(
     request: Request,
     users: UserRepository = Depends(get_user_repository),
+    sessions: AuthSessionRepository = Depends(get_auth_session_repository),
 ) -> User:
     """Покупатель по токену из cookie. Без валидного токена — 401."""
 
     token = request.cookies.get(USER_COOKIE)
-    subject = read_subject(token, TokenRole.CUSTOMER)
-    user = await users.get_by_id(int(subject)) if subject and subject.isdigit() else None
+    claims = read_token(token, TokenRole.CUSTOMER)
 
+    if claims is None or not claims.subject.isdigit() or not await sessions.is_active(claims):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Требуется вход",
+        )
+
+    user = await users.get_by_id(int(claims.subject))
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -6,7 +6,7 @@ from app.catalog.repositories.brands import BrandRepository
 from app.catalog.repositories.categories import CategoryRepository
 from app.catalog.repositories.products import ProductRepository
 from app.catalog.schemas import ProductCreateSchema
-from app.catalog.validators import validate_prices, validate_specs
+from app.catalog.validators import availability_for_stock, validate_prices, validate_specs
 from app.slugs import make_slug
 
 
@@ -52,7 +52,7 @@ class CreateProductUseCase:
             price=payload.price,
             old_price=payload.old_price,
             stock_quantity=payload.stock_quantity,
-            availability=payload.availability,
+            availability=availability_for_stock(payload.stock_quantity, payload.availability),
             status=PublicationStatus.DRAFT,
             is_hit=payload.is_hit,
             sort_order=payload.sort_order,

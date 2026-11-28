@@ -1,8 +1,10 @@
 from asyncpg.exceptions import UniqueViolationError
-from sqlalchemy import ColumnElement, func, or_, select, true, update
+from sqlalchemy import ColumnElement, delete, func, or_, select, true, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.models import AuthSession
+from app.tokens import TokenRole
 from app.users.exceptions import EmailAlreadyTakenError
 from app.users.models import User
 
@@ -83,5 +85,15 @@ class UserRepository:
             .values(password_hash=password_hash)
             .returning(User.id)
         )
+        if changed is None:
+            await self.db.rollback()
+            return False
+
+        await self.db.execute(
+            delete(AuthSession).where(
+                AuthSession.subject == str(user.id),
+                AuthSession.role == TokenRole.CUSTOMER.value,
+            )
+        )
         await self.db.commit()
-        return changed is not None
+        return True

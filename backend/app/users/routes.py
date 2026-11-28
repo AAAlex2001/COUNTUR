@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
+from app.auth.repository import AuthSessionRepository
 from app.tokens import TokenRole, create_token
 from app.users.dependencies import (
+    USER_COOKIE,
     clear_user_cookie,
+    get_auth_session_repository,
     get_change_password_usecase,
     get_login_usecase,
     get_register_usecase,
@@ -36,6 +39,7 @@ async def register(
     payload: UserRegisterSchema,
     response: Response,
     usecase: RegisterUserUseCase = Depends(get_register_usecase),
+    sessions: AuthSessionRepository = Depends(get_auth_session_repository),
 ) -> UserSchema:
     """Регистрация. Сразу выдаёт cookie со входом."""
 
@@ -52,7 +56,9 @@ async def register(
             detail="На этот email уже есть аккаунт",
         ) from error
 
-    set_user_cookie(response, create_token(str(user.id), TokenRole.CUSTOMER))
+    token = create_token(str(user.id), TokenRole.CUSTOMER)
+    await sessions.create(token)
+    set_user_cookie(response, token.value)
 
     return UserSchema.model_validate(user)
 
@@ -62,6 +68,7 @@ async def login(
     payload: UserLoginSchema,
     response: Response,
     usecase: LoginUserUseCase = Depends(get_login_usecase),
+    sessions: AuthSessionRepository = Depends(get_auth_session_repository),
 ) -> UserSchema:
     """Вход по email и паролю. Выдаёт cookie с токеном."""
 
@@ -73,15 +80,22 @@ async def login(
             detail="Неверный email или пароль",
         ) from error
 
-    set_user_cookie(response, create_token(str(user.id), TokenRole.CUSTOMER))
+    token = create_token(str(user.id), TokenRole.CUSTOMER)
+    await sessions.create(token)
+    set_user_cookie(response, token.value)
 
     return UserSchema.model_validate(user)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-async def logout(response: Response) -> None:
-    """Выход: удаляем cookie с токеном."""
+async def logout(
+    request: Request,
+    response: Response,
+    sessions: AuthSessionRepository = Depends(get_auth_session_repository),
+) -> None:
+    """Отозвать сессию и удалить cookie."""
 
+    await sessions.revoke_token(request.cookies.get(USER_COOKIE), TokenRole.CUSTOMER)
     clear_user_cookie(response)
 
 
@@ -114,10 +128,11 @@ async def update_me(
 @router.post("/password", status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(
     payload: PasswordChangeSchema,
+    response: Response,
     user: User = Depends(require_user),
     usecase: ChangePasswordUseCase = Depends(get_change_password_usecase),
 ) -> None:
-    """Смена пароля по текущему паролю."""
+    """Сменить пароль и завершить все активные сессии покупателя."""
 
     try:
         await usecase.execute(user, payload)
@@ -131,3 +146,5 @@ async def change_password(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Неверный текущий пароль",
         ) from error
+
+    clear_user_cookie(response)

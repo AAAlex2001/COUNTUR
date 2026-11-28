@@ -7,9 +7,22 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.catalog.exceptions import InvalidFilterError, InvalidProductError
+<<<<<<< HEAD
 from app.catalog.models import Attribute, Category, Product, ProductImage, ProductSpec
 from app.catalog.schemas import ProductUpdateSchema, SpecInSchema
 from app.catalog.usecases.get_catalog_filters import GetCatalogFiltersUseCase
+=======
+from app.catalog.models import (
+    Availability,
+    Attribute,
+    Category,
+    Product,
+    ProductImage,
+    ProductSpec,
+)
+from app.catalog.schemas import ProductCreateSchema, ProductUpdateSchema, SpecInSchema
+from app.catalog.usecases.create_product import CreateProductUseCase
+>>>>>>> fd35b3f (Harden and simplify COUNTUR application)
 from app.catalog.usecases.update_product import UpdateProductUseCase
 from app.catalog.validators import (
     apply_specs,
@@ -165,8 +178,32 @@ def test_product_patch_preserves_omitted_fields_and_applies_empty_values() -> No
     assert result.old_price is None
     assert result.price == 0
     assert result.stock_quantity == 0
+    assert result.availability == Availability.OUT_OF_STOCK
     assert result.highlights == []
     assert result.is_hit is False
+
+
+def test_product_creation_with_zero_stock_is_not_in_stock() -> None:
+    categories = AsyncMock()
+    categories.get_by_id.return_value = make_category()
+    products = AsyncMock()
+    products.unique_slug.return_value = "zero-stock-product"
+    products.add.side_effect = lambda product: product
+    create = CreateProductUseCase(products, categories, AsyncMock())
+
+    result = asyncio.run(
+        create.execute(
+            ProductCreateSchema(
+                name="Товар без остатка",
+                category_id=1,
+                price=Decimal("100"),
+                stock_quantity=0,
+            )
+        )
+    )
+
+    assert result.stock_quantity == 0
+    assert result.availability == Availability.OUT_OF_STOCK
 
 
 def test_product_patch_rejects_clearing_required_price() -> None:

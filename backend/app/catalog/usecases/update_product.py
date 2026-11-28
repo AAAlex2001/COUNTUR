@@ -1,13 +1,14 @@
 """Сценарий изменения товара."""
 
 from app.catalog.exceptions import CategoryNotFoundError, SkuAlreadyTakenError
-from app.catalog.models import Product, PublicationStatus
+from app.catalog.models import Availability, Product, PublicationStatus
 from app.catalog.repositories.brands import BrandRepository
 from app.catalog.repositories.categories import CategoryRepository
 from app.catalog.repositories.products import ProductRepository
 from app.catalog.schemas import ProductUpdateSchema
 from app.catalog.validators import (
     apply_specs,
+    availability_for_stock,
     validate_prices,
     validate_publishable,
     validate_required_fields,
@@ -40,6 +41,9 @@ def update_sale_terms(product: Product, payload: ProductUpdateSchema) -> None:
     if payload.availability is not None:
         product.availability = payload.availability
 
+    product.availability = availability_for_stock(
+        product.stock_quantity, Availability(product.availability)
+    )
     validate_prices(product.price, product.old_price)
 
 

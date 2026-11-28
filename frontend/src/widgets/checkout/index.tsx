@@ -65,10 +65,18 @@ const CheckoutSteps = ({ user, cart }: CheckoutStepsProps) => {
 /** Оформление заказа: доступно после входа и только с непустой корзиной. */
 const Checkout = () => {
   const { user } = useUser();
-  const { cart, loaded } = useCart();
+  const { cart, loaded, error } = useCart();
 
   if (!loaded) {
     return <Loader size="lg" />;
+  }
+
+  if (error) {
+    return (
+      <section className={styles.checkout}>
+        <p role="alert">Не удалось загрузить корзину. Обновите страницу и попробуйте снова.</p>
+      </section>
+    );
   }
 
   return (

@@ -17,7 +17,7 @@ import styles from "./style.module.scss";
 /** Страница корзины: список товаров и блок «Итого», либо пустая корзина, либо предложение войти. */
 const Cart = () => {
   const { user } = useUser();
-  const { cart, loaded } = useCart();
+  const { cart, loaded, error } = useCart();
   const positions = cart.items.length;
   const isEmpty = positions === 0;
 
@@ -47,6 +47,10 @@ const Cart = () => {
 
       {!loaded && <Loader size="lg" />}
 
+      {loaded && error && (
+        <p role="alert">Не удалось загрузить корзину. Обновите страницу и попробуйте снова.</p>
+      )}
+
       {loaded && !user && (
         <LoginPrompt
           title="Корзина хранится в аккаунте"
@@ -54,7 +58,7 @@ const Cart = () => {
         />
       )}
 
-      {loaded && user && isEmpty && (
+      {loaded && user && !error && isEmpty && (
         <EmptyState
           icon={<CartIcon />}
           title="В корзине пока пусто"
@@ -67,7 +71,7 @@ const Cart = () => {
         />
       )}
 
-      {loaded && user && !isEmpty && (
+      {loaded && user && !error && !isEmpty && (
         <div className={styles.columns}>
           <ul className={styles.items}>
             {cart.items.map((item) => (

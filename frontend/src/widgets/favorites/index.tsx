@@ -15,7 +15,7 @@ import styles from "./style.module.scss";
 /** Показать избранные товары. */
 const Favorites = ({ actions }: { actions: ProductActions }) => {
   const { user } = useUser();
-  const { products: favorites, loaded } = useFavorites();
+  const { products: favorites, loaded, error } = useFavorites();
   const isEmpty = favorites.length === 0;
 
   return (
@@ -43,6 +43,10 @@ const Favorites = ({ actions }: { actions: ProductActions }) => {
 
       {!loaded && <Loader size="lg" />}
 
+      {loaded && error && (
+        <p role="alert">Не удалось загрузить избранное. Обновите страницу и попробуйте снова.</p>
+      )}
+
       {loaded && !user && (
         <LoginPrompt
           title="Избранное хранится в аккаунте"
@@ -50,7 +54,7 @@ const Favorites = ({ actions }: { actions: ProductActions }) => {
         />
       )}
 
-      {loaded && user && isEmpty && (
+      {loaded && user && !error && isEmpty && (
         <EmptyState
           icon={<HeartIcon />}
           title="В избранном пока пусто"
@@ -63,7 +67,7 @@ const Favorites = ({ actions }: { actions: ProductActions }) => {
         />
       )}
 
-      {loaded && user && !isEmpty && (
+      {loaded && user && !error && !isEmpty && (
         <ul className={styles.grid}>
           {favorites.map((product) => (
             <li key={product.id}>

@@ -8,6 +8,7 @@ import { EMPTY_CART, type Cart } from "./types";
 type CartValue = {
   cart: Cart;
   loaded: boolean;
+  error: boolean;
   setCart: (cart: Cart) => void;
 };
 
@@ -23,22 +24,45 @@ export const CartProvider = ({ initialCart, children }: CartProviderProps) => {
   const { user } = useUser();
   const [cart, setCart] = useState(initialCart);
   const [loadedFor, setLoadedFor] = useState(user?.id ?? null);
+  const [errorFor, setErrorFor] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user || user.id === loadedFor) return;
 
+    const userId = user.id;
+    let isActive = true;
+
     fetchCart()
-      .then(setCart)
-      .catch(() => undefined)
-      .finally(() => setLoadedFor(user.id));
+      .then((nextCart) => {
+        if (!isActive) return;
+
+        setCart(nextCart);
+        setLoadedFor(userId);
+      })
+      .catch(() => {
+        if (!isActive) return;
+
+        setCart(EMPTY_CART);
+        setErrorFor(userId);
+        setLoadedFor(userId);
+      });
+
+    return () => {
+      isActive = false;
+    };
   }, [user, loadedFor]);
 
   const ready = user !== null && loadedFor === user.id;
+  const error = user !== null && errorFor === user.id;
 
   const value = {
     cart: ready ? cart : EMPTY_CART,
     loaded: user === null || ready,
-    setCart,
+    error,
+    setCart: (nextCart: Cart) => {
+      setCart(nextCart);
+      setErrorFor(null);
+    },
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

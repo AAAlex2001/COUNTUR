@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useReducer } from "react";
-import { changePassword } from "@/entities/user";
+import { changePassword, useUser } from "@/entities/user";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
 import { EMPTY_PASSWORD, passwordReducer } from "./reducers";
@@ -23,6 +24,8 @@ const validate = (fields: PasswordFields): string | null => {
 
 /** Окно смены пароля: открыть, заполнить, сохранить. */
 export const usePassword = () => {
+  const router = useRouter();
+  const { setUser } = useUser();
   const toast = useToast();
   const [state, dispatch] = useReducer(passwordReducer, {
     open: false,
@@ -47,8 +50,10 @@ export const usePassword = () => {
 
     try {
       await changePassword(state.fields.current, state.fields.next);
+      setUser(null);
       dispatch({ type: "modal/close" });
       toast("Пароль изменён");
+      router.push("/");
     } catch (failure) {
       toast(errorMessage(failure, "Не удалось изменить пароль"), "error");
     } finally {

@@ -1,6 +1,7 @@
 """Все модели приложения в одном месте, чтобы их видели Alembic и SQLAlchemy."""
 
 from app.base import Base
+from app.auth.models import AuthSession
 from app.cart.models import CartItem
 from app.catalog.models import (
     Attribute,
@@ -23,6 +24,7 @@ from app.users.models import User
 
 __all__ = [
     "Base",
+    "AuthSession",
     "CartItem",
     "Attribute",
     "Brand",

@@ -9,6 +9,7 @@ type FavoritesValue = {
   products: ProductCardData[];
   ids: number[];
   loaded: boolean;
+  error: boolean;
   setProducts: (products: ProductCardData[]) => void;
 };
 
@@ -26,24 +27,47 @@ export const FavoritesProvider = ({ initialProducts, children }: FavoritesProvid
   const { user } = useUser();
   const [products, setProducts] = useState(initialProducts);
   const [loadedFor, setLoadedFor] = useState(user?.id ?? null);
+  const [errorFor, setErrorFor] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user || user.id === loadedFor) return;
 
+    const userId = user.id;
+    let isActive = true;
+
     fetchFavorites()
-      .then(setProducts)
-      .catch(() => undefined)
-      .finally(() => setLoadedFor(user.id));
+      .then((nextProducts) => {
+        if (!isActive) return;
+
+        setProducts(nextProducts);
+        setLoadedFor(userId);
+      })
+      .catch(() => {
+        if (!isActive) return;
+
+        setProducts(NO_PRODUCTS);
+        setErrorFor(userId);
+        setLoadedFor(userId);
+      });
+
+    return () => {
+      isActive = false;
+    };
   }, [user, loadedFor]);
 
   const ready = user !== null && loadedFor === user.id;
+  const error = user !== null && errorFor === user.id;
   const visible = ready ? products : NO_PRODUCTS;
 
   const value = {
     products: visible,
     ids: visible.map((product) => product.id),
     loaded: user === null || ready,
-    setProducts,
+    error,
+    setProducts: (nextProducts: ProductCardData[]) => {
+      setProducts(nextProducts);
+      setErrorFor(null);
+    },
   };
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

@@ -24,10 +24,27 @@ export const useAdminReviews = (productId: number) => {
   });
 
   useEffect(() => {
-    fetchAdminReviews(productId, PAGE_SIZE, 0)
-      .catch(() => EMPTY_LIST)
-      .then((list) => dispatch({ type: "load/finish", list }));
-  }, [productId]);
+    let isActive = true;
+
+    const loadReviews = async () => {
+      dispatch({ type: "load/start", page: 1 });
+
+      try {
+        const list = await fetchAdminReviews(productId, PAGE_SIZE, 0);
+        if (isActive) dispatch({ type: "load/finish", list });
+      } catch (failure) {
+        if (!isActive) return;
+
+        dispatch({ type: "load/finish", list: EMPTY_LIST });
+        toast(errorMessage(failure, "Не удалось загрузить отзывы"), "error");
+      }
+    };
+
+    void loadReviews();
+    return () => {
+      isActive = false;
+    };
+  }, [productId, toast]);
 
   /** Загрузить и показать страницу отзывов. */
   const openPage = async (page: number) => {
